@@ -744,7 +744,9 @@ for (const auto& item : inventory) {
 
 What is your opinion about it? $\Rightarrow$ Just say something, say whatever you think
 
+```{.cpp}
 {{< include ./cpp/Q_and_A_02.cpp >}}
+```
 
 ## Q&A for Chocolate: Question 02
 
@@ -754,7 +756,9 @@ Nothing is shown here just in case I made a mistake, double clicking $\ldots$
 
 It is better to write as follows:
 
+```{.cpp hide="true"}
 {{< include ./cpp/Q_and_A_02_rewrite.cpp >}}
+```
 
 # Homework
 

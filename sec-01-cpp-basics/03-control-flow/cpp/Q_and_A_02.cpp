@@ -1,5 +1,4 @@
 #include <iostream>
-
 int main()
 {
     int count{ 0 }; // count how many times the loop iterates
@@ -12,12 +11,10 @@ int main()
 
         if (ch == 'e')
             keep_looping = false;
-        else
-        {
+        else {
             ++count;
             std::cout << "We've iterated " << count << " times\n";
         }
     }
-
     return 0;
 }

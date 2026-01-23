@@ -1548,19 +1548,26 @@ Listing&nbsp;25: How will this program behave?
 <section id="qa-for-chocolate-question-02" class="slide level2">
 <h2>Q&amp;A for Chocolate: Question 02</h2>
 <p>What is your opinion about it? <span class="math inline">\(\Rightarrow\)</span> Just say something, say whatever you think</p>
-<p>#include <iostream></iostream></p>
-<p>int main() { int count{ 0 }; // count how many times the loop iterates bool keep_looping { true }; // controls whether the loop ends or not while (keep_looping) { std::cout &lt;&lt; “Enter ‘e’ to exit this loop or any other character to continue:”; char ch{}; std::cin &gt;&gt; ch;</p>
-<pre><code>    if (ch == 'e')
-        keep_looping = false;
-    else
-    {
-        ++count;
-        std::cout &lt;&lt; "We've iterated " &lt;&lt; count &lt;&lt; " times\n";
-    }
-}
-
-return 0;</code></pre>
-<p>}</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb48-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb48-2"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb48-3"><a href=""></a><span class="op">{</span></span>
+<span id="cb48-4"><a href=""></a>    <span class="dt">int</span> count<span class="op">{</span> <span class="dv">0</span> <span class="op">};</span> <span class="co">// count how many times the loop iterates</span></span>
+<span id="cb48-5"><a href=""></a>    <span class="dt">bool</span> keep_looping <span class="op">{</span> <span class="kw">true</span> <span class="op">};</span> <span class="co">// controls whether the loop ends or not</span></span>
+<span id="cb48-6"><a href=""></a>    <span class="cf">while</span> <span class="op">(</span>keep_looping<span class="op">)</span></span>
+<span id="cb48-7"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb48-8"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Enter 'e' to exit this loop or any other character to continue: "</span><span class="op">;</span></span>
+<span id="cb48-9"><a href=""></a>        <span class="dt">char</span> ch<span class="op">{};</span></span>
+<span id="cb48-10"><a href=""></a>        <span class="bu">std::</span>cin <span class="op">&gt;&gt;</span> ch<span class="op">;</span></span>
+<span id="cb48-11"><a href=""></a></span>
+<span id="cb48-12"><a href=""></a>        <span class="cf">if</span> <span class="op">(</span>ch <span class="op">==</span> <span class="ch">'e'</span><span class="op">)</span></span>
+<span id="cb48-13"><a href=""></a>            keep_looping <span class="op">=</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb48-14"><a href=""></a>        <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb48-15"><a href=""></a>            <span class="op">++</span>count<span class="op">;</span></span>
+<span id="cb48-16"><a href=""></a>            <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"We've iterated "</span> <span class="op">&lt;&lt;</span> count <span class="op">&lt;&lt;</span> <span class="st">" times</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb48-17"><a href=""></a>        <span class="op">}</span></span>
+<span id="cb48-18"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb48-19"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb48-20"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="qa-for-chocolate-question-02-1" class="slide level2">
 <h2>Q&amp;A for Chocolate: Question 02</h2>
@@ -1569,17 +1576,26 @@ return 0;</code></pre>
 <section id="qa-for-chocolate-question-02-2" class="slide level2">
 <h2>Q&amp;A for Chocolate: Question 02</h2>
 <p>It is better to write as follows:</p>
-<p>#include <iostream></iostream></p>
-<p>int main() { int count{ 0 }; // count how many times the loop iterates while (true) // loop until user terminates { std::cout &lt;&lt; “Enter ‘e’ to exit this loop or any other character to continue:”; char ch{}; std::cin &gt;&gt; ch;</p>
-<pre><code>    if (ch == 'e')
-        break;
-
-    ++count;
-    std::cout &lt;&lt; "We've iterated " &lt;&lt; count &lt;&lt; " times\n";
-}
-
-return 0;</code></pre>
-<p>}</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49" data-hide="true"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb49-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb49-2"><a href=""></a></span>
+<span id="cb49-3"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb49-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb49-5"><a href=""></a>    <span class="dt">int</span> count<span class="op">{</span> <span class="dv">0</span> <span class="op">};</span> <span class="co">// count how many times the loop iterates</span></span>
+<span id="cb49-6"><a href=""></a>    <span class="cf">while</span> <span class="op">(</span><span class="kw">true</span><span class="op">)</span> <span class="co">// loop until user terminates</span></span>
+<span id="cb49-7"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb49-8"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Enter 'e' to exit this loop or any other character to continue: "</span><span class="op">;</span></span>
+<span id="cb49-9"><a href=""></a>        <span class="dt">char</span> ch<span class="op">{};</span></span>
+<span id="cb49-10"><a href=""></a>        <span class="bu">std::</span>cin <span class="op">&gt;&gt;</span> ch<span class="op">;</span></span>
+<span id="cb49-11"><a href=""></a></span>
+<span id="cb49-12"><a href=""></a>        <span class="cf">if</span> <span class="op">(</span>ch <span class="op">==</span> <span class="ch">'e'</span><span class="op">)</span></span>
+<span id="cb49-13"><a href=""></a>            <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb49-14"><a href=""></a></span>
+<span id="cb49-15"><a href=""></a>        <span class="op">++</span>count<span class="op">;</span></span>
+<span id="cb49-16"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"We've iterated "</span> <span class="op">&lt;&lt;</span> count <span class="op">&lt;&lt;</span> <span class="st">" times</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb49-17"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb49-18"><a href=""></a></span>
+<span id="cb49-19"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb49-20"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section></section>
 <section>
 <section id="homework" class="title-slide slide level1 center">
