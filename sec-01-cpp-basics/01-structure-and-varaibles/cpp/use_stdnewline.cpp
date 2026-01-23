@@ -3,7 +3,7 @@
 int main()
 {
     // std::endl will cause the cursor to move to the next line
-    std::cout << "Hi!" << std::endl;                // try to remove std::endl here
+    std::cout << "Hi!\n";                // try to remove std::endl here
     std::cout << "My name is Alex." << std::endl;   // try to remove std::endl here
 
     // However, it is advisable to use:
