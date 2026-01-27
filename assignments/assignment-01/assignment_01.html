@@ -168,16 +168,17 @@ window.Quarto = {
 </section>
 <section id="rationale-on-the-length-of-the-assignment" class="level2">
 <h2 class="anchored" data-anchor-id="rationale-on-the-length-of-the-assignment">Rationale on the length of the assignment</h2>
-<p><span style="color:red"><strong>Why is the assignment so long?</strong></span></p>
+<p><span style="color:red"><em>Why is the assignment so long?</em></span></p>
 <p>Here is my experience. If I give one single assignment with a significantly meaningful topic, you will skip all the practice opportunities and finally end up using ChatGPT to solve the final exam – Again, I saw and marked more than AI-geneted code than you could imagine.</p>
 <p>The first part of the assignment gives you the opportunities to practice writing code in C++. The second part of the assignment introduce you to the simplest knowledge in the machine learning world: Linear Regression.</p>
 </section>
 <section id="my-advices" class="level2">
-<h2 class="anchored" data-anchor-id="my-advices"><span style="color:red">My advices</span></h2>
+<h2 class="anchored" data-anchor-id="my-advices"><span style="color:blue">My advices</span></h2>
 <ul>
 <li>I encourage you to try to solve the exercises using just <strong>Google</strong>, <strong>stackoverflow</strong>, before trying to use ChatGPT, Gemini or CoPilot.</li>
 <li>If you decide to use GenAI Chatbots, you should try to refrain yourself from copy/paste the solution in a bruteforce manner. Instead, you should ask them for knowledge you want to learn.</li>
-<li><span style="color:blue"><strong>Good habits compound, so does bad habits.</strong></span></li>
+<li>Keep in mind that you will have to write C++ code on paper in the final paper exam.</li>
+<li><span style="color:blue"><em>Good habits compound, so do bad habits.</em></span></li>
 </ul>
 </section>
 </section>
@@ -227,26 +228,37 @@ window.Quarto = {
 </section>
 <section id="task-2" class="level1">
 <h1>Task 2</h1>
+<p><strong>Intro</strong>: This year I decide to roll out a slightly more challenging problems but also more fun to do as compared to those given in the prior years. My aim is to provide you an opportunity to learn machine learning. I hope that in the end of the Assignment 2, we can build a program to classify hand-written digits: <span class="math inline">\(0, 1, \ldots, 9\)</span>.</p>
 <p>In this task, we will build a linear regression model, which is the first step of building a complex neural network.</p>
 <section id="problem-description" class="level2">
 <h2 class="anchored" data-anchor-id="problem-description">Problem description</h2>
 <p>You can read this <a href="https://en.wikipedia.org/wiki/Linear_regression">wikipedia: Linear Regression</a> for multi-dimensional linear regression. But my description will use different notations.</p>
-<p>We are given a task of predicting the house price in Glasgow by using various properties of a house such as number of bedrooms, total living area, distance to schools and city center and so on. That is, we need to build a prediction model that can be represented by a mapping <span class="math display">\[
+<p>Imagine that an Estate Agent/Glasgow Council gives us a task of predicting the house price in Glasgow by using various features of a house/flat such as number of bedrooms, total living area, distance to schools and city center and so on. Mathematically speaking, we need to build a prediction model that can be represented by a mapping <span class="math display">\[
 y = f(x_1, x_2, \ldots, x_n), \quad y=\text{house price}
-\]</span> and <span class="math inline">\(x_1, x_2, \ldots x_n\)</span> correspond to the features of the house. For example, <span class="math inline">\(x_1\)</span> is the number of bedrooms, <span class="math inline">\(x_2\)</span> is the total iving area, <span class="math inline">\(x_3\)</span> is the distance to the city center and so on. That is we seek the function <span class="math inline">\(f\)</span>. The prediction model estimates the relationship between a scalar response (dependent variable <span class="math inline">\(y\)</span>).</p>
+\]</span> and <span class="math inline">\(x_1, x_2, \ldots, x_n\)</span> correspond to the features of the house. For example, <span class="math inline">\(x_1\)</span> is the total living area, <span class="math inline">\(x_2\)</span> is the number of bedrooms, <span class="math inline">\(x_3\)</span> is the distance to the city center and so on. The prediction model, represented by <span class="math inline">\(f\)</span>, estimates the relationship between a scalar response (dependent variable <span class="math inline">\(y\)</span>) and one or more explanatory variables (independent variable <span class="math inline">\(\mathbf{x}\)</span>) The ultimate goal is to seek the function <span class="math inline">\(f\)</span>.</p>
+<p><strong>Example</strong></p>
+<p>We go around the city of Glasgow and collect the dataset <span class="math inline">\(\mathcal{D}\)</span> of <span class="math inline">\(m\)</span> data points:</p>
+<p><span id="eq-dataset-multiple-features"><span class="math display">\[
+\mathcal{D} = \big\{ (\mathbf{x}^{(1)}, y^{(1)}), (\mathbf{x}^{(2)}, y^{(2)}), \ldots (\mathbf{x}^{(m)}, y^{(m)})\big\}.
+\tag{1}\]</span></span> Note that one single data point comprises both <span class="math inline">\(\mathbf{x} \in \mathbb{R}^{n}\)</span> and <span class="math inline">\(y \in \mathbb{R}\)</span> components. If we try to predict the house price by using only one feature such as total living area <span class="math inline">\(x_1\)</span>, then we have a dataset as <span class="math display">\[
+\mathcal{D} = \big\{ (x^{(1)}, y^{(1)}), (x^{(2)}, y^{(2)}), \ldots (x^{(m)}, y^{(m)})\big\}.
+\]</span> If we try to predict the house price by using two features <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> (number of bedrooms), the we have a dataset as</p>
+<p><span class="math display">\[
+\mathcal{D} = \big\{ ((x_1^{(1)}, x_2^{(1)}), y^{(1)}), ((x_1^{(2)}, x_2^{(2)}), y^{(2)}), \ldots ((x_1^{(m)}, x_2^{(m)}), y^{(m)})\big\}.
+\]</span> Now, you can imagine the kind of dataset we are dealing with if we decide to use more than <span class="math inline">\(2\)</span> features to predict the house price. In fact, <span class="math inline">\(x_1, x_2, \ldots\)</span> are called <strong>features</strong></p>
 </section>
 <section id="simple-linear-regression" class="level2">
 <h2 class="anchored" data-anchor-id="simple-linear-regression">Simple linear regression</h2>
-<p>Let us simplify the above problem to prediction of the house price based on the total area of the house. That is, the vector <span class="math inline">\(\mathbf{x}\)</span> becomes a scalar <span class="math inline">\(x\)</span>. We go around the city of Glasgow and collect the dataset <span class="math inline">\(\mathcal{D}\)</span> of <span class="math inline">\(m\)</span> data points:</p>
-<p><span class="math display">\[
+<p>Let us simplify the above problem to prediction of the house price based on the total living area of the house. In this case, the vector <span class="math inline">\(\mathbf{x}\)</span> becomes a scalar <span class="math inline">\(x\)</span>, and our dataset looks like <span class="math display">\[
 \mathcal{D} = \big\{ (x^{(1)}, y^{(1)}), (x^{(2)}, y^{(2)}), \ldots (x^{(m)}, y^{(m)})\big\}.
 \]</span></p>
-<p>The simplest prediction model we can build is the simple linear regression. In statistics, simple linear regression is a linear regression model with a single independent variable. Consider the model function</p>
-<p><span class="math display">\[
-(M):\qquad y = f_{w, b}(x) = w x + b
-\]</span> which describes a line with the slope <span class="math inline">\(w\)</span> and <span class="math inline">\(y\)</span>-intercept value <span class="math inline">\(b\)</span>. We wan to look for <span class="math inline">\(w\)</span> and <span class="math inline">\(b\)</span> so that the line <strong>fits</strong> the dataset <span class="math inline">\(\mathcal{D}\)</span> as much as possible.</p>
+<p>The simplest prediction model we can build is the <strong>simple linear regression</strong>. In statistics, simple linear regression is a linear regression model with a single independent variable.</p>
+<p>Consider the model function <span id="eq-simple-linear-regression-model-function"><span class="math display">\[
+(M):\qquad \widehat{y} = f_{w, b}(x) := w x + b
+\tag{2}\]</span></span> which describes a line with the slope <span class="math inline">\(w\)</span> and <span class="math inline">\(y\)</span>-intercept value <span class="math inline">\(b\)</span>. We wan to look for <span class="math inline">\(w\)</span> and <span class="math inline">\(b\)</span> so that the line <strong>fits</strong> the dataset <span class="math inline">\(\mathcal{D}\)</span> as much as possible. Since the model will be trained or learned through an iterative process, the parameters <span class="math inline">\(w\)</span> and <span class="math inline">\(b\)</span> are called <strong>learnable parameters</strong>.</p>
+<p>If we can manage to do so, given a particular total living area <span class="math inline">\(A\)</span>, we can make the prediction that the house price should be approximate to <span class="math inline">\(f_{w, b}(A)\)</span>. That’s it; we collect the money from the Agency and Glasgow Council – Smiley.</p>
 <p>See the code snippet and the output to understand my point:</p>
-<div id="f804776a" class="cell" data-execution_count="1">
+<div id="cf930aaf" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
@@ -306,11 +318,11 @@ Q(m, w) = \frac{1}{m}\sum\limits_{i=1}^{m}\big|\widehat{y}^{(i)}  - y^{(i)} \big
 <p><span class="math display">\[
 \min\limits_{w, b} Q(w, b)\quad\longrightarrow w, b
 \]</span></p>
-<p>However, it turns out that minimizing the function <span class="math inline">\(Q(w, b)\)</span> is not convenient because it involves absolutes of multiple values. To overcome this issue, we can consider the squared error <span class="math display">\[
+<p>However, it turns out that minimizing the function <span class="math inline">\(Q(w, b)\)</span> is not convenient because it involves absolutes of multiple values. To overcome this issue, we can consider the squared error for one single data point <span class="math display">\[
 \varepsilon^2 = (\widehat{y}^{(i)} - y^{(i)})^2 = (w x^{(i)} + b - y^{(i)})^2
-\]</span> and consider the least squared error function <span class="math inline">\(\mathcal{L}\)</span> instead of the function <span class="math inline">\(Q\)</span> as follows <span id="eq-loss-function"><span class="math display">\[
+\]</span> and consider the mean squared error function <span class="math inline">\(\mathcal{L}\)</span> instead of the function <span class="math inline">\(Q\)</span> as follows <span id="eq-loss-function"><span class="math display">\[
 \mathcal{L}(w, b) = \frac{1}{2m} \sum\limits_{i=1}^{m} (\widehat{y}^{(i)} - y^{(i)})^2 =\frac{1}{2m} \sum\limits_{i=1}^{m} (w x^{(i)} + b - y^{(i)})^2
-\tag{1}\]</span></span> Function <span class="math inline">\(\mathcal{L}\)</span> is called <strong>loss function</strong> in the optimization theory and machine learning community. By minimizing the loss function <span class="math inline">\(\mathcal{L}\)</span> with respect to two parameters <span class="math inline">\(w\)</span> and <span class="math inline">\(b\)</span>, we obtain the linear regression model that best fit the dataset <span class="math inline">\(\mathcal{D}\)</span>:</p>
+\tag{3}\]</span></span> Function <span class="math inline">\(\mathcal{L}\)</span> is called <strong>loss function</strong> in the optimization theory and machine learning community. Note that the factor <span class="math inline">\(2\)</span> is added for convenience of computing the gradient of <span class="math inline">\(\mathcal{L}\)</span> and it does not change the optimal learning parameters. By minimizing the loss function <span class="math inline">\(\mathcal{L}\)</span> with respect to two parameters <span class="math inline">\(w\)</span> and <span class="math inline">\(b\)</span>, we obtain the linear regression model that best fit the dataset <span class="math inline">\(\mathcal{D}\)</span>:</p>
 <p><span class="math display">\[
 \min\limits_{w, b}\mathcal{L}(w, b)\quad\longrightarrow w, b
 \]</span></p>
@@ -330,7 +342,7 @@ Q(m, w) = \frac{1}{m}\sum\limits_{i=1}^{m}\big|\widehat{y}^{(i)}  - y^{(i)} \big
 w^{\ast} &amp;= \frac{\sum\limits_{i=1}^{m}(x^{(i)} - \overline{x})(y^{(i)} - \overline{y})}{\sum\limits_{i=1}^{m} (x^{(i)} - \overline{x})^2}, \\[3pt]
 b^{\ast} &amp;= \overline{y} - w^{\ast} \cdot \overline{x},
 \end{aligned}
-\tag{2}\]</span></span> where <span class="math inline">\(\overline{x}\)</span> and <span class="math inline">\(\overline{y}\)</span> are the average of the <span class="math inline">\(x^{(i)}\)</span> and <span class="math inline">\(y^{(i)}\)</span>, respectively: <span class="math display">\[
+\tag{4}\]</span></span> where <span class="math inline">\(\overline{x}\)</span> and <span class="math inline">\(\overline{y}\)</span> are the average of the <span class="math inline">\(x^{(i)}\)</span> and <span class="math inline">\(y^{(i)}\)</span>, respectively: <span class="math display">\[
 \overline{x} = \frac{1}{m}\sum\limits_{i=1} x^{(i)},\qquad \overline{y} = \frac{1}{m}\sum\limits_{i=1} y^{(i)}
 \]</span></p>
 <p>The above result can be expanded to the following expression: <span id="eq-normal-equation-2"><span class="math display">\[
@@ -338,12 +350,12 @@ b^{\ast} &amp;= \overline{y} - w^{\ast} \cdot \overline{x},
 w^{\ast} &amp;= \frac{m \sum_{i=1}^{m} x^{(i)} y^{(i)} - \sum_{i=1}^{m} x^{(i)} \sum_{i=1}^{m} y^{(i)}}{m \sum_{i=1}^{m} (x^{(i)})^2 - \left( \sum_{i=1}^{m} x^{(i)} \right)^2} \\[3pt]
 b^{\ast} &amp;= \frac{\sum_{i=1}^{m} y^{(i)} \sum_{i=1}^{m} (x^{(i)})^2 - \sum_{i=1}^{m} x^{(i)} \sum_{i=1}^{m} x^{(i)} y^{(i)}}{m \sum_{i=1}^{m} (x^{(i)})^2 - \left( \sum_{i=1}^{m} x^{(i)} \right)^2}
 \end{aligned}
-\tag{3}\]</span></span></p>
-<p>The solution formulas given by <a href="#eq-normal-equation-1" class="quarto-xref">Equation&nbsp;2</a> and <a href="#eq-normal-equation-2" class="quarto-xref">Equation&nbsp;3</a> are equivalent. Either of them is called <strong>Normal Equation</strong>.</p>
+\tag{5}\]</span></span></p>
+<p>The solution formulas given by <a href="#eq-normal-equation-1" class="quarto-xref">Equation&nbsp;4</a> and <a href="#eq-normal-equation-2" class="quarto-xref">Equation&nbsp;5</a> are equivalent. Either of them is called <strong>Normal Equation</strong>.</p>
 </section>
 <section id="b-gradient-descent-method" class="level3">
 <h3 class="anchored" data-anchor-id="b-gradient-descent-method">B – Gradient descent method</h3>
-<p>To prepare for the future assignment 02, we shall learn gradient descent method to minimize the loss function given by <a href="#eq-loss-function" class="quarto-xref">Equation&nbsp;1</a> – <a href="https://en.wikipedia.org/wiki/Gradient_descent">Wikipedia: Gradient Descent</a></p>
+<p>To prepare for the future assignment 02, we shall learn gradient descent method to minimize the loss function given by <a href="#eq-loss-function" class="quarto-xref">Equation&nbsp;3</a> – <a href="https://en.wikipedia.org/wiki/Gradient_descent">Wikipedia: Gradient Descent</a></p>
 <p>You will learn later that the classification problem using the logistic regression method cannot be solved easily by deriving an analytical set of equations. There is no single “Normal Equation” for logistic regression.</p>
 <p>In the world of machine learning, <strong>Gradient Descent</strong> is the primary algorithm used to “train” models by minimizing error. This is an iterative approach to find the best possible parameters.</p>
 <section id="the-intuition-hiking-in-the-fog" class="level4">
@@ -365,8 +377,8 @@ b^{\ast} &amp;= \frac{\sum_{i=1}^{m} y^{(i)} \sum_{i=1}^{m} (x^{(i)})^2 - \sum_{
 <h4 class="anchored" data-anchor-id="gradient-descent-formula">Gradient descent formula</h4>
 <p>Assume that we have a function of multiple parameters (variables) <span class="math inline">\(J = J(\theta_{1}, \ldots, \theta_{n})\)</span>. Note that we use the term “parameters” to reflect our linear regression model. What we explain here is valid for a function of multiple variables. Our aim is to minimize <span class="math inline">\(J\)</span> with respect to the parameters <span class="math inline">\(\Theta\)</span> using an interative process. To update a set of parameters <span class="math inline">\(\boldsymbol{\Theta} = (\theta_1, \ldots, \theta_n)\)</span>, we use the following update rule:</p>
 <p><span id="eq-gradient-descent"><span class="math display">\[
-\boldsymbol{\Theta}_{\text{new}} = \boldsymbol{\Theta}_{\text{old}} - \eta \cdot \nabla J(\boldsymbol{\Theta}_\text{old}).
-\tag{4}\]</span></span> This update will be repeated until</p>
+\boldsymbol{\Theta}^{\text{new}} = \boldsymbol{\Theta}^{\text{old}} - \eta \cdot \nabla J(\boldsymbol{\Theta}^{\text{old}}).
+\tag{6}\]</span></span> This update will be repeated until</p>
 <ul>
 <li>the value of <span class="math inline">\(J(\boldsymbol{\Theta})\)</span> does not change much, or</li>
 <li>all the components of the gradient <span class="math inline">\(\nabla J(\boldsymbol{\Theta})\)</span> are almost equal to <span class="math inline">\(0\)</span>.</li>
@@ -381,47 +393,75 @@ This is the derivative of the cost function <span class="math inline">\(J\)</spa
 <li>The <strong>minus sign</strong> (<span class="math inline">\(-\)</span>) is crucial.<br>
 It ensures we move <em>opposite</em> the gradient (downhill) rather than with it (uphill).</li>
 </ul>
-<p>As for our case of linear regression model, the vector of parameters is <span class="math inline">\(\boldsymbol{\Theta} = (w, b)\)</span> and the function to be optimized is the loss function <span class="math inline">\(\mathcal{L}(w, b)\)</span>. The gradient descent rule <a href="#eq-gradient-descent" class="quarto-xref">Equation&nbsp;4</a> for our case becomes <span class="math display">\[
+<p>As for our case of linear regression model, the vector of parameters is <span class="math inline">\(\boldsymbol{\Theta} = (w, b)\)</span> and the function to be optimized is the loss function <span class="math inline">\(\mathcal{L}(w, b)\)</span>. The gradient descent rule <a href="#eq-gradient-descent" class="quarto-xref">Equation&nbsp;6</a> for our case becomes <span class="math display">\[
 \begin{aligned}
-w_\text{new} &amp;= w_\text{old} - \eta\cdot \frac{\partial \mathcal{L}}{\partial w}(w_\text{old}, b_\text{old}) \\[3pt]
-b_\text{new} &amp;= b_\text{old} - \eta\cdot \frac{\partial \mathcal{L}}{\partial b}(w_\text{old}, b_\text{old}) \\[3pt]
+w^\text{new} &amp;= w^\text{old} - \eta\,\frac{\partial \mathcal{L}}{\partial w}(w^\text{old}, b^\text{old}) \\[3pt]
+b^\text{new} &amp;= b^\text{old} - \eta\,\frac{\partial \mathcal{L}}{\partial b}(w^\text{old}, b^\text{old}) \\[3pt]
 \end{aligned}
 \]</span></p>
-<p>We can prove that the derivatives of <span class="math inline">\(\mathcal{L}\)</span> following <a href="#eq-loss-function" class="quarto-xref">Equation&nbsp;1</a> with respect to <span class="math inline">\(w\)</span> and <span class="math inline">\(b\)</span> are given by: <span class="math display">\[
+<p>We can prove that the derivatives of <span class="math inline">\(\mathcal{L}\)</span> following <a href="#eq-loss-function" class="quarto-xref">Equation&nbsp;3</a> with respect to <span class="math inline">\(w\)</span> and <span class="math inline">\(b\)</span> are given by<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>: <span id="eq-gradient-loss-function-simple-lr"><span class="math display">\[
 \begin{aligned}
-\frac{\partial \mathcal{L}}{\partial w} &amp;= \frac{1}{m} \sum\limits_{i=1}^{m}(\widehat{y}^{(i)} - y^{(i)}) \cdot x^{(i)}, \\[3pt]
-\frac{\partial \mathcal{L}}{\partial b} &amp;= \frac{1}{m} \sum\limits_{i=1}^{m}(\widehat{y}^{(i)} - y^{(i)}) \cdot 1, \\[3pt]
+\frac{\partial \mathcal{L}}{\partial w} &amp;= \frac{1}{m} \sum\limits_{i=1}^{m}(\widehat{y}^{(i)} - y^{(i)}) \, x^{(i)} = \frac{1}{m}\sum\limits_{i=1}^{m}(w x^{(i)} + b - y^{(i)})\, x^{(i)}, \\[3pt]
+\frac{\partial \mathcal{L}}{\partial b} &amp;= \frac{1}{m} \sum\limits_{i=1}^{m}(\widehat{y}^{(i)} - y^{(i)})\cdot 1 = \frac{1}{m}\sum\limits_{i=1}^{m}(w x^{(i)} + b - y^{(i)}), \\[3pt]
+\end{aligned}
+\tag{7}\]</span></span></p>
+</section>
+</section>
+</section>
+<section id="multiple-linear-regression" class="level2">
+<h2 class="anchored" data-anchor-id="multiple-linear-regression">Multiple linear regression</h2>
+<p>Leveraging on the knowledge we have just learned for single-variable linear regression, we now revisit the prediction model that employs multiple features. In this case, we use the dataset given by <a href="#eq-dataset-multiple-features" class="quarto-xref">Equation&nbsp;1</a>. Our goal is to build a <strong>multiple linear regression</strong> model.</p>
+<p>Recalling the model function <a href="#eq-simple-linear-regression-model-function" class="quarto-xref">Equation&nbsp;2</a>, we can derive the single-variable linear regression to multiple linear regression by extending <a href="#eq-simple-linear-regression-model-function" class="quarto-xref">Equation&nbsp;2</a> to the following model function <span class="math display">\[
+(M):\qquad \widehat{y} = f_{\mathbf{w}, b}(\mathbf{x}) := w_1 x_1 + \ldots + w_n x_n + b = \mathbf{w} \cdot \mathbf{x} + b,
+\]</span> where <span class="math inline">\(\mathbf{w}\cdot \mathbf{x} = w_1 x_1 + \ldots + w_n x_n\)</span> denote the dot product between two vectors <span class="math inline">\(\mathbf{w} = (w_1, \ldots, w_n)\)</span> and <span class="math inline">\(\mathbf{x} = (x_1, \ldots, x_n)\)</span>.</p>
+<p>The loss function <span class="math inline">\(\mathcal{L}\)</span> to be minimized is constructed in the same fashion as <a href="#eq-loss-function" class="quarto-xref">Equation&nbsp;3</a>. The only difference is that it is now a function of all the learning parameters <span class="math inline">\(\mathbf{w}= (w_1, \ldots, w_n)\)</span> and <span class="math inline">\(b\)</span>. <span class="math display">\[
+\mathcal{L}(\mathbf{w}, b) = \frac{1}{2m} \sum\limits_{i=1}^{m} (\widehat{y}^{(i)} - y^{(i)})^2 = \frac{1}{2m} \sum\limits_{i=1}^{m} (\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)})^2.
+\]</span> We aim to minimize the loss function <span class="math inline">\(\mathcal{L}(\mathbf{w}, b)\)</span> to obtain the optimal parameters <span class="math inline">\(\mathbf{w}\)</span>, <span class="math inline">\(b\)</span>: <span class="math display">\[
+\min\limits_{\mathbf{w}, b} \mathcal{L}(\mathbf{w}, b) \longrightarrow \mathbf{w}^{\ast}, b^{\ast}
+\]</span> Again, the parameters <span class="math inline">\(\mathbf{w}\)</span> and <span class="math inline">\(b\)</span> are called <strong>learnable parameters</strong>.</p>
+<p>Before discussing the gradient descent method for this minimization problem, we note that the loss function is still a quadratic function of the parameters <span class="math inline">\(w_1, \ldots, w_n\)</span> and <span class="math inline">\(b\)</span>. For this reason, there is one unique optimal solution <span class="math inline">\(\mathbf{w}^{\ast}, b^{\ast}\)</span> for this minimization problem. This optimal solution can be derived by a normal equation; and it is not difficult to derive it. Nevertheless, we are not interested in pursuing this. Instead, we will solve this minimization problem using the gradient descent method.</p>
+<section id="gradient-descent-method" class="level3">
+<h3 class="anchored" data-anchor-id="gradient-descent-method">Gradient descent method</h3>
+<p>The gradient descent method is still carried out as before following the updating rule of <a href="#eq-gradient-descent" class="quarto-xref">Equation&nbsp;6</a>. We now only need to compute the gradient <span class="math inline">\(\nabla \mathcal{L}\)</span> with respect to <span class="math inline">\(\mathbf{w}\)</span> and <span class="math inline">\(b\)</span>. It turns out that the computation of <span class="math inline">\(\nabla \mathcal{L}\)</span> is just a natural extension of <a href="#eq-gradient-loss-function-simple-lr" class="quarto-xref">Equation&nbsp;7</a><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\frac{\partial \mathcal{L}}{\partial w_\textcolor{red}{1}} &amp;= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)}) x_\textcolor{red}{1}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_\textcolor{red}{1}^{(i)} \\[3pt]
+\frac{\partial \mathcal{L}}{\partial w_\textcolor{red}{2}} &amp;= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)}) x_\textcolor{red}{2}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_\textcolor{red}{2}^{(i)} \\[3pt]
+\vdots \\[3pt]
+\frac{\partial \mathcal{L}}{\partial w_\textcolor{red}{n}} &amp;= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)}) x_\textcolor{red}{n}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_\textcolor{red}{n}^{(i)} \\[3pt]
+\frac{\partial \mathcal{L}}{\partial b} &amp;= \frac{1}{m} \sum\limits_{i=1}^{m}(\widehat{y}^{(i)} - y^{(i)})\cdot 1 = \frac{1}{m}\sum\limits_{i=1}^{m}(\mathbf{w} \cdot \mathbf{x}^{(i)} + b - y^{(i)}),
 \end{aligned}
 \]</span></p>
 </section>
 </section>
-</section>
-<section id="task" class="level2">
-<h2 class="anchored" data-anchor-id="task">Task</h2>
-<p>First, use Gemini Guided Learning Mode to learn the following techniques/concepts to help you solve the problem:</p>
+<section id="tasks" class="level2">
+<h2 class="anchored" data-anchor-id="tasks">Tasks</h2>
+<p><span style="color:red"><strong>Learning process</strong></span>&nbsp; First, use Gemini Guided Learning Mode to learn the following techniques/concepts to help you solve the problem:</p>
 <ol type="1">
 <li>How to create a vector using <code>std::vector</code>.</li>
+<li>How to create a vector of vectors of the same size, which is matrix. This step is for solving multiple linear regression.</li>
 <li>How to create random numbers in monder C++ (C++ 11 and later) using <code>std::random_device</code>, <code>std::mt19937</code>, <code>std::uniform_int_distribution</code>, and maybe more.</li>
 <li>How to write data into a file using <code>fstream</code>.</li>
 <li>Maybe more <span class="math inline">\(\ldots\)</span></li>
 </ol>
 <blockquote class="blockquote">
-<p>ChatGPT/Gemini can easily give you the solution to the entire problem. But you should learn how to use them 😉.</p>
-<p>If I give you a problem that ChatGPT/Gemini cannot solve it, then we are all F_up.</p>
+<p>ChatGPT/Gemini can easily give you the solution to the entire problem. But you should learn how to use them 😉. If I give you a problem that ChatGPT/Gemini cannot solve it, then we are all F_up.</p>
 </blockquote>
-<p>Now, You need to write a C++ program to build a linear regression model by implementing both methods: Particularly, you should do the following</p>
-<ul>
-<li>Generate a dataset <span class="math inline">\(\mathcal{D}\)</span> following a simple linear function <span class="math inline">\(y = k x + m\)</span>.</li>
+<p>Next, you need to write a C++ program to build a linear regression model by implementing both methods: Particularly, you should do the following</p>
+<ol type="1">
+<li>Generate a dataset <span class="math inline">\(\mathcal{D}\)</span> following a simple linear function <span class="math inline">\(y = k\cdot x + m\)</span>.</li>
 <li>Add noise to both the <span class="math inline">\(x^{(i)}\)</span> and <span class="math inline">\(y^{(i)}\)</span> values in the generated dataset.<br>
 <strong>Note</strong>: Be careful with the amount of noise you add. You don’t want it looks wild.</li>
 <li>Derive the linear regression model for your generated dataset by computing the model parameters <span class="math inline">\(w\)</span> and <span class="math inline">\(b\)</span>. You must implement both methods:
-<ol type="1">
-<li>Analytical method using normal equation</li>
-<li>Gradient descent method</li>
-</ol></li>
+<ul>
+<li>Analytical method using <strong>normal equation</strong></li>
+<li><strong>Gradient descent</strong> method</li>
+</ul></li>
 <li>Compare the results obtained by the two above-mentioned methods.</li>
-<li>Visualize your result by using Python. Unfortunately, plotting in C++ is a technically involved task.</li>
-</ul>
+<li>Repeat the steps <span class="math inline">\((1), (2)\)</span> and <span class="math inline">\((3)\)</span> but for multiple linear regression. For running your model, you only need to focus on <span class="math inline">\(2\)</span>-variable linear regression. That is, we have <span class="math inline">\(\mathbf{x}^{(i)} = (x_1^{(i)}, x_2^{(i)}) \in \mathbb{R}^{2}\)</span> and <span class="math inline">\(y^{(i)} \in \mathbb{R}\)</span>.</li>
+<li>Compare the learning parameters <span class="math inline">\(\mathbf{w}^{\ast} = (w_1^{\ast}, w_2^{\ast})\)</span> and <span class="math inline">\(b^{\ast}\)</span> with the hypothetical weights you used to generate the data. That is, if you generate the dataset based on the plane <span class="math inline">\(y = w_1 x_1 + w_2 x_2 + b\)</span>, then you compare <span class="math inline">\(\mathbf{w}^{\ast}\)</span> versus <span class="math inline">\(\mathbf{w}\)</span> and <span class="math inline">\(b^{\ast}\)</span> versus <span class="math inline">\(b\)</span>.</li>
+<li><strong>Optional</strong>: Visualize your result by using Python to understand the whole idea of this problem. Unfortunately, plotting in C++ is a technically involved task.</li>
+</ol>
 <p>Python is not the focus of our course. The following code may give you an idea about how the <code>.csv</code> file look like.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -437,14 +477,25 @@ b_\text{new} &amp;= b_\text{old} - \eta\cdot \frac{\partial \mathcal{L}}{\partia
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="marking-scheme" class="level2">
-<h2 class="anchored" data-anchor-id="marking-scheme">Marking scheme</h2>
+</section>
+<section id="marking-scheme" class="level1">
+<h1>Marking scheme</h1>
+<p><span style="color:red"><strong>Total points</strong></span>: <span class="math inline">\(100/100\)</span></p>
+<ol type="1">
+<li><strong>Task</strong> <span class="math inline">\(1\)</span>: Total <span class="math inline">\(30/100\)</span>, therefore <span class="math inline">\(15/100\)</span> for each subtask.</li>
+<li><strong>Task</strong> <span class="math inline">\(2\)</span>: Total <span class="math inline">\(40/100\)</span></li>
+</ol>
 <ul>
-<li>Task 1: <span class="math inline">\(30/100\)</span></li>
-<li>Task 2: <span class="math inline">\(40/100\)</span></li>
-<li>Report: <span class="math inline">\(30/100\)</span></li>
+<li><p><span class="math inline">\(10/100\)</span> for generating data with noise (for single-variable linear regression, and for two-variable linear regression)</p></li>
+<li><p><span class="math inline">\(10/100\)</span> for implementating the normal equation</p></li>
+<li><p><span class="math inline">\(10/100\)</span> for implementing the gradient descent method for simple linear regression problem (single variable linear regression).</p></li>
+<li><p><span class="math inline">\(10/100\)</span> for extending the gradent descent method to multiple linear regression problem.</p>
+<p>Of course, the result for multiple linear regression problem should already cover the result for simple linear regression. <strong>In all cases, you must run your program with data and output the weights.</strong></p></li>
 </ul>
-<p>Requirements:</p>
+<ol start="3" type="1">
+<li><strong>Report</strong>: <span class="math inline">\(30/100\)</span></li>
+</ol>
+<p><strong>Requirements</strong>:</p>
 <ul>
 <li>You need to write significantly meaningful comments in your source code.</li>
 <li>You need to write significantly meaningful report.
@@ -454,13 +505,14 @@ b_\text{new} &amp;= b_\text{old} - \eta\cdot \frac{\partial \mathcal{L}}{\partia
 </ul></li>
 </ul>
 </section>
-</section>
 
 
 <div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
 <ol>
 <li id="fn1"><p>You can try to prove this by yourself but it is not the core of this assignment.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>You can try to derive this formulation. It is ridiculously easy.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>You can try to derive this formulation. It is ridiculously easy.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section></div></main>
 <!-- /main column -->
