@@ -113,7 +113,6 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Assignment 01</h1>
-<p class="subtitle lead">C++ Basics</p>
 </div>
 
 
@@ -258,7 +257,7 @@ y = f(x_1, x_2, \ldots, x_n), \quad y=\text{house price}
 \tag{2}\]</span></span> which describes a line with the slope <span class="math inline">\(w\)</span> and <span class="math inline">\(y\)</span>-intercept value <span class="math inline">\(b\)</span>. We wan to look for <span class="math inline">\(w\)</span> and <span class="math inline">\(b\)</span> so that the line <strong>fits</strong> the dataset <span class="math inline">\(\mathcal{D}\)</span> as much as possible. Since the model will be trained or learned through an iterative process, the parameters <span class="math inline">\(w\)</span> and <span class="math inline">\(b\)</span> are called <strong>learnable parameters</strong>.</p>
 <p>If we can manage to do so, given a particular total living area <span class="math inline">\(A\)</span>, we can make the prediction that the house price should be approximate to <span class="math inline">\(f_{w, b}(A)\)</span>. That’s it; we collect the money from the Agency and Glasgow Council – Smiley.</p>
 <p>See the code snippet and the output to understand my point:</p>
-<div id="cf930aaf" class="cell" data-execution_count="1">
+<div id="4c2b30b9" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
@@ -423,13 +422,22 @@ b^\text{new} &amp;= b^\text{old} - \eta\,\frac{\partial \mathcal{L}}{\partial b}
 <section id="gradient-descent-method" class="level3">
 <h3 class="anchored" data-anchor-id="gradient-descent-method">Gradient descent method</h3>
 <p>The gradient descent method is still carried out as before following the updating rule of <a href="#eq-gradient-descent" class="quarto-xref">Equation&nbsp;6</a>. We now only need to compute the gradient <span class="math inline">\(\nabla \mathcal{L}\)</span> with respect to <span class="math inline">\(\mathbf{w}\)</span> and <span class="math inline">\(b\)</span>. It turns out that the computation of <span class="math inline">\(\nabla \mathcal{L}\)</span> is just a natural extension of <a href="#eq-gradient-loss-function-simple-lr" class="quarto-xref">Equation&nbsp;7</a><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>:</p>
+<!-- $$
+\begin{aligned}
+\frac{\partial \mathcal{L}}{\partial w_{1}} &= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)})\, x_{1}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_{1}^{(i)}, \\[3pt]
+\frac{\partial \mathcal{L}}{\partial w_{2}} &= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)})\, x_{2}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_{2}^{(i)}, \\[3pt]
+\vdots \\[3pt]
+\frac{\partial \mathcal{L}}{\partial w_{n}} &= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)})\, x_{n}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_{n}^{(i)}, \\[3pt]
+\frac{\partial \mathcal{L}}{\partial b} &= \frac{1}{m} \sum\limits_{i=1}^{m}(\widehat{y}^{(i)} - y^{(i)})\cdot 1 = \frac{1}{m}\sum\limits_{i=1}^{m}(\mathbf{w} \cdot \mathbf{x}^{(i)} + b - y^{(i)}).
+\end{aligned}
+$$ -->
 <p><span class="math display">\[
 \begin{aligned}
-\frac{\partial \mathcal{L}}{\partial w_\textcolor{red}{1}} &amp;= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)}) x_\textcolor{red}{1}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_\textcolor{red}{1}^{(i)} \\[3pt]
-\frac{\partial \mathcal{L}}{\partial w_\textcolor{red}{2}} &amp;= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)}) x_\textcolor{red}{2}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_\textcolor{red}{2}^{(i)} \\[3pt]
+\frac{\partial \mathcal{L}}{\partial w_{1}} &amp;= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)})\, x_{1}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_{1}^{(i)}, \\[3pt]
+\frac{\partial \mathcal{L}}{\partial w_{2}} &amp;= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)})\, x_{2}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_{2}^{(i)}, \\[3pt]
 \vdots \\[3pt]
-\frac{\partial \mathcal{L}}{\partial w_\textcolor{red}{n}} &amp;= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)}) x_\textcolor{red}{n}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_\textcolor{red}{n}^{(i)} \\[3pt]
-\frac{\partial \mathcal{L}}{\partial b} &amp;= \frac{1}{m} \sum\limits_{i=1}^{m}(\widehat{y}^{(i)} - y^{(i)})\cdot 1 = \frac{1}{m}\sum\limits_{i=1}^{m}(\mathbf{w} \cdot \mathbf{x}^{(i)} + b - y^{(i)}),
+\frac{\partial \mathcal{L}}{\partial w_{n}} &amp;= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)})\, x_{n}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_{n}^{(i)}, \\[3pt]
+\frac{\partial \mathcal{L}}{\partial b} &amp;= \frac{1}{m} \sum\limits_{i=1}^{m}(\widehat{y}^{(i)} - y^{(i)})\cdot 1 = \frac{1}{m}\sum\limits_{i=1}^{m}(\mathbf{w} \cdot \mathbf{x}^{(i)} + b - y^{(i)}).
 \end{aligned}
 \]</span></p>
 </section>
@@ -483,27 +491,22 @@ b^\text{new} &amp;= b^\text{old} - \eta\,\frac{\partial \mathcal{L}}{\partial b}
 <p><span style="color:red"><strong>Total points</strong></span>: <span class="math inline">\(100/100\)</span></p>
 <ol type="1">
 <li><strong>Task</strong> <span class="math inline">\(1\)</span>: Total <span class="math inline">\(30/100\)</span>, therefore <span class="math inline">\(15/100\)</span> for each subtask.</li>
-<li><strong>Task</strong> <span class="math inline">\(2\)</span>: Total <span class="math inline">\(40/100\)</span></li>
-</ol>
+<li><strong>Task</strong> <span class="math inline">\(2\)</span>: Total <span class="math inline">\(40/100\)</span>
 <ul>
-<li><p><span class="math inline">\(10/100\)</span> for generating data with noise (for single-variable linear regression, and for two-variable linear regression)</p></li>
-<li><p><span class="math inline">\(10/100\)</span> for implementating the normal equation</p></li>
-<li><p><span class="math inline">\(10/100\)</span> for implementing the gradient descent method for simple linear regression problem (single variable linear regression).</p></li>
-<li><p><span class="math inline">\(10/100\)</span> for extending the gradent descent method to multiple linear regression problem.</p>
-<p>Of course, the result for multiple linear regression problem should already cover the result for simple linear regression. <strong>In all cases, you must run your program with data and output the weights.</strong></p></li>
-</ul>
-<ol start="3" type="1">
-<li><strong>Report</strong>: <span class="math inline">\(30/100\)</span></li>
-</ol>
-<p><strong>Requirements</strong>:</p>
+<li><span class="math inline">\(10/100\)</span> for generating data with noise (for single-variable linear regression, and for two-variable linear regression)</li>
+<li><span class="math inline">\(10/100\)</span> for implementating the normal equation</li>
+<li><span class="math inline">\(10/100\)</span> for implementing the gradient descent method for simple linear regression problem (single variable linear regression).</li>
+<li><span class="math inline">\(10/100\)</span> for extending the gradent descent method to multiple linear regression problem.<br>
+Of course, the result for multiple linear regression problem should already cover the result for simple linear regression. <em>In all cases, you must run your program with data and output the learnable parameters.</em></li>
+</ul></li>
+<li><strong>Report</strong>: <span class="math inline">\(30/100\)</span><br>
+<strong>Requirements</strong>:
 <ul>
-<li>You need to write significantly meaningful comments in your source code.</li>
-<li>You need to write significantly meaningful report.
-<ul>
+<li>You need to write <em>significantly meaningful comments</em> in your source code.</li>
 <li>You explain what you have learned.</li>
 <li>Why you write the code the way you did.</li>
 </ul></li>
-</ul>
+</ol>
 </section>
 
 

@@ -1,6 +1,6 @@
 ---
 title: "Assignment 01"
-subtitle: "C++ Basics"
+# subtitle: "C++ Basics"
 author:
     Khiem Nguyen 
     <br> Lecturer in Multiscale Materials
@@ -12,6 +12,11 @@ format:
         page-layout: full
         margin-left: 20px
         margin-right: 20px
+    # pdf:clear
+    #   margin-left: 25px
+    #   margin-right: 25px
+    #   margin-top: 25px
+    #   margin-bottom: 25px
 ---
 
 # Foreword
@@ -326,16 +331,24 @@ Before discussing the gradient descent method for this minimization problem, we 
 
 The gradient descent method is still carried out as before following the updating rule of @eq-gradient-descent. We now only need to compute the gradient $\nabla \mathcal{L}$ with respect to $\mathbf{w}$ and $b$. It turns out that the computation of $\nabla \mathcal{L}$ is just a natural extension of @eq-gradient-loss-function-simple-lr^[You can try to derive this formulation. It is ridiculously easy.]:
 
+<!-- $$
+\begin{aligned}
+\frac{\partial \mathcal{L}}{\partial w_{1}} &= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)})\, x_{1}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_{1}^{(i)}, \\[3pt]
+\frac{\partial \mathcal{L}}{\partial w_{2}} &= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)})\, x_{2}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_{2}^{(i)}, \\[3pt]
+\vdots \\[3pt]
+\frac{\partial \mathcal{L}}{\partial w_{n}} &= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)})\, x_{n}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_{n}^{(i)}, \\[3pt]
+\frac{\partial \mathcal{L}}{\partial b} &= \frac{1}{m} \sum\limits_{i=1}^{m}(\widehat{y}^{(i)} - y^{(i)})\cdot 1 = \frac{1}{m}\sum\limits_{i=1}^{m}(\mathbf{w} \cdot \mathbf{x}^{(i)} + b - y^{(i)}).
+\end{aligned}
+$$ -->
 $$
 \begin{aligned}
-\frac{\partial \mathcal{L}}{\partial w_\textcolor{red}{1}} &= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)}) x_\textcolor{red}{1}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_\textcolor{red}{1}^{(i)}, \\[3pt]
-\frac{\partial \mathcal{L}}{\partial w_\textcolor{red}{2}} &= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)}) x_\textcolor{red}{2}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_\textcolor{red}{2}^{(i)}, \\[3pt]
+\frac{\partial \mathcal{L}}{\partial w_{1}} &= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)})\, x_{1}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_{1}^{(i)}, \\[3pt]
+\frac{\partial \mathcal{L}}{\partial w_{2}} &= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)})\, x_{2}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_{2}^{(i)}, \\[3pt]
 \vdots \\[3pt]
-\frac{\partial \mathcal{L}}{\partial w_\textcolor{red}{n}} &= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)}) x_\textcolor{red}{n}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_\textcolor{red}{n}^{(i)}, \\[3pt]
+\frac{\partial \mathcal{L}}{\partial w_{n}} &= \frac{1}{m} \sum\limits_{i=1}^{m}( \widehat{y}{(i)} - y^{(i)})\, x_{n}^{(i)} = \frac{1}{m} \sum\limits_{i=1}^{m}(\mathbf{w}\cdot \mathbf{x}^{(i)} + b - y^{(i)}) x_{n}^{(i)}, \\[3pt]
 \frac{\partial \mathcal{L}}{\partial b} &= \frac{1}{m} \sum\limits_{i=1}^{m}(\widehat{y}^{(i)} - y^{(i)})\cdot 1 = \frac{1}{m}\sum\limits_{i=1}^{m}(\mathbf{w} \cdot \mathbf{x}^{(i)} + b - y^{(i)}).
 \end{aligned}
 $$
-
 
 ## Tasks
 
@@ -385,22 +398,17 @@ plt.show()
 [**Total points**]{style="color:red"}: $100/100$
 
 1. **Task** $1$: Total $30/100$, therefore $15/100$ for each subtask.
-2. **Task** $2$: Total $40/100$
-  - $10/100$ for generating data with noise (for single-variable linear regression, and for two-variable linear regression)
-  - $10/100$ for implementating the normal equation
-  - $10/100$ for implementing the gradient descent method for simple linear regression problem (single variable linear regression).
-  - $10/100$ for extending the gradent descent method to multiple linear regression problem.
-  
-    Of course, the result for multiple linear regression problem should already cover the result for simple linear regression. **In all cases, you must run your program with data and output the weights.**
-  
-3. **Report**: $30/100$
-
-**Requirements**:
-
-- You need to write significantly meaningful comments in your source code.
-- You need to write significantly meaningful report.
-  - You explain what you have learned.
-  - Why you write the code the way you did.
+2. **Task** $2$: Total $40/100$  
+     - $10/100$ for generating data with noise (for single-variable linear regression, and for two-variable linear regression)
+     - $10/100$ for implementating the normal equation
+     - $10/100$ for implementing the gradient descent method for simple linear regression problem (single variable linear regression).
+     - $10/100$ for extending the gradent descent method to multiple linear regression problem.  
+      Of course, the result for multiple linear regression problem should already cover the result for simple linear regression. *In all cases, you must run your program with data and output the learnable parameters.*
+3. **Report**: $30/100$  
+    **Requirements**:
+    - You need to write _significantly meaningful comments_ in your source code.
+    - You explain what you have learned.
+    - Why you write the code the way you did.
 
 
 
