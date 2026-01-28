@@ -12,10 +12,10 @@ int main()
 {
     print_int(97);   // okay
 
-    print_int('a');  // compile error: function deleted
-    print_int(true); // compile error: function deleted
+    // print_int('a');  // compile error: function deleted
+    // print_int(true); // compile error: function deleted
 
-    print_int(5.0);  // compile error: ambiguous match
+    // print_int(5.0);  // compile error: ambiguous match
 
     return 0;
 }
