@@ -206,6 +206,8 @@
 <li><a href="#/function-templates" id="/toc-function-templates">Function templates</a></li>
 <li><a href="#/naming-convention-of-template-parameters" id="/toc-naming-convention-of-template-parameters">Naming convention of template parameters</a></li>
 <li><a href="#/function-template-instantiation" id="/toc-function-template-instantiation">Function template instantiation</a></li>
+<li><a href="#/template-argument-deduction" id="/toc-template-argument-deduction">Template argument deduction</a></li>
+<li><a href="#/further-on-function-templates" id="/toc-further-on-function-templates">Further on function templates</a></li>
 </ul>
 </nav>
 </section>
@@ -448,7 +450,7 @@ Listing&nbsp;3: An example of using template function – Filename: <code>use_te
 </section>
 <section id="function-template-instantiation-2" class="slide level2">
 <h2>Function template instantiation</h2>
-<p><strong>Process for instantiating a function</strong></p>
+<p>➥ <strong>Process for instantiating a function</strong></p>
 <p>The compiler essentially clones the primary template and replaces the template type (<code>T</code>) with the actual type we have specified.</p>
 <ul>
 <li>When we call <code>max&lt;int&gt;(1, 2)</code>, the function specialization that gets instantiated looks like</li>
@@ -459,9 +461,9 @@ Listing&nbsp;3: An example of using template function – Filename: <code>use_te
 <span id="cb11-4"><a href=""></a>    <span class="cf">return</span> <span class="op">(</span>x <span class="op">&lt;</span> y<span class="op">)</span> <span class="op">?</span> y <span class="op">:</span> x<span class="op">;</span></span>
 <span id="cb11-5"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="function-template-instantiation-3" class="slide level2">
-<h2>Function template instantiation</h2>
-<p>What the compiler actually compiles after all the instantiation are done:</p>
+<section id="function-template-instantiation-more" class="slide level2">
+<h2>Function template instantiation: More</h2>
+<p>➥ What the compiler actually compiles after all the instantiation are done:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb12-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
 <span id="cb12-2"><a href=""></a></span>
 <span id="cb12-3"><a href=""></a><span class="co">// a declaration for our function template (we don't need the definition any more)</span></span>
@@ -481,7 +483,268 @@ Listing&nbsp;3: An example of using template function – Filename: <code>use_te
 <span id="cb12-17"><a href=""></a></span>
 <span id="cb12-18"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb12-19"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Let us compile it and run to see.</p>
+<p>➥ Let us compile it and run to see.</p>
+</section>
+<section id="function-template-instantiation-3" class="slide level2">
+<h2>Function template instantiation</h2>
+<ul>
+<li>A function template is only instantiated the first time a function call is made.</li>
+<li>Further calls to the function are routed to the already instantiated function.</li>
+<li>if no function call is made to a function template, the function template won’t be instantiated.</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb13-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb13-2"><a href=""></a></span>
+<span id="cb13-3"><a href=""></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">&gt;</span></span>
+<span id="cb13-4"><a href=""></a>T max<span class="op">(</span>T x<span class="op">,</span> T y<span class="op">)</span> <span class="co">// function template for max(T, T)</span></span>
+<span id="cb13-5"><a href=""></a><span class="op">{</span></span>
+<span id="cb13-6"><a href=""></a>    <span class="cf">return</span> <span class="op">(</span>x <span class="op">&lt;</span> y<span class="op">)</span> <span class="op">?</span> y <span class="op">:</span> x<span class="op">;</span></span>
+<span id="cb13-7"><a href=""></a><span class="op">}</span></span>
+<span id="cb13-8"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb13-9"><a href=""></a><span class="op">{</span></span>
+<span id="cb13-10"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> max<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">)</span> <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span>    <span class="co">// instantiates and calls function max&lt;int&gt;(int, int)</span></span>
+<span id="cb13-11"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> max<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;(</span><span class="dv">4</span><span class="op">,</span> <span class="dv">3</span><span class="op">)</span> <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span>    <span class="co">// calls already instantiated function max&lt;int&gt;(int, int)</span></span>
+<span id="cb13-12"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> max<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">)</span> <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span> <span class="co">// instantiates and calls function max&lt;double&gt;(double, double)</span></span>
+<span id="cb13-13"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb13-14"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="function-template-instantiation-more-1" class="slide level2">
+<h2>Function template instantiation: More</h2>
+<p>Let us breakdown the above <code>cpp</code> example</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb14-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb14-2"><a href=""></a></span>
+<span id="cb14-3"><a href=""></a><span class="co">// a declaration for our function template (we don't need the definition any more)</span></span>
+<span id="cb14-4"><a href=""></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">&gt;</span></span>
+<span id="cb14-5"><a href=""></a>T max<span class="op">(</span>T x<span class="op">,</span> T y<span class="op">);</span></span>
+<span id="cb14-6"><a href=""></a></span>
+<span id="cb14-7"><a href=""></a><span class="kw">template</span><span class="op">&lt;&gt;</span></span>
+<span id="cb14-8"><a href=""></a><span class="dt">int</span> max<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;(</span><span class="dt">int</span> x<span class="op">,</span> <span class="dt">int</span> y<span class="op">)</span> <span class="co">// the generated function max&lt;int&gt;(int, int)</span></span>
+<span id="cb14-9"><a href=""></a><span class="op">{</span></span>
+<span id="cb14-10"><a href=""></a>    <span class="cf">return</span> <span class="op">(</span>x <span class="op">&lt;</span> y<span class="op">)</span> <span class="op">?</span> y <span class="op">:</span> x<span class="op">;</span></span>
+<span id="cb14-11"><a href=""></a><span class="op">}</span></span>
+<span id="cb14-12"><a href=""></a></span>
+<span id="cb14-13"><a href=""></a><span class="kw">template</span><span class="op">&lt;&gt;</span></span>
+<span id="cb14-14"><a href=""></a><span class="dt">double</span> max<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;(</span><span class="dt">double</span> x<span class="op">,</span> <span class="dt">double</span> y<span class="op">)</span> <span class="co">// the generated function max&lt;double&gt;(double, double)</span></span>
+<span id="cb14-15"><a href=""></a><span class="op">{</span></span>
+<span id="cb14-16"><a href=""></a>    <span class="cf">return</span> <span class="op">(</span>x <span class="op">&lt;</span> y<span class="op">)</span> <span class="op">?</span> y <span class="op">:</span> x<span class="op">;</span></span>
+<span id="cb14-17"><a href=""></a><span class="op">}</span></span>
+<span id="cb14-18"><a href=""></a></span>
+<span id="cb14-19"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb14-20"><a href=""></a><span class="op">{</span></span>
+<span id="cb14-21"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> max<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">)</span> <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span>    <span class="co">// instantiates and calls function max&lt;int&gt;(int, int)</span></span>
+<span id="cb14-22"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> max<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;(</span><span class="dv">4</span><span class="op">,</span> <span class="dv">3</span><span class="op">)</span> <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span>    <span class="co">// calls already instantiated function max&lt;int&gt;(int, int)</span></span>
+<span id="cb14-23"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> max<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">)</span> <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span> <span class="co">// instantiates and calls function max&lt;double&gt;(double, double)</span></span>
+<span id="cb14-24"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb14-25"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section></section>
+<section>
+<section id="template-argument-deduction" class="title-slide slide level1 center">
+<h1>Template argument deduction</h1>
+
+</section>
+<section id="template-argument-deduction-explanation" class="slide level2">
+<h2>Template argument deduction: Explanation</h2>
+<p>➥ In most cases, the actual types we want to use for instantiation will match the type of our function parameters.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb15-1"><a href=""></a><span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> max<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">)</span> <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span> <span class="co">// specifying we want to call max&lt;int&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>➥ Instead of making a function call like</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb16-1"><a href=""></a><span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> max<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">)</span> <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>we can do one of these:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb17-1"><a href=""></a><span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> max<span class="op">&lt;&gt;(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">)</span> <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>or</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb18-1"><a href=""></a><span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> max<span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">)</span> <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>➥ Further explanation on this soon!</p>
+</section>
+<section id="template-argument-deduction-explanation-1" class="slide level2">
+<h2>Template argument deduction: Explanation</h2>
+<p><strong>Quick summary</strong></p>
+<ul>
+<li>In cases where the type of the arguments match the actual type we want, we do not need to specify the actual type.</li>
+<li>instead, we can use template argument deduction to have the compiler deduce the actual type that should be used from the argument types in the function call.</li>
+</ul>
+</section>
+<section id="template-argument-deduction-explanation-2" class="slide level2">
+<h2>Template argument deduction: Explanation</h2>
+<p>Let us consider again:</p>
+<ul>
+<li><code>max&lt;&gt;(1, 2)</code></li>
+<li><code>max(1, 2)</code></li>
+</ul>
+<p>Difference between two cases: How the compiler resolves the function call from a set of overloaded functions.</p>
+<ul>
+<li>In the top case (empty angled brackets), the compiler will only consider <code>max&lt;int&gt;</code> <em>template function overloads</em>.</li>
+<li>In the bottom case (no angled brackets), the compiler will consider both <code>max&lt;int&gt;</code> <em>template function overloads</em> <strong>and</strong> <code>max</code> <em>non-template function overloads</em>.</li>
+<li>When the bottom case results in both a template function and a non-template function that are equally viable, <span style="color:red">the non-template function will be preferred</span>.</li>
+</ul>
+<blockquote>
+<p><strong>Key insight</strong></p>
+<p>The normal function call syntax will prefer a non-template function over an equally viable function instantiated from a template.</p>
+</blockquote>
+</section>
+<section id="template-argument-deduction-explanation-3" class="slide level2">
+<h2>Template argument deduction: Explanation</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb19-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb19-2"><a href=""></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">&gt;</span></span>
+<span id="cb19-3"><a href=""></a>T max<span class="op">(</span>T x<span class="op">,</span> T y<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb19-4"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"called max&lt;int&gt;(int, int)</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span> <span class="cf">return</span> <span class="op">(</span>x <span class="op">&lt;</span> y<span class="op">)</span> <span class="op">?</span> y <span class="op">:</span> x<span class="op">;</span></span>
+<span id="cb19-5"><a href=""></a><span class="op">}</span></span>
+<span id="cb19-6"><a href=""></a><span class="dt">int</span> max<span class="op">(</span><span class="dt">int</span> x<span class="op">,</span> <span class="dt">int</span> y<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb19-7"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"called max(int, int)</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span> <span class="cf">return</span> <span class="op">(</span>x <span class="op">&lt;</span> y<span class="op">)</span> <span class="op">?</span> y <span class="op">:</span> x<span class="op">;</span></span>
+<span id="cb19-8"><a href=""></a><span class="op">}</span></span>
+<span id="cb19-9"><a href=""></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb19-10"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> max<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">)</span> <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span> <span class="co">// calls max&lt;int&gt;(int, int)</span></span>
+<span id="cb19-11"><a href=""></a>    <span class="co">// deduces max&lt;int&gt;(int, int) (non-template functions not considered)</span></span>
+<span id="cb19-12"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> max<span class="op">&lt;&gt;(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">)</span> <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span>    </span>
+<span id="cb19-13"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> max<span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">)</span> <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span>      <span class="co">// calls max(int, int)</span></span>
+<span id="cb19-14"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb19-15"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>Note hwo the syntax in the bottom case looks identical to a normal function call.</li>
+<li><em>In most cases</em>, this normal function call syntax is the one we use to call functions instantiated from a function template.</li>
+</ul>
+</section>
+<section id="favor-normal-function-call-over-function-template-call" class="slide level2">
+<h2>Favor normal function call over function template call</h2>
+<p><strong>Best practice</strong></p>
+<p>Favor the normal function call syntax when making calls to a function instantiated from a function template (unless you need the function template version to be preferred over a matching non-template function).</p>
+</section>
+<section id="favor-normal-function-call-over-function-template-call-1" class="slide level2">
+<h2>Favor normal function call over function template call</h2>
+<div id="lst-favor-normal-function" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-favor-normal-function-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;4: Favor normal function call over function template call. Filename=<code>favor_normal_func_over_func_template_call.cpp</code>
+</figcaption>
+<div aria-describedby="lst-favor-normal-function-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb20-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb20-2"><a href=""></a></span>
+<span id="cb20-3"><a href=""></a><span class="co">// This function template can handle many types, so its implementation is generic</span></span>
+<span id="cb20-4"><a href=""></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">&gt;</span></span>
+<span id="cb20-5"><a href=""></a><span class="dt">void</span> print<span class="op">(</span>T x<span class="op">)</span></span>
+<span id="cb20-6"><a href=""></a><span class="op">{</span></span>
+<span id="cb20-7"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> x<span class="op">;</span> <span class="co">// print T however it normally prints</span></span>
+<span id="cb20-8"><a href=""></a><span class="op">}</span></span>
+<span id="cb20-9"><a href=""></a></span>
+<span id="cb20-10"><a href=""></a><span class="co">// This function only needs to consider how to print a bool, so it can specialize how it handles</span></span>
+<span id="cb20-11"><a href=""></a><span class="co">// printing of a bool</span></span>
+<span id="cb20-12"><a href=""></a><span class="dt">void</span> print<span class="op">(</span><span class="dt">bool</span> x<span class="op">)</span></span>
+<span id="cb20-13"><a href=""></a><span class="op">{</span></span>
+<span id="cb20-14"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="bu">std::</span>boolalpha <span class="op">&lt;&lt;</span> x<span class="op">;</span> <span class="co">// print bool as true or false, not 1 or 0</span></span>
+<span id="cb20-15"><a href=""></a><span class="op">}</span></span>
+<span id="cb20-16"><a href=""></a></span>
+<span id="cb20-17"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb20-18"><a href=""></a><span class="op">{</span></span>
+<span id="cb20-19"><a href=""></a>    print<span class="op">&lt;</span><span class="dt">bool</span><span class="op">&gt;(</span><span class="kw">true</span><span class="op">);</span> <span class="co">// calls print&lt;bool&gt;(bool) -- prints 1</span></span>
+<span id="cb20-20"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb20-21"><a href=""></a></span>
+<span id="cb20-22"><a href=""></a>    print<span class="op">&lt;&gt;(</span><span class="kw">true</span><span class="op">);</span>     <span class="co">// deduces print&lt;bool&gt;(bool) (non-template functions not considered) -- prints 1</span></span>
+<span id="cb20-23"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb20-24"><a href=""></a></span>
+<span id="cb20-25"><a href=""></a>    print<span class="op">(</span><span class="kw">true</span><span class="op">);</span>       <span class="co">// calls print(bool) -- prints true</span></span>
+<span id="cb20-26"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb20-27"><a href=""></a></span>
+<span id="cb20-28"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb20-29"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+<p>➥ Let us compile and see the output.</p>
+</section></section>
+<section>
+<section id="further-on-function-templates" class="title-slide slide level1 center">
+<h1>Further on function templates</h1>
+
+</section>
+<section id="function-templates-with-non-template-parameters" class="slide level2">
+<h2>Function templates with non-template parameters</h2>
+<p><em>It’s not a surprising</em>: We can create <span style="color:blue">function templates that have both template parameters and non-template parameters</span></p>
+<div id="lst-func-template-with-non-template-para" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-func-template-with-non-template-para-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;5: Function template with non-template parameters Filename=<code>func_template_with_non_template_parameters.cpp</code>
+</figcaption>
+<div aria-describedby="lst-func-template-with-non-template-para-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb21-1"><a href=""></a><span class="co">// T is a type template parameter</span></span>
+<span id="cb21-2"><a href=""></a><span class="co">// double is a non-template parameter</span></span>
+<span id="cb21-3"><a href=""></a><span class="co">// We don't need to provide names for these parameters since they aren't used</span></span>
+<span id="cb21-4"><a href=""></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">&gt;</span></span>
+<span id="cb21-5"><a href=""></a><span class="dt">int</span> print<span class="op">(</span>T x<span class="op">,</span> <span class="dt">double</span> y<span class="op">)</span></span>
+<span id="cb21-6"><a href=""></a><span class="op">{</span></span>
+<span id="cb21-7"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"first argument: "</span> <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="st">"-- 2nd argument = "</span> <span class="op">&lt;&lt;</span> y<span class="op">;</span></span>
+<span id="cb21-8"><a href=""></a><span class="op">}</span></span>
+<span id="cb21-9"><a href=""></a></span>
+<span id="cb21-10"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb21-11"><a href=""></a><span class="op">{</span></span>
+<span id="cb21-12"><a href=""></a>    print<span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="fl">3.4</span><span class="op">);</span>      <span class="co">// print(int, double)</span></span>
+<span id="cb21-13"><a href=""></a>    print<span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="fl">3.4</span><span class="bu">f</span><span class="op">);</span>     <span class="co">// print(int, double) -- float is promoted to double</span></span>
+<span id="cb21-14"><a href=""></a>    print<span class="op">(</span><span class="fl">1.2</span><span class="op">,</span> <span class="fl">3.4</span><span class="op">);</span>    <span class="co">// print(double, double)</span></span>
+<span id="cb21-15"><a href=""></a>    print<span class="op">(</span><span class="fl">1.2</span><span class="bu">f</span><span class="op">,</span> <span class="fl">3.4</span><span class="op">);</span>   <span class="co">// print(float, double)</span></span>
+<span id="cb21-16"><a href=""></a>    print<span class="op">(</span><span class="fl">1.2</span><span class="bu">f</span><span class="op">,</span> <span class="fl">3.4</span><span class="bu">f</span><span class="op">);</span>  <span class="co">// print(float, double) --  float is promoted to double</span></span>
+<span id="cb21-17"><a href=""></a></span>
+<span id="cb21-18"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb21-19"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="instantiated-functions-may-not-always-compile" class="slide level2">
+<h2>Instantiated functions may not always compile</h2>
+<p>➥ Look at this example</p>
+<div id="lst-instantiated-not-compile" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-instantiated-not-compile-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;6: An instantiated function that does not compile. Filename=<code>instantiated_func_not_compile.cpp</code>
+</figcaption>
+<div aria-describedby="lst-instantiated-not-compile-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb22-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb22-2"><a href=""></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
+<span id="cb22-3"><a href=""></a></span>
+<span id="cb22-4"><a href=""></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">&gt;</span></span>
+<span id="cb22-5"><a href=""></a>T add_value<span class="op">(</span>T x<span class="op">,</span> <span class="dt">double</span> v<span class="op">)</span></span>
+<span id="cb22-6"><a href=""></a><span class="op">{</span></span>
+<span id="cb22-7"><a href=""></a>    <span class="cf">return</span> x <span class="op">+</span> v<span class="op">;</span></span>
+<span id="cb22-8"><a href=""></a><span class="op">}</span></span>
+<span id="cb22-9"><a href=""></a></span>
+<span id="cb22-10"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb22-11"><a href=""></a><span class="op">{</span></span>
+<span id="cb22-12"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> add_value<span class="op">(</span><span class="fl">4.2</span><span class="op">,</span> <span class="fl">2.4</span><span class="op">)</span> <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span>   <span class="co">// This make sense.</span></span>
+<span id="cb22-13"><a href=""></a>    <span class="bu">std::</span>string hello <span class="op">{</span> <span class="st">"Hello, world!"</span> <span class="op">};</span></span>
+<span id="cb22-14"><a href=""></a>    <span class="co">// This won't make sense: string + double!?!?</span></span>
+<span id="cb22-15"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> add_value<span class="op">(</span>hello<span class="op">,</span> <span class="fl">4.2</span><span class="op">)</span> <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span>  <span class="co">// compile error </span></span>
+<span id="cb22-16"><a href=""></a></span>
+<span id="cb22-17"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb22-18"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="instantiated-functions-may-not-always-make-sense-semantically" class="slide level2">
+<h2>Instantiated functions may not always make sense semantically</h2>
+<p>➥ Look at this example</p>
+<div id="lst-not-make-sense-semantically" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-not-make-sense-semantically-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;7: Instantiated function that does not make sense sematically Filename=<code>not_make_sense_semantically.cpp</code>
+</figcaption>
+<div aria-describedby="lst-not-make-sense-semantically-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb23-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb23-2"><a href=""></a></span>
+<span id="cb23-3"><a href=""></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">&gt;</span></span>
+<span id="cb23-4"><a href=""></a>T addOne<span class="op">(</span>T x<span class="op">)</span></span>
+<span id="cb23-5"><a href=""></a><span class="op">{</span></span>
+<span id="cb23-6"><a href=""></a>    <span class="cf">return</span> x <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb23-7"><a href=""></a><span class="op">}</span></span>
+<span id="cb23-8"><a href=""></a></span>
+<span id="cb23-9"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb23-10"><a href=""></a><span class="op">{</span></span>
+<span id="cb23-11"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> addOne<span class="op">(</span><span class="st">"Hello, world!"</span><span class="op">)</span> <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb23-12"><a href=""></a></span>
+<span id="cb23-13"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb23-14"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="function-templates-and-default-arguments-for-non-template-parameters" class="slide level2">
+<h2>Function templates and default arguments for non-template parameters</h2>
 
 </section></section>
     </div>

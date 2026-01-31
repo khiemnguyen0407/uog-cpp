@@ -240,7 +240,7 @@ We learn how function templates are used.
 
 ## Function template instantiation
 
-**Process for instantiating a function**  
+&#10149; **Process for instantiating a function**  
 
 The compiler essentially clones the primary template and replaces the template type (`T`) with the actual type we have specified.
 
@@ -254,11 +254,136 @@ int max<int>(int x, int y) // the generated function max<int>(int, int)
 }
 ``` 
 
-## Function template instantiation
-What the compiler actually compiles after all the instantiation are done:
+## Function template instantiation: More
+&#10149; What the compiler actually compiles after all the instantiation are done:
 
 ```{.cpp}
-{{< include ./cpp/instantiation_look.cpp >}}
+{{< include ./cpp/instantiation_look_breakdown.cpp >}}
+```
+&#10149; Let us compile it and run to see.
+
+## Function template instantiation
+
+- A function template is only instantiated the first time a function call is made.
+- Further calls to the function are routed to the already instantiated function.
+-  if no function call is made to a function template, the function template won't be instantiated.
+
+```{.cpp}
+{{< include ./cpp/instantiation_look_more.cpp >}}
 ```
 
-Let us compile it and run to see.
+## Function template instantiation: More
+Let us breakdown the above `cpp` example
+
+```{.cpp}
+{{< include ./cpp/instantiation_look_more_breakdown.cpp >}}
+```
+
+# Template argument deduction
+
+## Template argument deduction: Explanation
+
+&#10149; In most cases, the actual types we want to use for instantiation will match the type of our function parameters.
+```{.cpp}
+std::cout << max<int>(1, 2) << '\n'; // specifying we want to call max<int>
+```
+
+&#10149; Instead of making a function call like
+```{.cpp}
+std::cout << max<int>(1, 2) << '\n';
+```
+we can do one of these:
+
+```{.cpp}
+std::cout << max<>(1, 2) << '\n';
+```
+or 
+```{.cpp}
+std::cout << max(1, 2) << '\n';
+```
+
+&#10149; Further explanation on this soon!
+
+## Template argument deduction: Explanation
+
+**Quick summary**
+
+- In cases where the type of the arguments match the actual type we want, we do not need to specify the actual type.
+- instead, we can use template argument deduction to have the compiler deduce the actual type that should be used from the argument types in the function call.
+
+## Template argument deduction: Explanation
+
+Let us consider again:
+
+- `max<>(1, 2)`
+- `max(1, 2)`
+
+Difference between two cases: How the compiler resolves the function call from a set of overloaded functions.
+
+- In the top case (empty angled brackets), the compiler will only consider `max<int>` _template function overloads_.
+- In the bottom case (no angled brackets), the compiler will consider both `max<int>` _template function overloads_ **and** `max` _non-template function overloads_.
+- When the bottom case results in both a template function and a non-template function that are equally viable, [the non-template function will be preferred]{style="color:red"}.
+
+> **Key insight**
+> 
+> The normal function call syntax will prefer a non-template function over an equally viable function instantiated from a template.
+
+
+## Template argument deduction: Explanation
+
+```{.cpp}
+{{< include ./cpp/template_argument_deduction_more.cpp >}}
+```
+- Note hwo the syntax in the bottom case looks identical to a normal function call.
+- _In most cases_, this normal function call syntax is the one we use to call functions instantiated from a function template.
+
+## Favor normal function call over function template call
+
+**Best practice**
+
+Favor the normal function call syntax when making calls to a function instantiated from a function template (unless you need the function template version to be preferred over a matching non-template function).
+
+## Favor normal function call over function template call
+
+:::{#lst-favor-normal-function lst-cap="Favor normal function call over function template call. Filename=`favor_normal_func_over_func_template_call.cpp`"}
+```{.cpp}
+{{< include ./cpp/favor_normal_func_over_func_template_call.cpp >}}
+```
+:::
+
+&#10149; Let us compile and see the output.
+
+# Further on function templates
+
+## Function templates with non-template parameters
+
+*It's not a surprising*: We can create [function templates that have both template parameters and non-template parameters]{style="color:blue"}
+
+:::{#lst-func-template-with-non-template-para lst-cap="Function template with non-template parameters Filename=`func_template_with_non_template_parameters.cpp`"}
+```{.cpp}
+{{< include ./cpp/func_template_with_non_template_parameters.cpp >}}
+```
+:::
+
+## Instantiated functions may not always compile
+
+&#10149; Look at this example
+
+:::{#lst-instantiated-not-compile lst-cap="An instantiated function that does not compile. Filename=`instantiated_func_not_compile.cpp`"}
+```{.cpp}
+{{< include ./cpp/instantiated_func_not_compile.cpp >}}
+```
+:::
+
+## Instantiated functions may not always make sense semantically
+
+&#10149; Look at this example
+
+:::{#lst-not-make-sense-semantically lst-cap="Instantiated function that does not make sense sematically Filename=`not_make_sense_semantically.cpp`"}
+```{.cpp}
+{{< include ./cpp/not_make_sense_semantically.cpp >}}
+```
+:::
+
+## Function templates and default arguments for non-template parameters
+
