@@ -1081,8 +1081,124 @@ Listing&nbsp;10: Function templates can be overloaded. Filename=<code>function_t
 </section>
 <section id="non-type-template-parameters-1" class="slide level2">
 <h2>Non-type template parameters</h2>
-<p>A <span style="color:red"><strong>non-type template parameter</strong></span> is a template parameter with a fixed type that serves as a placeholder for a <code>constexpr value</code> passed in as a template argument.</p>
+<p>A <span style="color:red"><strong>non-type template parameter</strong></span> is a template parameter with <span style="color:blue">a fixed type</span> that serves as a placeholder for a <code>constexpr value</code> passed in as a template argument.</p>
 <p><strong>Recall</strong>&nbsp; <code>constexpr</code> is a keyword introduced in C++11 that tells the compiler a value or function can be evaluated at compile-time.</p>
+<p>A non-type template parameter can be any of the following types:</p>
+<ul>
+<li>An integral type</li>
+<li>An enumeration type</li>
+<li><code>std::nullptr_t</code></li>
+<li>A floating point type (since C++20)</li>
+<li>A pointer or reference to an object</li>
+<li>A pointer or reference to a function</li>
+</ul>
+</section>
+<section id="non-type-template-parameters-an-example" class="slide level2">
+<h2>Non-type template parameters: An example</h2>
+<p>➥&nbsp; Let us combine both type and non-type template parameters in this example:</p>
+<div id="lst-nontype-template-parameter" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-nontype-template-parameter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;11: An example of non-type template parameters Filename=<code>nontype_template_parameters.cpp</code>
+</figcaption>
+<div aria-describedby="lst-nontype-template-parameter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb37-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb37-2"><a href=""></a></span>
+<span id="cb37-3"><a href=""></a><span class="co">/**</span></span>
+<span id="cb37-4"><a href=""></a><span class="co"> * Scales a value by a factor known at compile-time.</span></span>
+<span id="cb37-5"><a href=""></a><span class="co"> * T: The data type (e.g., int, float)</span></span>
+<span id="cb37-6"><a href=""></a><span class="co"> * Factor: The non-type parameter (the scaling multiplier)</span></span>
+<span id="cb37-7"><a href=""></a><span class="co"> */</span></span>
+<span id="cb37-8"><a href=""></a><span class="kw">template</span> <span class="op">&lt;</span><span class="dt">int</span> Factor<span class="op">,</span> <span class="kw">typename</span> T<span class="op">&gt;</span></span>
+<span id="cb37-9"><a href=""></a>T scale_sensor_reading<span class="op">(</span>T raw_value<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb37-10"><a href=""></a>    <span class="co">// Because Factor is a template parameter, the compiler </span></span>
+<span id="cb37-11"><a href=""></a>    <span class="co">// treats 'raw_value * Factor' as a highly optimized operation.</span></span>
+<span id="cb37-12"><a href=""></a>    <span class="cf">return</span> raw_value <span class="op">*</span> Factor<span class="op">;</span></span>
+<span id="cb37-13"><a href=""></a><span class="op">}</span></span>
+<span id="cb37-14"><a href=""></a></span>
+<span id="cb37-15"><a href=""></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb37-16"><a href=""></a>    <span class="dt">int</span> raw_input <span class="op">=</span> <span class="dv">10</span><span class="op">;</span></span>
+<span id="cb37-17"><a href=""></a></span>
+<span id="cb37-18"><a href=""></a>    <span class="co">// The factor '5' is baked into this specific version of the function.</span></span>
+<span id="cb37-19"><a href=""></a>    <span class="dt">int</span> high_sensitivity <span class="op">=</span> scale_sensor_reading<span class="op">&lt;</span><span class="dv">5</span><span class="op">&gt;(</span>raw_input<span class="op">);</span></span>
+<span id="cb37-20"><a href=""></a></span>
+<span id="cb37-21"><a href=""></a>    <span class="co">// The factor '2' is baked into this one.</span></span>
+<span id="cb37-22"><a href=""></a>    <span class="dt">int</span> low_sensitivity <span class="op">=</span> scale_sensor_reading<span class="op">&lt;</span><span class="dv">2</span><span class="op">&gt;(</span>raw_input<span class="op">);</span></span>
+<span id="cb37-23"><a href=""></a></span>
+<span id="cb37-24"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Raw: "</span> <span class="op">&lt;&lt;</span> raw_input <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb37-25"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"High (x5): "</span> <span class="op">&lt;&lt;</span> high_sensitivity <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb37-26"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Low  (x2): "</span> <span class="op">&lt;&lt;</span> low_sensitivity <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb37-27"><a href=""></a></span>
+<span id="cb37-28"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb37-29"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="non-type-template-parameters-compilers-pov" class="slide level2">
+<h2>Non-type template parameters: Compiler’s POV</h2>
+<ul>
+<li><p>When the compiler sees the call <code>scale_sensor_reading&lt;5&gt;(raw_input)</code>, it will instantiate a function that looks something like this</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb38-1"><a href=""></a><span class="kw">template</span><span class="op">&lt;&gt;</span></span>
+<span id="cb38-2"><a href=""></a><span class="dt">int</span> scale_sensor_reading<span class="op">&lt;</span><span class="dv">5</span><span class="op">&gt;(</span><span class="dt">int</span> raw_value<span class="op">)</span></span>
+<span id="cb38-3"><a href=""></a><span class="op">{</span></span>
+<span id="cb38-4"><a href=""></a>    <span class="cf">return</span> raw_value <span class="op">*</span> <span class="dv">5</span><span class="op">;</span></span>
+<span id="cb38-5"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>Similarly, by seeing <code>scale_sensor_reading&lt;2&gt;(raw_input)</code>, the compiler will instantiate a function looking like</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb39-1"><a href=""></a><span class="kw">template</span><span class="op">&lt;&gt;</span></span>
+<span id="cb39-2"><a href=""></a><span class="dt">int</span> scale_sensor_reading<span class="op">&lt;</span><span class="dv">2</span><span class="op">&gt;(</span><span class="dt">int</span> raw_value<span class="op">)</span></span>
+<span id="cb39-3"><a href=""></a><span class="op">{</span></span>
+<span id="cb39-4"><a href=""></a>    <span class="cf">return</span> raw_value <span class="op">*</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb39-5"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+</ul>
+</section>
+<section id="non-type-template-parameters-compilers-pov-1" class="slide level2">
+<h2>Non-type template parameters: Compiler’s POV</h2>
+<p>➥&nbsp; Let us put the instantiations of the function template into the code, compile and run it.</p>
+<div id="lst-nontype-template-parameter-pov" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-nontype-template-parameter-pov-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;12: The compiler will instantiate two functions to execute two versions of <code>scale_sensor_reading()</code>. Filename=<code>nontype_template_parameters_pov.cpp</code>
+</figcaption>
+<div aria-describedby="lst-nontype-template-parameter-pov-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb40-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb40-2"><a href=""></a></span>
+<span id="cb40-3"><a href=""></a><span class="co">/**</span></span>
+<span id="cb40-4"><a href=""></a><span class="co"> * Scales a value by a factor known at compile-time.</span></span>
+<span id="cb40-5"><a href=""></a><span class="co"> * T: The data type (e.g., int, float)</span></span>
+<span id="cb40-6"><a href=""></a><span class="co"> * Factor: The non-type parameter (the scaling multiplier)</span></span>
+<span id="cb40-7"><a href=""></a><span class="co"> */</span></span>
+<span id="cb40-8"><a href=""></a><span class="kw">template</span> <span class="op">&lt;</span><span class="dt">int</span> Factor<span class="op">,</span> <span class="kw">typename</span> T<span class="op">&gt;</span></span>
+<span id="cb40-9"><a href=""></a>T scale_sensor_reading<span class="op">(</span>T raw_value<span class="op">);</span></span>
+<span id="cb40-10"><a href=""></a></span>
+<span id="cb40-11"><a href=""></a><span class="kw">template</span><span class="op">&lt;&gt;</span></span>
+<span id="cb40-12"><a href=""></a><span class="dt">int</span> scale_sensor_reading<span class="op">&lt;</span><span class="dv">5</span><span class="op">&gt;(</span><span class="dt">int</span> raw_value<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb40-13"><a href=""></a>    <span class="cf">return</span> raw_value <span class="op">*</span> <span class="dv">5</span><span class="op">;</span></span>
+<span id="cb40-14"><a href=""></a><span class="op">}</span></span>
+<span id="cb40-15"><a href=""></a></span>
+<span id="cb40-16"><a href=""></a><span class="kw">template</span><span class="op">&lt;&gt;</span></span>
+<span id="cb40-17"><a href=""></a><span class="dt">int</span> scale_sensor_reading<span class="op">&lt;</span><span class="dv">2</span><span class="op">&gt;(</span><span class="dt">int</span> raw_value<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb40-18"><a href=""></a>    <span class="cf">return</span> raw_value <span class="op">*</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb40-19"><a href=""></a><span class="op">}</span></span>
+<span id="cb40-20"><a href=""></a></span>
+<span id="cb40-21"><a href=""></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb40-22"><a href=""></a>    <span class="dt">int</span> raw_input <span class="op">=</span> <span class="dv">10</span><span class="op">;</span></span>
+<span id="cb40-23"><a href=""></a></span>
+<span id="cb40-24"><a href=""></a>    <span class="co">// The factor '5' is baked into this specific version of the function.</span></span>
+<span id="cb40-25"><a href=""></a>    <span class="dt">int</span> high_sensitivity <span class="op">=</span> scale_sensor_reading<span class="op">&lt;</span><span class="dv">5</span><span class="op">&gt;(</span>raw_input<span class="op">);</span></span>
+<span id="cb40-26"><a href=""></a></span>
+<span id="cb40-27"><a href=""></a>    <span class="co">// The factor '2' is baked into this one.</span></span>
+<span id="cb40-28"><a href=""></a>    <span class="dt">int</span> low_sensitivity <span class="op">=</span> scale_sensor_reading<span class="op">&lt;</span><span class="dv">2</span><span class="op">&gt;(</span>raw_input<span class="op">);</span></span>
+<span id="cb40-29"><a href=""></a></span>
+<span id="cb40-30"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Raw: "</span> <span class="op">&lt;&lt;</span> raw_input <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb40-31"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"High (x5): "</span> <span class="op">&lt;&lt;</span> high_sensitivity <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb40-32"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Low  (x2): "</span> <span class="op">&lt;&lt;</span> low_sensitivity <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb40-33"><a href=""></a></span>
+<span id="cb40-34"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb40-35"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
 
 </section></section>
 

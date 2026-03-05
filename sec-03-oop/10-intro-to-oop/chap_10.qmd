@@ -1,0 +1,677 @@
+---
+title: "Object-oriented programming"
+author: |
+    Khiem Nguyen 
+    <br>Lecturer in Multiscale Materials
+    <br><khiem.nguyen@glasgow.ac.uk>
+author-meta: "Lecturer in Multiscale Materials"
+format: 
+    revealjs:
+        theme: simple   # other themes: beige, blood, dark, dracula, league, moon, night, serif, simple, sky, solarized
+        mouse-wheel: true
+        highlight-style: github
+        slide-number: true
+        title-slide-style: pandoc
+        echo: true
+        code-overflow: wrap
+        code-line-numbers: true
+        code-block-bg: false          # <-- remove white background in code blocks
+        # code-block-border-left: false # optional: remove left border
+        # highlight-style: monokai      # good for dark images
+        toc: true
+        toc-depth: 1
+        toc-title: Presentation Outline
+        chalkboard: true
+        css: simple.css
+---
+
+# Why Object-Oriented Programming
+
+## Procedure programming vs Object-oriented programming
+- Up to now, we've been doing a type of programming called [**procedure programming**]{style="color:red"}. In procedure programming, the functions and the data those functions operate on are separate entities.
+
+- In [**object-oriented programming**]{style="color:red"} (OOP), the focus is on creating program-defined data types that contain both properties and a set of well-defined behaviors.
+
+We won't discuss why we need Object-Oriented Programming (OOP) in this course:
+
+- We have all learned the importance of OOP in "Introductory Programming 2" and other programming courses.
+- [Since the 1990s, OOP has been the industry standard.]{style="color:navy"}
+
+<u>Instead, I walk you through some job posts in software engineer industry.</u>
+
+
+
+## The dominance of OOP
+
+- [**Why it's popular**]{style="color:navy"}: It mimics how we perceive the world -- objects with properties and behaviors.
+- [**Scalable**]{style="color:navy"}: OOP makes it possible to manage large, complex systems where we need to "encapsulate" data to prevent bugs.
+- [**The industry "lungs"**]{style="color:navy"}: If you look at job postings or legacy codebases, [OOP is everywhere.]{style="color:navy"}
+
+![](./figures/mathwork-job-post.png)
+
+_You don't need to know MATLAB to find a job in Mathworks_. [Instead, you need experience in C++ and OOP.]{style="color:red"}
+
+## C++ is highly desired in industry
+
+I asked Gemini about software engineering roles at MathWorks (developing MATLAB you use all the time.)
+![](./figures/gemini-reply-regarding-jobs-at-mathworks.png)
+
+## C++ is highly desired in industry: Software architecture at Airbus
+
+![](./figures/airbus-software-architect.png)
+
+## Git Control and OOP are essential skills in industry
+Note the requirement of experience with Java. For your record, [Java is a pure OOP programming language]{style="color:red"}.
+
+![](./figures/airbus-software-developer.png)
+
+## Why OOP: $4$ key pillars of OOP
+
+::: {.my-box}
+_I hope this is more than enough to convince you why we need to learn Object-Oriented Programming, especially in C++._
+:::
+
+:::{.fragment}
+&#9998;&nbsp; But that's a very lazy explanation.
+:::
+
+::: {.fragment}
+&#9998;&nbsp; There are four **key pillars in Object-Oriented Programming**
+
+1. **Encapsulation**
+2. **Abstraction**
+3. **Inheritance**
+4. **Polymorphism**
+
+We shall quickly go through each of them, explain what they are and why they are.
+:::
+
+## Encapsulation
+
+&#9998;&nbsp; [**Encapsulation**]{style="color:red"} is the practice of bundling data (variables) and methods (functions) that operate on that data into a single unit called **class**.
+
+&#9998;&nbsp; It involves "hiding" the internal state of the object from the outside world to prevent accidental interference.
+
+:::{.fragment}
+- **Example 1**&nbsp; Remember what you learned in Python:
+
+  - `ndarray` object in NumPy library
+  - `Figure` object is returned when you plot `pyplot.plot(x, y)` 
+:::
+
+::: {.fragment}
+- **Example 2**&nbsp; Think of this code snippet `a = np.array([1, 'two', 3])`:
+
+  - The interpreter tells you the error and _exactly what kind of error you made_.
+  - This is because there is _a ton of checking behind the scene_, and _the user does not need to know._
+:::
+
+::: {.fragment}
+- **Example 3**&nbsp; Think of registering a student at UoG (python): `Student(name="Bull Shit", age=7)`
+
+  - There must be some behind-the-scene checking, or otherwise mistakes can easily slip through.
+  - Inform the user that something is wrong.
+:::
+
+## Encapsulation
+
+In C++, we use [**access specifiers**]{style="color:red"} to achieve this:
+
+&#9998;&nbsp; `private`: Members are only accessible within the class.
+
+&#9998;&nbsp; `public`: Members are accessible from outside the class.
+
+::: {.fragment}
+- **Example**&nbsp; Think of a **Bank Account**
+  - You should not be able to change the `balance` variable directly from outside -- otherwise, the bank is F___ed up.
+  - You should have to use `deposit()` or `withdraw()` method that checks if the transaction is valid.
+:::
+
+## Encapsulation
+
+Encapsulation enhances **security**.
+
+![](./figures/oop.jpg)
+
+## Abstraction
+
+&#9998;&nbsp; [**Abstraction**]{style="color:red"} is about **simplifying** things.
+
+&#9998;&nbsp; It means showing only the essential features of an object and hiding the complex background details.
+
+![](./figures/oop-abstraction.jpg)
+
+
+## Abstraction
+  
+[**Why use abstraction**]{style="color:red"}
+
+- **Reduces complexity**: We only deal with a high-level interface (from a user point of view)
+- **Easy Maintaince**: We can change the internal "engine" of our code (from a developer point of view) without changing how other people use it.
+
+:::{.fragment}
+- **Example**&nbsp; Think of a **Coffee Machine**:
+  - only need to know which button to press
+  - no need to understand the internal water pressure, size of grind bean, etc.
+:::
+
+::: {.fragment}
+- **Example**&nbsp; We want to build a graphics app:
+  - We want to "_draw_" different shapes, but the ways we draw a Circle and a Square are different.
+  - We create an [**Abstract Class**]{style="color:red"} called **Shape**. It acts as a blueprint that says: "Anything that is a shape must have a `draw()` method,
+    ```{.cpp}
+    class Shape {
+    public:
+        // Pure virtual function makes this an Abstract Class
+        virtual void draw() = 0; 
+    };
+    ```
+:::
+
+## Encapsulation vs Abstraction
+
+- [**Encapsulation**]{style="color:red"} is about [**protection and data integrity**]{style="color:blue"}.
+  - **Example**&nbsp; Check if a `battery_level` is negative
+  - **Example**&nbsp; Check if a `withdrawl_amount` exeeds a balance
+- [**Abstraction**]{style="color:red"} is about [**interface and simplification**]{style="color:blue"}.
+  - **Example**&nbsp; Allow user to simply call `set_battery(50)` without having to see the `if (value < 0)` logic hidden inside.
+
+**My own opinion**:
+
+- I try my best to find examples to illustrate these two points. 
+- Sometimes, I can get confused by myself. 
+- Some examples can sit at the intersection of both encapsulation & abstraction.
+- Don't worry if you get confused after this 🤨
+
+## Inheritance
+
+&#9998;&nbsp; [**Inheritance**]{style="color:red"} allows us to create a new class (**Derived** class or **Child** class) based on existing class (**Base** class or **Parent** class).
+
+&#9998;&nbsp; The child class "_inherits_" the attributes and behaviors of the parent, which helps us [_avoid writing the same code over and over again_]{style="color:red"} &#10140; [Don't repeat yourself]{style="color:blue"}.
+
+:::{.fragment}
+- **Example**&nbsp; An circle is an ellipse.
+  - A circle is an ellipse with the same length of two axes.
+  - If one can draw an ellipse, there is no point to copy/paste the code to draw a circle.
+:::
+
+:::{.fragment}
+- **Example**&nbsp; Lecturer, Member of Teaching Office, Technician, Demonstrators are all Employee with names, age, salary, etc.
+  - combine all common features and behaviors for all kinds of Employee
+  - bundle these features and behaviors into Employee
+  - no need to repeat code for each kind of Employee
+:::
+
+## Polymorphism
+
+[**Polymorphism**]{style="color:red"} allows an object to be treated as an instance of its parent class, but still behave according to its own specific type.
+
+:::{.fragment}
+- **Example**&nbsp; We can have a list of different shapes and tell them all to `draw()`, and they will each "know" how to draw themselves correctly.
+- We shall understand this pillar better when we reach this point.
+:::
+
+
+# `struct` vs `class`
+
+**Importance Note** 
+
+
+:::{.my-box}
+[_In C++, the difference between a `struct` and a `class` is surprising small from a technical standpoint_]{style="color:red"}, but quite significant from a **stylistic** and **architecture** standpoint.
+:::
+
+- Therefore, any example that is implemented using a struct could be implemented using a class, or vice-versa. 
+- However, from a practical standpoint, we use `struct` and `class` differently.
+
+## `struct` vs `class`: Technical difference (defaults)
+
+In C++, a `struct` and a `class` are almost identical, except for the default access level of their members and inheritance. That's it!
+
+**Default Access Control**
+
+- `struct`: Members (variables and functions) are `public` by default
+- `class` : Members are `private` by default
+  
+**Default Inheritance**
+
+- `struct`: Inherits `publicly` by default
+- `class` : Inherits `privately` by default
+
+We shall study these concepts soon.
+
+## `struct` vs `class`: Google C++ style
+
+Technically, you can use `struct` and `class` interchangably. Practically, we use them with different purposes. Google suggests
+  
+![](./figures/google-struct-vs-class.png)
+
+## `struct` vs `class`: Google C++ style
+
+**Key points**
+
+- Use a `struct` only for passive objects that carry data; everything else is a `class`.
+- The `struct` and `class` keywords behave almost identically in C++. We add our own semantic meanings to each keyword, so you should use the appropriate keyword for the data-type you're defining.
+
+# Defining a class: Syntax
+
+## Defining a class
+
+- A class is a **program-defined** data type. Sometimes, you hear **user-defined** data type.
+- Classes are defined similarly to structs: Classes are defined using the `class` keyword, structs using the `struct` keyword.
+
+```{.cpp}
+class Employee
+{
+    int m_id {};            // m_ stands for member, m_id is the member variable
+    int m_age {};
+    double m_wage {};   
+}
+```
+
+**Naming convention**
+
+&#9998;&nbsp; The prefix `m_` is used to signify the member variables of a class.
+
+&#9998;&nbsp; We discuss why member variables of a class are often prefixed with an `m_` in upcoming lesson.
+
+## Naming convention: Google style
+
+![](./figures/google-class-data-members-naming-convention.png)
+
+## Naming convention: Which to choose
+
+
+- Several companies and wide industry have adopted the prefix `m_` naming convention.
+    
+    ```{.cpp}
+    class Employee
+    {
+        int m_id {};
+        int m_age {};
+        double m_wage {};   
+    }
+    ```
+- Google suggests trailing underscore, such as `id_`, `age_`, and `wage_`
+  
+    ```{.cpp}
+    class Employee
+    {
+        int id_ {};
+        int age_ {};
+        double wage_ {}
+    }
+    ```
+
+&#9998;&nbsp; When we use the prefix `m_` convention, the intelliSense will suggest variable names when we type `m_`.
+
+## Naming convention: Which to choose ... and But
+
+- The prefix `m_` or the suffix `_` help us to avoid **name shadowing** in **class constructors**.
+- When you learn more about modern C++ (in our lectures actually), you soon recognize: we don't even need the above naming conventions. 
+
+Conclusion:
+
+- I would prefer not to use the prefix naming convention `m_` in our lectures.
+- Saying that, sometimes I mix the convention `m_` in on purpose (or maybe by forgetting). 
+
+## A `class` can implement a `struct`
+
+By declaring `public` member variables, a `class` behaves just like a `struct`.
+
+::: {#lst-class-like-struct lst-cap="A `class` behaves like a `struct` by declaring member variables `public`. Filename=`class_just_like_struct.cpp`"}
+```{.cpp}
+{{< include ./cpp/class_just_like_struct.cpp >}}
+```
+:::
+
+## Most of the C++ standard library is classes
+
+We have already been using class objects, perhaps without knowing it:
+
+- `std::string`
+- `std::string_view`
+- `std::vector`
+
+In fact, most of the non-aliased types in the standard library are defined as classes!
+
+::: {.my-box}
+Classes are really the heart and soul of C++ -- they are so foundational that C++ was originally named “C with classes”!
+:::
+
+# Member functions and implicit objects
+
+- In this Section, we shall use `struct` to demonstrate the concepts. 
+- By using `struct`, I can demonstrate that `struct` and `class` are technically almost the same.
+
+## Member functions
+- In addition to having member variables, `class` types (which include `struct`, `class`, `union`) can have their own functions.
+- Functions that belong to a class type are called [**member functions**]{style="color:red"}.
+- Functions that are not member functions are called [**non-member functions**]{style="color:red"}.
+
+## A non-member function example
+Let us look at the following example:
+
+::: {#lst-nonmember-function-example lst-cap="An example of non-member function. Filename=`non_member_function_example.cpp`"}
+```{.cpp}
+{{< include ./cpp/non_member_function_example.cpp >}}
+```
+:::
+
+## A member function example
+
+In this lesson, we'll use structs to show examples of member functions -- but everything we show here applies equally well to classes.
+
+::: {#lst-member-function-example lst-cap="An example of member function. Filename=`member_function_example.cpp`"}
+```{.cpp}
+{{< include ./cpp/member_function_example.cpp >}}
+```
+:::
+
+## Calling member functions and the implicit object
+
+- In the non-member example, we call
+  
+    ```{.cpp}
+    print(today)
+    ```
+- In the member example, we call 
+  
+    ```{.cpp}
+    today.print()
+    ```
+
+- In the member function case, we don't pass `today` as an argument.
+- The object is **implicitly** passed to the member function.
+- The object that member function is called on is called [**implicit object**]{style="color:red"}
+
+## Assessing members inside a member function uses the implicit object
+&#9998;&nbsp; In the non-member example, we define
+  
+```{.cpp}
+// non-member version of print
+void print(const Date& date)
+{
+    // member variables accessed using member selection operator (.)
+    std::cout << date.year << '/' << date.month << '/' << date.day;
+}
+```
+
+&#9998;&nbsp; In the member example, we define
+
+```{.cpp}
+void print() // defines a member function named print()
+{
+    std::cout << year << '/' << month << '/' << day;
+}
+```
+- We access the members as `year`, `month`, and `day`.
+- Any member identifier that is not prefixed with the member selection operator (`.`) is associated with the implicit object.
+- `year`, `month`, and `day` (which are not prefixed) evaluate to the values of `today.year`, `today.month`, and `today.day` respectively.
+
+## A comparison to OOP in Python
+
+```{python}
+class Date:
+  def __init__(self, year=2026, month=2, date=28): # we learn constructor in C++ soon
+    self.year = year        
+    self.month = month
+    self.date = date
+  def print(self):
+    print(f"{self.year}/{self.month}/{self.date}")  # we don't have self. in C++
+
+# Use this class in global scope
+today = Date(2026,2,26) # when this lecture first took place
+today.print()
+# How about this: I know that many of you did not learn it in 
+# Introductory Programming 2. I am cooler :D
+Date.print(today) # exposes the implicit object in the statement today.print()
+```
+
+## A comparison to OOP in Python: Repeat last slide
+```{.python}
+class Date:
+  # blah blah
+  
+  def print(self):
+    print(f"{self.year}/{self.month}/{self.date}")  # we don't have self. in C++
+# Use this class in global scope
+today = Date(2026,2,26) # when this lecture first took place
+today.print()
+Date.print(today)   # this exposes the implicit object in the statement today.print()
+```
+
+- What we have just learned in C++ looks different from Python you know. We don't have `self`: `self.year`, `self.month`, `self.day`.
+- We shall learn an equivalence of `self` of Python in C++.
+- Statement `Date.print(today)` exposes the implicit object in statement `today.print()`
+
+## A comparison to OOP in Python: But Python is not as serious as C++
+```{python}
+#| error: true
+class Date:
+  def __init__(self, year=2026, month=2, date=28): # we learn constructor in C++ soon
+    self.year = year        
+    self.month = month
+    self.date = date
+  
+  def print(self):
+    print(f"{self.year}/{self.month}/{self.date}")  # we don't have self. in C++
+# Use this class in global scope
+today = Date(2026,2,26) # when this lecture first took place
+my_name = "khiem"
+Date.print(my_name) # SYNTAX Correct, but run time error. my_name.year does not exist
+```
+
+## A comparison to OOP in Python: But Python is not as serious as C++
+
+```{python}
+#| error: true
+class Date:
+  def __init__(self, year=2026, month=2, date=28): # we learn constructor in C++ soon
+    self.year, self.month, self.date = year, month, date
+  def print(self):
+    print(f"{self.year}/{self.month}/{self.date}")  # we don't have self. in C++
+
+class Foo:
+  def __init__(self):
+    self.year, self.month, self.date = "one", "two", 3
+# Use this class in global scope
+today = Date(2026,2,26) # when this lecture first took place
+foo_object = Foo()
+
+# SYNTAX correct, and Code run fine too. But it is just nonsense
+Date.print(foo_object) 
+```
+
+
+## Member functions can be overloaded
+&#9998;&nbsp; Just like non-member functions, member functions can be overloaded.
+
+::: {#lst-overload-member-function lst-cap="Member functions can be overloaded. Filename=`overload_member_functions.cpp`"}
+```{.cpp}
+{{< include ./cpp/overload_member_functions.cpp >}}
+```
+:::
+
+## Structs and member functions: A bit of history
+
+:::{.incremental}
+- In C, structs only have data members, not member functions.
+- While designing classes in C++, Bjarne Stroustrup considered whether structs (which were inherited from C) should be granted the ability to have member functions. 
+- Upon consideration, he determined that they should.
+- In modern C++, it is fine for structs to have member functions.
+:::
+
+:::{.my-box}
+&#9998;&nbsp; Both structs and classes are called [**class type**]{style="color:red"}
+:::
+
+# Const class objects and const member functions
+
+&#9998;&nbsp; Again, we shall use `struct` for examples in this section.
+
+## Const variables: A quick revisit
+- We learn: All const variables must be initialized at time of creation
+  ```{.cpp}
+  const int x { 42 }; 
+  const double double z {};    // initialze to zero.
+  ```
+- Similarly, class type objects can be made const using `const` keyword
+  ```{.cpp}
+  struct Date
+  {
+      int year {};
+      int month {};
+      int day {};
+  };
+  int main()
+  {
+      // const class type object
+      const Date today { 2020, 10, 14 };
+      return 0;
+  }
+  ```
+
+## Modifying the data members of const objects is disallowed
+
+&#9998;&nbsp; Any attempt to modify the data members of the object is disallowed.
+
+::: {#lst-modify-const-objects lst-cap="Modifying the data members of const objects is disallowed. Filename=`modify_members_of_const_objects.cpp`"}
+```{.cpp}
+{{< include ./cpp/modify_members_of_const_objects.cpp >}}
+```
+:::
+
+&#10149;&nbsp; Show the code with uncommented code. IntelliSense picked up the error before compilation.
+
+## Const objects may not call non-const member functions
+
+&#9998;&nbsp; You may be surprised that the following code causes compilation error.
+
+::: {#lst-modify-const-objects lst-cap="const object calling the non-const member functions will create compilation error." Filename=`const_objects_call_non_const_mem_functions.cpp`"}
+```{.cpp}
+{{< include ./cpp/const_objects_call_non_const_mem_functions.cpp >}}
+```
+:::
+
+## Const member functions
+
+&#9998;&nbsp; To address the above issue, we make `print()` a const member function.
+
+&#9998;&nbsp; A [**const member function**]{style="color:red"} is a member function that guarantees it will not modify the object or call any non-const member functions (as they may modify the object)
+
+::: {#lst-const-member-functions lst-cap="const member function can be called by const objects. Filename=`const_member_functions.cpp`"}
+```{.cpp}
+{{< include ./cpp/const_member_functions.cpp >}}
+```
+:::
+
+## Const member functions
+
+&#9998;&nbsp; **Not a surprise**: A const member function that attempts to change a data member or call a non-const member function will cause a compiler error to occur.
+
+::: {#lst-const-mem-function-change-mem-data lst-cap="A const member function cannot change data members. Filename=`const_member_functions_change_data_members.cpp`"}
+```{.cpp}
+{{< include ./cpp/const_member_functions_change_data_members.cpp >}}
+```
+:::
+
+
+## Const member functions can be called on non-const objects
+
+&#9998;&nbsp; **Not a surprise** (again): Const member functions may also be called on non-const objects.
+
+  - We promise the compiler _const member functions won't change the data members._
+  - Indeed, non-const objects calling const member functions cannot break such promise.
+
+## Const member functions can be called on non-const objects
+
+::: {#lst-nonconst-obj-call-const-memfunc lst-cap="A non-const object can call const member functions because it cannot break the promise of constant-ness. Filename=`nonconst_objects_call_const_mem_functions.cpp`"}
+```{.cpp}
+{{< include ./cpp/nonconst_objects_call_const_mem_functions.cpp >}}
+```
+:::
+
+## Const member functions can be called on non-const objects
+
+::: {.my-box}
+A member function that does not (and will not ever) modify the state of the object should be made const, so that it can be called on both const and non-const objects.
+:::
+
+## Wait a minute: What a mess
+
+- How am I supposed to remember all the const-ness thingys.
+- I am not even Tony Stark or Spider Man.
+
+
+:::{.fragment}
+So, I asked Gemini: 
+
+_There are too many things to remember about making function const and making reference const in writing C++ code to deal with const objects. Can you please give me one or two single golden rule so that I remember what I should do?_
+
+Gemini answers me (I shortened it a bit): 
+:::
+
+::: {.fragment}
+::: {.my-box}
+If you are working with **structs** or **classes**, here are the two golden rules that will cover 95% of your needs.
+
+&#9998;&nbsp; [**Rule 1**]{style="color:red"} The "[Read-Only]{style="color:blue"}" Rule (For Functions)
+
+&nbsp;&nbsp;&nbsp;&nbsp; If a function does not change the object's data, mark it `const` at the end.
+
+&nbsp;&nbsp;&nbsp;&nbsp; Think of it as a promise to the compiler.
+
+
+&#9998;&nbsp; [**Rule 2**]{style="color:red"} The "[Efficient Pass]{style="color:blue"}" Rule (For Parameters)
+
+&nbsp;&nbsp;&nbsp;&nbsp; Always pass objects by `const &` (const reference) unless they are tiny or we need to modify its value.
+:::
+:::
+&#10149;&nbsp; Let us combine both rules into one example
+
+## Const objects via pass by const reference
+
+:::{.fragment}
+[**Recap:**]{style="color:magenta"}
+
+- Passing a class type argument by value causes a copy of the class to be made -- which is slow.
+- **Passing by reference avoids making a copy.**
+:::
+
+:::{.fragment}
+[**Note**]{style="color:magenta"}
+
+- Note that modifying the argument's value is not the key point. It is a side effect.
+- If we add `const` qualifier, we cannot modify the arguments' value.
+- Of course, _we wish to modify the argument's value in reasonable cases._
+:::
+
+::: {.fragment}
+[**Another Note**]{style="color:magenta"}
+
+- Instantiating const local variables is one way to create const objects
+- Another common way to get a const object is [_by passing an object to a function by const reference. But, this only holds from the perspective of that function._]{style="color:red"}
+:::
+
+## Const objects via pass by const reference
+
+**Question**&nbsp; What's wrong with the following code?
+
+::: {#lst-const-objects-via-pass-by-const-ref-01 lst-cap="Passing an object by const reference make the object const in the perspective of the function. Filename=`const_objects_via_pass_by_const_ref_01.cpp`"}
+```{.cpp}
+{{< include ./cpp/const_objects_via_pass_by_const_ref_01.cpp >}}
+```
+:::
+
+&#10149;&nbsp; Compile the file and show the code in VSCode.
+
+## Const objects via pass by const reference
+
+Yup, the fix is simple: make `print()` const
+
+::: {#lst-const-objects-via-pass-by-const-ref-02 lst-cap="Fix the above code listing by making `print()` const. Filename=`const_objects_via_pass_by_const_ref_01.cpp`"}
+```{.cpp}
+{{< include ./cpp/const_objects_via_pass_by_const_ref_02.cpp >}}
+```
+:::

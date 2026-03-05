@@ -1,0 +1,609 @@
+---
+title: "More on classes"
+# subtitle: "More on classes"
+author: |
+    Khiem Nguyen 
+    <br>Lecturer in Multiscale Materials
+    <br><khiem.nguyen@glasgow.ac.uk>
+author-meta: "Lecturer in Multiscale Materials"
+format: 
+    revealjs:
+        theme: simple   # other themes: beige, blood, dark, dracula, league, moon, night, serif, simple, sky, solarized
+        mouse-wheel: true
+        highlight-style: github
+        slide-number: true
+        title-slide-style: pandoc
+        echo: true
+        code-overflow: wrap
+        code-line-numbers: true
+        code-block-bg: false          # <-- remove white background in code blocks
+        # code-block-border-left: false # optional: remove left border
+        # highlight-style: monokai      # good for dark images
+        toc: true
+        toc-depth: 1
+        toc-title: Presentation Outline
+        chalkboard: true
+        css: simple.css
+---
+
+# The hidden `this` pointer
+
+In Python, the first parameter of function member, normally named `self`, refer to the "current" object "under consideration".
+
+```{.python}
+class Fraction:
+    def __init__(self, nominator, denominator):
+        self.nominator = nominator
+        self.denomintory = denominator
+```
+
+Now, we learn the hidden pointer `this` which acts like `self`, but it is a pointer.
+
+## The hidden `this` pointer
+
+&#9998;&nbsp; The keyword `this` is a const pointer that holds the address of the current implicit object.
+
+::: {#lst-hidden-pointer-this lst-cap="Keyword `this` is a const pointer that holds the address of the current implicit object. Filename=`hidden_pointer_this.cpp`"}
+```{.cpp}
+{{< include ./cpp/hidden_pointer_this.cpp >}}
+```
+:::
+&#9998;&nbsp; We use `->` to select a member from a pointer to an object.
+
+## How is `this` set?
+
+When we make the function call
+  
+```{.cpp}
+simple.set_value(42);
+```
+the compiler rewrites the expression `simple.set_value(42)` as
+
+```{.cpp}
+// This is hypothetical explanation. 
+// This line of code won't run in the main function.
+Simple::set_value(&simple, 42); 
+```
+
+## `this` always pointers to the object being operated on
+
+&#9998;&nbsp; Just like `self` variable in Python, each member function has a single `this` pointer parameter that points to the implicit object.
+
+```{.cpp}
+int main()
+{
+    Simple a{42};       // this = &a inside the Simple constructor
+    Simple b{42};       // this = &b inside the Simple constructor
+    a.set_value(12);    // this = &a inside member function set_value()
+    b.set_value(21);    // this = &b inside member function set_value()
+
+    return 0;
+}
+```
+
+## Explicitly referencing `this`
+
+- Most of the time, we don't need to explicitly reference the `this` pointer.
+- If we have a parameter with the same name as a data member, we can disambiguate them by using `this`.
+
+    ```{.cpp}
+    struct Something
+    {
+        double data{}; // not using m_ prefix because this is a struct
+
+        void set_data(int data)
+        {
+            this->data = data;  // this->data is the member, 
+                                // data is the local parameter
+        }
+    };
+    ```
+
+## Returning `*this`: function chaining
+
+&#9998;&nbsp; **Why we want to return** `*this` -- object pointed by `this`
+
+- It can sometimes be useful to have a member function return the implicit object as a return value.
+- This allows member functions to be [*chained together*]{style="color:blue"}.
+- This is called [**function chaining**]{style="color:red"} (or [**method chaining**]{style="color:red"}).
+
+&#9998;&nbsp; **Common example we have used all the time**:
+
+- Consider:
+
+    ```{.cpp}
+    std::cout << "Hello " << user_name;
+    ```
+
+- The compiler evaluates the above snippet like this:
+  
+    ```{.cpp}
+    (std::cout << "Hello, ") << user_name;
+    ```
+
+- The expression `(std::cout << "Hello, ")` returns `std::cout`. 
+- Then, `std::cout` is used again in `std::cout << user_name`.
+
+&#10149;&nbsp; We will revisit this in the lesson "overloading operators".
+
+## Returning `*this*`: function chaining
+
+&#10149;&nbsp; Let us consider the example:
+
+::: {#lst-hidden-pointer-this lst-cap="Return `*this` to allow method chaining. Filename=`method_chaining_example.cpp`"}
+```{.cpp}
+{{< include ./cpp/method_chaining_example.cpp >}}
+```
+:::
+
+# Introduction to destructors
+
+&#9998;&nbsp; We covered [**constructors**]{style="color:red"}, which are special member functions that are called when an object of a non-aggregate class type is created.
+
+&#9998;&nbsp; Analogously, classes have another type of special member function that is called automatically when an object of a non-aggregate class type is destroyed: [**destructors**]{style="color:red"}
+
+## The cleanup problem
+
+&#10149;&nbsp; Let us look at this not-so-hypothetical situation
+
+::: {#lst-database-helper lst-cap="The memory leak occurs because we did not clean up the data pointed by the pointer `connection_string`. Filename=`database_helper_without_destructor.cpp`"}
+```{.cpp}
+{{< include ./cpp/database_helper_without_destructor.cpp >}}
+```
+:::
+
+&#10149;&nbsp; Memory leak occured. We did not free up the memory space pointed by `connection_string` -- Look at the code line `connection_string = new std::string(path)`.
+
+## The cleanup problem
+
+&#10149;&nbsp; We can delete the memory pointed by `connection_string` by writing a public function (we cannot access the private member `connection_string` in `main()`)
+
+```{.cpp}
+class DatabaseHelper {
+private:
+    std::string* connection_string;
+
+public:
+    // yada yada as before
+    void cleanup() {
+        delete connection_string;
+    }
+};
+
+int main ()
+{
+    {
+        // Object created inside a block (scope starts)
+        DatabaseHelper db("127.0.0.1:5432/my_database");
+        db.query("SELECT * FROM users;");
+        // Cleanup: Return the memory to the OS before it is destroyed.
+        db.cleanup();
+    } // <--- SCOPE ENDS HERE
+    std::cout << "The object is gone, connection is closed and memory is returned to OS." << std::endl;
+}
+```
+
+## The cleanup problem: A specific example
+
+&#10149;&nbsp; Let us run the following code snippet.
+
+::: {#lst-array-example lst-cap="In this example a Vector object is managed by a dynamically allocated array. Filename=`array_without_destructor.cpp`"}
+```{.cpp}
+{{< include ./cpp/array_without_destructor.cpp >}}
+```
+:::
+
+&#10149;&nbsp; What about we forget the little line of code `vector.cleanup()` because it is written in a much more complex logic \& code?
+
+## Destructors to rescue
+
+&#9998;&nbsp; A class [**Destructor**]{style="color:red"} is called automatically when an object of a non-aggregate class type is destroyed.
+
+&#9998;&nbsp; [**Destructors**]{style="color:red"} are designed to allow a class to do any necessary clean up before an object of the class is destroyed.
+
+&#9998;&nbsp; A class can only have [**a single destructor**]{style="color:blue"}.
+
+### Destructor naming
+
+- The destructor must have the same name as the class, preceded by a tilde (`~`).
+- The destructor cannot take arguments.
+- The destructor has no return type.
+
+```{.cpp}
+Simple(int id) : id { id }      // constructor
+{
+    std::cout << "Constructing Simple " << id << '\n';
+}
+
+~Simple() // here's our destructor
+{
+    std::cout << "Destructing Simple " << di << '\n';
+}
+```
+
+## Destructors: An example
+
+::: {#lst-destructor-example lst-cap="An simple example of destructor. Filename=`destructor_example.cpp`"}
+```{.cpp}
+{{< include ./cpp/destructor_example.cpp >}}
+```
+:::
+
+## An implicit destructor
+
+Again, not a surprising:
+
+- f a non-aggregate class type object has no user-declared destructor, the compiler will generate a destructor, called [**implicit destructor**]{style="color:red"}, with an empty body.
+- It is effectively just a placeholder.
+- If our class does [not need to do any cleanup on destruction]{style="color:blue"}, it is [fine to not define a destructor at all]{style="color:blue"}. The compiler generates an implicit destructor.
+
+## Revisit `Vector` example
+
+&#10149;&nbsp; Here we go and we know what to do with `Vector` defined above
+
+::: {#lst-array-with-destructor lst-cap="Let the destructor do the memory cleanup. Filename=`array_with_destructor.cpp`"}
+```{.cpp}
+template <typename T, int N>    // This is a good opportunity to teach this
+class Vector
+{
+    T* data;    // pointer to the data type T
+public:
+    Vector() {
+        data = new T[N];
+    }
+    ~Vector() {
+        delete data;
+        std::cout << "Array pointed by pointer " << data 
+                  << " is cleaned and returned to OS\n";
+    }
+    // rest the same
+}
+```
+:::
+
+# Class Template
+
+- Just like when we learn _function template_, a similar problem arises in classes too:
+  
+    ```{.cpp}
+    struct Pair {
+        int first {};
+        int second {};
+    };
+    struct Pair {
+        double first {};
+        double second {};
+    };
+    ```
+- In fact, we have used `std::vector<double>` in the assignments.
+
+## Class template: Rationale
+
+&#10149;&nbsp; Look at this scenario:
+
+- We define a `Pair`:
+  
+    ```{.cpp}
+    struct Pair
+    {
+        int first {};
+        int second {};
+    }
+    ```
+
+- Soon we recognize that we need a `Pair` with `double` data and possibly `std::vector<double>` data.
+  
+    ```{.cpp}
+    struct Pair
+    {
+        std::vector<double> first {};
+        std::vector<double> second {};
+    }
+    ```
+
+&#10149;&nbsp; That's enough to see the problem we encountered just like how we did with functions.
+
+&#10149;&nbsp; We need a **template** to define class type (`struct` and `class`) so that [_we can instantiate different classes depending on their use cases._]{style="color:blue"}
+
+
+## Class template
+
+
+::: {.my-box}
+A [**class template**]{style="color:red"} is a template definition for instantiating class types.
+:::
+
+::: {#lst-pair-class-template lst-cap="An example of class template for `Pair` Filename=`pair_class_template.cpp`"}
+```{.cpp}
+{{< include ./cpp/pair_class_template.cpp >}}
+```
+:::
+
+## Class template
+
+Just like with function templates, we
+
+- start a class template definition with a template parameter declaration
+- begin with the `template` keyword
+- specify all of the template types inside angled brackets `<>`
+- use the keyword `typename` for
+- continue to define class type (`struct` and `class`) as usual.
+
+## Class template: Compiler's POV
+&#10149;&nbsp; Same example as above, showing what the compiler actually compiles. We can run this code.
+
+::: {#lst-pair-class-template lst-cap="Compiler's point of view of instantiation of class template: `Pair` example again. Filename=`pair_class_template_compiler_pov.cpp`"}
+```{.cpp}
+{{< include ./cpp/pair_class_template_compiler_pov.cpp >}}
+```
+:::
+
+## Class template and function template: Put together in an example
+&#10149;&nbsp; Let us put class template and function template all toghether for better understanding.
+
+::: {#lst-class-template-and-func-template lst-cap="This example combines both class template and function template. Filename=`class_template_and_func_template.cpp`"}
+```{.cpp}
+{{< include ./cpp/class_template_and_func_template.cpp >}}
+```
+:::
+
+## Class template and function template: Compiler's POV
+
+When the `max()` function is called with a `Pair<int>` in the function call
+```{.cpp}
+max<int>(p1)
+```
+with `p1` is an `Pair<int>` object, the compiler will instantiate the function `int max<int>(Pair<int>)` looking like this
+```{.cpp}
+template <>
+constexpr int max(Pair<int> p)
+{
+    return (p.first < p.second ? p.second : p.first);
+}
+```
+
+## Class templates with multiple template types
+
+&#9998;&nbsp; It is not a surprise that class templates can also have multiple template types.
+
+::: {#lst-class-multiple-template-types lst-cap="An example of a class template with multiple template types. Filename=`class_multiple_template_types.cpp`"}
+```{.cpp}
+{{< include ./cpp/class_multiple_template_types.cpp >}}
+```
+:::
+
+## Standard template library: `std::pair`
+
+&#9998;&nbsp; Working with pairs of data is common, the C++ standard library contains a class template named `std::pair`.
+
+&#9998;&nbsp; `std::pair` is defined identically to the `Pair` class template with multiple template types we've just learned.
+
+# Friend non-member functions
+
+- We've used `std::cout << some_object;` so many times without noticing that `std::cout` is an object, `<<` is an operator. 
+- It works like `object1 + object2` in which 
+  - `object1` is `std::cout`
+  - `object2` is `some_object`
+  - `<<` plays the role of operator `+`.
+- If we write `std::cout << polynomial`, we wish `std::cout` can access private data members of `polynomial` to print meaning outputs to the consol.
+
+&#10149;&nbsp; Here we go: we need the _magic_ of `friend`.
+
+## Friendship is magic
+
+- Inside the body of a class, a [**friend declaration**]{style="color:red"} (using the `friend` keyword) can be used to tell the compiler that some other class or function is now _a friend_.
+- A [**friend**]{style="color:red"} is a class or function (member of other classes or non-member) that has been [**granted full access to private and protected members of another class**]{style="color:blue"} 
+
+::: {.my-box}
+**Key insight**
+
+Friendship is always granted by the class whose members will be accessed (not by the class or function desiring access).
+:::
+
+## Friend non-member functions
+
+A [**friend function**]{style="color:red"} is a function (member or non-member) that can access the private or protected members of a class as though it were a member of that class.
+
+::: {#lst-friend-nonmember-function lst-cap="A non-member function can access data members of a class by being `friend` with that class. Filename=`friend_nonmember_function.cpp`"}
+```{.cpp}
+{{< include ./cpp/friend_nonmember_function.cpp >}}
+```
+:::
+
+## Defining a friend non-member inside a class
+
+&#9998;&nbsp; `friend` non-member functions can also be defined inside a class.
+
+::: {#lst-friend-nonmember-function-inside-class lst-cap="Because `print()` is defined as a `friend`, it is treated as a non-member function. Filename=`friend_nonmember_function_inside_class.cpp`"}
+```{.cpp}
+{{< include ./cpp/friend_nonmember_function_inside_class.cpp >}}
+```
+:::
+
+&#10149;&nbsp; `print()` is **not** a member of `Accumulator`. Since `print()` is defined as a `friend`, it is instead treated as a non-member function (as if it had been defined outside `Accumulator`).
+
+## Friend of multiple classes
+
+&#9998;&nbsp; A function can be a friend of more than one class at the same time.
+
+::: {#lst-multiple-friends lst-cap="Function `print_weather()` is friend of two classes `Temperature` and `Humidity`. Filename=`function_friend_with_multiple_classes.cpp`"}
+```{.cpp}
+{{< include ./cpp/function_friend_with_multiple_classes.cpp >}}
+```
+:::
+
+## Prefer non-friend functions to friend functions
+
+&#9998;&nbsp; We should prefer non-friend functions over friend functions.
+
+&#10149;&nbsp; Look at this example: If we change the variable name `value`, we must change the body of `print()`
+
+```{.cpp}
+{{< include ./cpp/prefer_nonfriend_to_friend_01.cpp >}}
+```
+
+## Prefer non-friend functions to friend functions
+
+&#10149;&nbsp; A better idea to fix this issue is to add getter function `value()`.
+
+```{.cpp}
+{{< include ./cpp/prefer_nonfriend_to_friend_02.cpp >}}
+```
+
+# Friend classes and friend member functions
+
+A [**friend class**] is a class that can access the private and protected members of another class.
+
+
+That's it, just like that.
+
+## Friend classes
+
+&#9998;&nbsp; A [**friend class**]{style="color:red"} is a class that can access the private and protected members of another class.
+
+::: {#lst-class-friend lst-cap="As `Display` is a friend of `Storage`, `Display` members can access the private members of any `Storage` object. Filename=`friend_class_example.cpp`"}
+```{.cpp}
+{{< include ./cpp/friend_class_example.cpp >}}
+```
+:::
+
+## Friend classes: More information
+
+1. **Friendship is not reciprocal**
+   
+   Just because `Display` is a friend of `Storage` does not mean `Storage` is also a friend of `Display` -- However, both can declare the other as friend.
+2. **Class friendship is not transitive**
+   
+   If `A` is a friend of `B` and `B` is a friend `C`, that does not imply `A` is a friend of `C`.
+3. **Friendship is not inherited** 
+   
+   If `A` makes `B` a friend, classes derived from (child of) `B` are not friends of `A`.
+
+## Friend member functions
+
+&#9998;&nbsp; Instead of making an entire class a friend, we can make a single member function a friend. 
+
+As this concept needs quite a lengthy explanation to make sense of the written code, this part is reserved for self-studied purpose.
+
+## Friend member functions: Example -- Part 1
+
+&#10149;&nbsp; Let us start with this simple code: Filename=`friend_member_function_01.cpp`.
+
+```{.cpp}
+#include <iostream>
+
+class Display; // forward declaration for class Display
+
+class Storage
+{
+private:
+	int int_value {};
+	double double_value {};
+public:
+	Storage(int int_value, double double_value)
+		: int_value { int_value }, double_value { double_value }
+	{
+	}
+
+	// Make the Display::display_storage member function a friend of the Storage class
+	friend void Display::display_storage(const Storage& storage); // error: Storage hasn't seen the full definition of class Display
+};
+
+class Display
+{
+private:
+	bool display_int_first {};
+
+public:
+	Display(bool display_int_first)
+		: display_int_first { display_int_first }
+	{
+	}
+
+	void display_storage(const Storage& storage)
+	{
+		if (m_displayIntFirst)
+			std::cout << storage.int_value << ' ' << storage.double_value << '\n';
+		else // display double first
+			std::cout << storage.double_value << ' ' << storage.int_value << '\n';
+	}
+};
+
+int main()
+{
+    Storage storage { 5, 6.7 };
+    Display display { false };
+    display.display_storage(storage);
+
+    return 0;
+}
+```
+
+&#10149;&nbsp; To make a single member function a friend, the compiler has to have seen the full definition for the class of the friend member function (not just a forward declaration). &#10140;&nbsp; So this code won't work.
+
+## Friend member functions: Example -- Part 2
+
+&#10149;&nbsp; We exchange the def positions of `Display` and `Storage`: `friend_member_function_02.cpp`.
+
+```{.cpp}
+#include <iostream>
+
+class Display
+{
+private:
+	bool display_int_first {};
+
+public:
+	Display(bool displayIntFirst)
+		: display_int_first { displayIntFirst }
+	{
+	}
+
+	void display_storage(const Storage& storage) // compile error: compiler doesn't know what a Storage is
+	{
+		if (display_int_first)
+			std::cout << storage.int_value << ' ' << storage.double_value << '\n';
+		else // display double first
+			std::cout << storage.double_value << ' ' << storage.int_value << '\n';
+	}
+};
+
+class Storage
+{
+private:
+	int int_value {};
+	double double_value {};
+public:
+	Storage(int int_value, double double_value)
+		: int_value { int_value }, double_value { double_value }
+	{
+	}
+
+	// Make the Display::display_storage member function a friend of the Storage class
+	friend void Display::display_storage(const Storage& storage); // okay now
+};
+
+int main()
+{
+    Storage storage { 5, 6.7 };
+    Display display { false };
+    display.display_storage(storage);
+
+    return 0;
+}
+```
+&#10149;&nbsp; We now have another problem: Because `Display::display_storage()` uses `Storage` as a reference parameter, and we just moved its definition below the definition of `Display`, the compiler will complain it does not know what a `Storage` is.
+
+## Friend member functions: Example - Part 3
+&#10149;&nbsp; We fix all issues by the following steps:
+
+- add `class Storage` as a forward declaration so the compiler will be OK with a reference to `Storage
+- move the definition of `Display::display_storage()` out of the class, after the full definition of `Storage` class
+
+See the fully compilable code next slide
+
+## Friend member functions: Example - Part 3
+&#10149;&nbsp; Fully working code: `friend_member_function_03.cpp`
+```{.cpp}
+{{< include ./cpp/friend_member_function_03.cpp >}}
+```

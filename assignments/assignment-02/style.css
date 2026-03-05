@@ -1,0 +1,14 @@
+/* Global code font size */
+code.sourceCode {
+  font-size: 0.90em !important;
+}
+
+/* Specific override for C++ if it's too wordy */
+.cell-code.cpp {
+  font-size: 0.9em !important;
+}
+
+/* Specific override for Python */
+.cell-code.python {
+  font-size: 0.90em !important;
+}

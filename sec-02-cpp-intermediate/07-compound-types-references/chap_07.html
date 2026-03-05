@@ -211,6 +211,7 @@
 <li><a href="#/modifying-values-through-a-non-const-lvalue-reference" id="/toc-modifying-values-through-a-non-const-lvalue-reference">Modifying values through a non-const lvalue reference</a></li>
 <li><a href="#/pass-by-lvalue-reference" id="/toc-pass-by-lvalue-reference">Pass by lvalue reference</a></li>
 <li><a href="#/pass-by-const-lvalue-reference" id="/toc-pass-by-const-lvalue-reference">Pass by const lvalue reference</a></li>
+<li><a href="#/return-by-reference" id="/toc-return-by-reference">Return by reference</a></li>
 </ul>
 </nav>
 </section>
@@ -895,7 +896,7 @@ Listing&nbsp;6: Modifying values through non-const lvalue references. Filename=<
 <span id="cb21-6"><a href=""></a>    <span class="at">const</span> <span class="dt">int</span> y <span class="op">{</span> <span class="dv">5</span> <span class="op">};</span>      <span class="co">// const int</span></span>
 <span id="cb21-7"><a href=""></a></span>
 <span id="cb21-8"><a href=""></a>    <span class="co">// invalid: non-const lvalue reference can't bind to a non-modifiable lvalue</span></span>
-<span id="cb21-9"><a href=""></a>    <span class="dt">int</span><span class="op">&amp;</span> invalidRef <span class="op">{</span> y <span class="op">};</span>  </span>
+<span id="cb21-9"><a href=""></a>    <span class="at">const</span> <span class="dt">int</span><span class="op">&amp;</span> invalidRef <span class="op">{</span> y <span class="op">};</span>  </span>
 <span id="cb21-10"><a href=""></a></span>
 <span id="cb21-11"><a href=""></a>    <span class="co">// invalid: non-const lvalue reference can't bind to an rvalue</span></span>
 <span id="cb21-12"><a href=""></a>    <span class="dt">int</span><span class="op">&amp;</span> invalidRef2 <span class="op">{</span> <span class="dv">0</span> <span class="op">};</span> </span>
@@ -1280,6 +1281,141 @@ Listing&nbsp;15: By making a reference parameter const, we can pass non-modifiab
 </div>
 <p>➥&nbsp; Now, we can understand the motivation for allowing const lvalue references to bind to rvalues:</p>
 <p>➜&nbsp; <span style="color:navy">Without that capability, there would be no way to pass literals (or other rvalues) to functions that used pass by reference!</span></p>
+</section></section>
+<section>
+<section id="return-by-reference" class="title-slide slide level1 center">
+<h1>Return by reference</h1>
+<ul>
+<li>When passing an argument by value, a copy of the argument is made into the function parameter.</li>
+<li>We can avoid making an expensive copy by passing by (const) reference (or pass by address) instead.</li>
+<li>A similar situation occurs when returning by value: <span style="color:blue">a copy of the return value is passed back to the caller</span></li>
+</ul>
+</section>
+<section id="return-by-reference-1" class="slide level2">
+<h2>Return by reference</h2>
+<p>✎&nbsp; [<strong>Return by reference</strong>] returns a reference that is bound to the object being returned, which avoids making a copy of the return.</p>
+<p>✎&nbsp; To return by reference, we define the return value of the function to be a reference type</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb32-1"><a href=""></a><span class="co">// returns a reference to an existing std::string (cheap)</span></span>
+<span id="cb32-2"><a href=""></a><span class="bu">std::</span>string<span class="op">&amp;</span> return_by_reference<span class="op">();</span></span>
+<span id="cb32-3"><a href=""></a></span>
+<span id="cb32-4"><a href=""></a><span class="co">// returns a const reference to an existing std::string (cheap)</span></span>
+<span id="cb32-5"><a href=""></a><span class="at">const</span> <span class="bu">std::</span>string<span class="op">&amp;</span> return_by_reference<span class="op">();</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="return-by-reference-an-academic-example" class="slide level2">
+<h2>Return by reference: An academic example</h2>
+<div id="lst-return-by-reference" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-return-by-reference-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;16: An example of return by reference. The variable <code>str_program_name</code> is made static so that it survives throughout the entire program. Filename=<code>return_by_ref_academic.cpp</code>
+</figcaption>
+<div aria-describedby="lst-return-by-reference-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb33-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb33-2"><a href=""></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
+<span id="cb33-3"><a href=""></a></span>
+<span id="cb33-4"><a href=""></a><span class="at">const</span> <span class="bu">std::</span>string<span class="op">&amp;</span> get_program_name<span class="op">()</span> <span class="co">// returns a const reference</span></span>
+<span id="cb33-5"><a href=""></a><span class="op">{</span></span>
+<span id="cb33-6"><a href=""></a>     <span class="co">// has static duration, destroyed at end of program</span></span>
+<span id="cb33-7"><a href=""></a>    <span class="at">static</span> <span class="at">const</span> <span class="bu">std::</span>string str_program_name <span class="op">{</span> <span class="st">"Calculator"</span> <span class="op">};</span></span>
+<span id="cb33-8"><a href=""></a></span>
+<span id="cb33-9"><a href=""></a>    <span class="cf">return</span> str_program_name<span class="op">;</span></span>
+<span id="cb33-10"><a href=""></a><span class="op">}</span></span>
+<span id="cb33-11"><a href=""></a></span>
+<span id="cb33-12"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb33-13"><a href=""></a><span class="op">{</span></span>
+<span id="cb33-14"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"This program is named "</span> <span class="op">&lt;&lt;</span> get_program_name<span class="op">();</span></span>
+<span id="cb33-15"><a href=""></a></span>
+<span id="cb33-16"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb33-17"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="object-being-returned-by-reference-must-exist-after-the-function-returns" class="slide level2">
+<h2>Object being returned by reference must exist after the function returns</h2>
+<p>✎&nbsp; Using return by reference has one major caveat:</p>
+<ul>
+<li>The programmer must be sure that the object being referenced outlives the function returning the reference.</li>
+<li>Otherwise, the reference being returned will be left dangling (referencing an object that has been destroyed)</li>
+</ul>
+</section>
+<section id="object-being-returned-by-reference-must-exist-after-the-function-returns-1" class="slide level2">
+<h2>Object being returned by reference must exist after the function returns</h2>
+<p>➥&nbsp; Look at this example &amp; run it.</p>
+<div id="lst-return-by-reference-lifetime" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-return-by-reference-lifetime-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;17: The object being returned by reference must exist after the function returns. Filename=<code>return_by_ref_lifetime.cpp</code>
+</figcaption>
+<div aria-describedby="lst-return-by-reference-lifetime-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb34-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb34-2"><a href=""></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
+<span id="cb34-3"><a href=""></a></span>
+<span id="cb34-4"><a href=""></a><span class="at">const</span> <span class="bu">std::</span>string<span class="op">&amp;</span> get_program_name<span class="op">()</span></span>
+<span id="cb34-5"><a href=""></a><span class="op">{</span></span>
+<span id="cb34-6"><a href=""></a>    <span class="co">// now a non-static local variable, destroyed when function ends</span></span>
+<span id="cb34-7"><a href=""></a>    <span class="at">const</span> <span class="bu">std::</span>string str_program_name <span class="op">{</span> <span class="st">"Calculator"</span> <span class="op">};</span> </span>
+<span id="cb34-8"><a href=""></a>    <span class="cf">return</span> str_program_name<span class="op">;</span></span>
+<span id="cb34-9"><a href=""></a><span class="op">}</span></span>
+<span id="cb34-10"><a href=""></a></span>
+<span id="cb34-11"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb34-12"><a href=""></a><span class="op">{</span></span>
+<span id="cb34-13"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"This program is named "</span> <span class="op">&lt;&lt;</span> get_program_name<span class="op">();</span> <span class="co">// undefined behavior</span></span>
+<span id="cb34-14"><a href=""></a></span>
+<span id="cb34-15"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb34-16"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="return-by-reference-a-lengthy-but-simple-example" class="slide level2">
+<h2>Return by reference: A lengthy but simple example</h2>
+<div id="lst-return-by-reference-example" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-return-by-reference-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;18: A lengthy but simple example of return by reference Filename=<code>return_by_ref_example.cpp</code>
+</figcaption>
+<div aria-describedby="lst-return-by-reference-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb35-1"><a href=""></a><span class="co">// C++ program to illustrate return by reference</span></span>
+<span id="cb35-2"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb35-3"><a href=""></a></span>
+<span id="cb35-4"><a href=""></a><span class="co">// Function to return as return by reference</span></span>
+<span id="cb35-5"><a href=""></a><span class="dt">int</span><span class="op">&amp;</span> return_by_ref<span class="op">(</span><span class="dt">int</span><span class="op">&amp;</span> x<span class="op">)</span></span>
+<span id="cb35-6"><a href=""></a><span class="op">{</span></span>
+<span id="cb35-7"><a href=""></a></span>
+<span id="cb35-8"><a href=""></a>    <span class="co">// Print the address</span></span>
+<span id="cb35-9"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"x = "</span> <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="st">" The address of x is "</span> <span class="op">&lt;&lt;</span> <span class="op">&amp;</span>x <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb35-10"><a href=""></a></span>
+<span id="cb35-11"><a href=""></a>    <span class="co">// Return reference</span></span>
+<span id="cb35-12"><a href=""></a>    <span class="cf">return</span> x<span class="op">;</span></span>
+<span id="cb35-13"><a href=""></a><span class="op">}</span></span>
+<span id="cb35-14"><a href=""></a></span>
+<span id="cb35-15"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb35-16"><a href=""></a><span class="op">{</span></span>
+<span id="cb35-17"><a href=""></a>    <span class="dt">int</span> a <span class="op">=</span> <span class="dv">20</span><span class="op">;</span></span>
+<span id="cb35-18"><a href=""></a>    <span class="dt">int</span><span class="op">&amp;</span> b <span class="op">=</span> return_by_ref<span class="op">(</span>a<span class="op">);</span></span>
+<span id="cb35-19"><a href=""></a></span>
+<span id="cb35-20"><a href=""></a>    <span class="co">// Print a and its address</span></span>
+<span id="cb35-21"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"a = "</span> <span class="op">&lt;&lt;</span> a <span class="op">&lt;&lt;</span> <span class="st">" The address of a is "</span> <span class="op">&lt;&lt;</span> <span class="op">&amp;</span>a <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb35-22"><a href=""></a>    <span class="co">// Print b and its address</span></span>
+<span id="cb35-23"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"b = "</span> <span class="op">&lt;&lt;</span> b <span class="op">&lt;&lt;</span> <span class="st">" The address of b is "</span> <span class="op">&lt;&lt;</span> <span class="op">&amp;</span>b <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb35-24"><a href=""></a></span>
+<span id="cb35-25"><a href=""></a>    <span class="co">// We can also change the value of</span></span>
+<span id="cb35-26"><a href=""></a>    <span class="co">// 'a' by using the address returned</span></span>
+<span id="cb35-27"><a href=""></a>    <span class="co">// by return_by_ref function</span></span>
+<span id="cb35-28"><a href=""></a></span>
+<span id="cb35-29"><a href=""></a>    <span class="co">// Since the function returns an alias</span></span>
+<span id="cb35-30"><a href=""></a>    <span class="co">// of x, which is itself an alias of a,</span></span>
+<span id="cb35-31"><a href=""></a>    <span class="co">// we can update the value of a</span></span>
+<span id="cb35-32"><a href=""></a>    return_by_ref<span class="op">(</span>a<span class="op">)</span> <span class="op">=</span> <span class="dv">13</span><span class="op">;</span></span>
+<span id="cb35-33"><a href=""></a></span>
+<span id="cb35-34"><a href=""></a>    <span class="co">// The above expression assigns the</span></span>
+<span id="cb35-35"><a href=""></a>    <span class="co">// value to the returned alias as 3.</span></span>
+<span id="cb35-36"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"a = "</span> <span class="op">&lt;&lt;</span> a <span class="op">&lt;&lt;</span> <span class="st">" The address of a is "</span> <span class="op">&lt;&lt;</span> <span class="op">&amp;</span>a <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb35-37"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb35-38"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
 
 </section></section>
     </div>

@@ -1,0 +1,212 @@
+/* 1. Base Styles & Typography */
+.reveal {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #333;
+    /* font-size: larger; */
+    font-size: 22px;
+    background-color: #fdfdfd;
+}
+
+.my-box {
+  /* This controls the internal spacing */
+  /* padding: 0.5em 0.5em;  */
+  padding: 0.5em;
+  /* This controls the space above/below the whole box in your document */
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+  
+  border: 1.5px solid #df2020;
+  border-radius: 10px;
+  background-color: #dbd3d3;
+}
+
+/* 1. The Output Block (standard print output) */
+.cell-output-display code, .cell-output-stdout {
+    background-color: #f8f9fa; /* Light grey background */
+    border-left: 4px solid #045214; /* Blue accent line */
+    padding: 1em;
+    font-family: 'Ubuntu Mono', monospace;
+    font-size: 0.9em;
+    color: #000000 !important;
+    border-radius: 4px;
+}
+
+
+/* 2. The Error Block (if you use error: true) */
+.cell-output-stderr, .cell-output-error {
+    background-color: #fff5f5;
+    border-left: 4px solid #ff4136; /* Red accent for errors */
+    color: #d0021b;
+    padding: 1em;
+}
+
+
+/* Target the container for printed text output */
+.cell-output-stdout pre, 
+.cell-output-stdout code,
+.cell-output-display pre,
+.cell-output-display code {
+    color: #000000 !important;   /* Pure Black */
+    opacity: 1 !important;        /* Remove any transparency */
+    -webkit-text-fill-color: #000000 !important; /* Extra override for some browsers */
+}
+
+/* Optional: If the background is also too grey/shady, make it white */
+.cell-output {
+    background-color: #ffffff !important;
+    border: none !important;
+}
+
+
+/* 2. Enhanced Header Styling for Topics */
+.reveal h1,
+.reveal h2 {
+    color: #004d11d0;
+    border-bottom: 3px solid #004d11d0;
+    margin-top: 0px;    /* Reduces space above */
+    /* Reduces space below */
+    /* margin-bottom: 10px;  */
+    /* Lighter blue accent */
+    padding-bottom: 8px;
+}
+.reveal h3 {
+    color: #00457a;
+    /* Standard C++ Logo Blue */
+    text-transform: none;
+    font-weight: 300;
+}
+
+
+
+/* 3. Code Block Customization */
+.reveal pre {
+    background: #d7e4dd10 !important;
+    /* VS Code background */
+    border-radius: 6px;
+    border: 0px solid #ffffff;
+    box-shadow: 0 10px 30px rgba(87, 79, 79, 0.5);
+    width: 100%;
+}
+
+.reveal pre code {
+    color: #d4d4d4;
+    /* Default VS Code text color */
+    line-height: 1.6;
+    font-family: 'Fira Code', 'Cascadia Code', monospace;
+    padding: 1.5em;
+    font-size: 1.7em !important;
+}
+
+/* VS Code Syntax Highlighting Overrides */
+.hljs-keyword {
+    color: #569cd6 !important;
+}
+
+/* int, void, return, class */
+.hljs-type {
+    color: #4ec9b0 !important;
+}
+
+/* Custom types, std::string */
+.hljs-string {
+    color: #ce9178 !important;
+}
+
+/* "strings" */
+.hljs-number {
+    color: #b5cea8 !important;
+}
+
+/* 42, 0.5 */
+.hljs-function {
+    color: #dcdcaa !important;
+}
+
+/* Function names */
+.hljs-comment {
+    color: #6a9955 !important;
+}
+
+/* // comments */
+.hljs-built_in {
+    color: #4ec9b0 !important;
+}
+
+/* std::cout, printf */
+.hljs-preprocess {
+    color: #c586c0 !important;
+}
+
+/* #include, #define */
+.hljs-operator {
+    color: #d4d4d4 !important;
+}
+
+/* Line numbers styling */
+.reveal .hljs-ln-numbers {
+    color: #858585 !important;
+    padding-right: 15px !important;
+    border-right: 1px solid #404040;
+}
+
+.reveal .hljs-ln-code {
+    padding-left: 15px !important;
+}
+
+/* Highlighted lines (using data-line-numbers) */
+.reveal .has-highlights tr.current-line {
+    background-color: rgba(38, 79, 120, 0.4) !important;
+}
+
+
+/* Increase font size of code block captions */
+div.listing-caption {
+    font-size: 1.2em !important;
+    /* Adjust this to 1.2em or 1.5em if needed */
+    font-weight: 600 !important;
+    /* Makes it slightly bolder */
+    color: #333333;
+    /* Dark color for better contrast on 'sky' theme */
+    margin-bottom: 0.5em !important;
+    margin-top: 0.5em !important;
+    text-align: right;
+    /* Usually looks better aligned with the code */
+}
+
+/* If you are using the 'filename' attribute, style that too */
+.code-with-filename .code-with-filename-file {
+    font-size: 1.0em !important;
+    padding: 5px 15px !important;
+}
+
+/* 4. Highlight "Key Concepts" or Annotations */
+.reveal .important {
+    color: #d32f2f;
+    font-weight: bold;
+}
+
+.reveal .columns {
+    display: flex;
+    align-items: center;
+    /* Centers content vertically */
+    justify-content: center;
+}
+
+/* 5. Memory/Pointer Visualization helper */
+.memory-table {
+    border-collapse: collapse;
+    margin: 20px auto;
+}
+
+.memory-table td {
+    border: 2px solid #333;
+    padding: 10px 20px;
+    background: #fff;
+    font-family: monospace;
+}
+
+.memory-table .address {
+    background: #eee;
+    font-size: 0.7em;
+    color: #666;
+}

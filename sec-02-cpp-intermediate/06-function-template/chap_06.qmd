@@ -617,7 +617,65 @@ While type template parameters are the most common type of template parameter us
 
 ## Non-type template parameters
 
-A [**non-type template parameter**]{style="color:red"} is a template parameter with a fixed type that serves as a placeholder for a `constexpr value` passed in as a template argument.
+A [**non-type template parameter**]{style="color:red"} is a template parameter with [a fixed type]{style="color:blue"} that serves as a placeholder for a `constexpr value` passed in as a template argument.
 
 **Recall**&nbsp; `constexpr` is a keyword introduced in C++11 that tells the compiler a value or function can be evaluated at compile-time.
+
+A non-type template parameter can be any of the following types:
+
+- An integral type 
+- An enumeration type
+- `std::nullptr_t`
+- A floating point type (since C++20)
+- A pointer or reference to an object
+- A pointer or reference to a function
+
+## Non-type template parameters: An example
+
+&#10149;&nbsp; Let us combine both type and non-type template parameters in this example:
+
+::: {#lst-nontype-template-parameter lst-cap="An example of non-type template parameters Filename=`nontype_template_parameters.cpp`"}
+```{ .cpp}
+{{< include ./cpp/nontype_template_parameters.cpp >}}
+```
+:::
+
+## Non-type template parameters: Compiler's POV
+
+- When the compiler sees the call `scale_sensor_reading<5>(raw_input)`, it will instantiate a function that looks something like this
+
+    ```{.cpp}
+    template<>
+    int scale_sensor_reading<5>(int raw_value)
+    {
+        return raw_value * 5;
+    }
+    ```
+
+- Similarly, by seeing `scale_sensor_reading<2>(raw_input)`, the compiler will instantiate a function looking like
+
+    ```{.cpp}
+    template<>
+    int scale_sensor_reading<2>(int raw_value)
+    {
+        return raw_value * 2;
+    }
+    ```
+  
+
+## Non-type template parameters: Compiler's POV
+
+&#10149;&nbsp; Let us put the instantiations of the function template into the code, compile and run it.
+
+::: {#lst-nontype-template-parameter-pov lst-cap="The compiler will instantiate two functions to execute two versions of `scale_sensor_reading()`. Filename=`nontype_template_parameters_pov.cpp`"}
+```{ .cpp}
+{{< include ./cpp/nontype_template_parameters_pov.cpp >}}
+```
+:::
+
+
+
+
+
+
 

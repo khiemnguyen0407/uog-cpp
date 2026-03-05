@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="chap_10_files/libs/clipboard/clipboard.min.js"></script>
+<script src="chap_10_files/libs/quarto-html/tabby.min.js"></script>
+<script src="chap_10_files/libs/quarto-html/popper.min.js"></script>
+<script src="chap_10_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="chap_10_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="chap_10_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="chap_10_files/libs/quarto-html/quarto-syntax-highlighting-065a5179aebd64318d7ea99d77b64a9e.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.25">
+
+  <meta name="author" content="Lecturer in Multiscale Materials">
+  <title>Object-oriented programming</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="chap_10_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="chap_10_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #24292e;  }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #24292e; } /* Normal */
+    code span.al { color: #ff5555; font-weight: bold; } /* Alert */
+    code span.an { color: #6a737d; } /* Annotation */
+    code span.at { color: #d73a49; } /* Attribute */
+    code span.bn { color: #005cc5; } /* BaseN */
+    code span.bu { color: #d73a49; } /* BuiltIn */
+    code span.cf { color: #d73a49; } /* ControlFlow */
+    code span.ch { color: #032f62; } /* Char */
+    code span.cn { color: #005cc5; } /* Constant */
+    code span.co { color: #6a737d; } /* Comment */
+    code span.cv { color: #6a737d; } /* CommentVar */
+    code span.do { color: #6a737d; } /* Documentation */
+    code span.dt { color: #d73a49; } /* DataType */
+    code span.dv { color: #005cc5; } /* DecVal */
+    code span.er { color: #ff5555; text-decoration: underline; } /* Error */
+    code span.ex { color: #d73a49; font-weight: bold; } /* Extension */
+    code span.fl { color: #005cc5; } /* Float */
+    code span.fu { color: #6f42c1; } /* Function */
+    code span.im { color: #032f62; } /* Import */
+    code span.in { color: #6a737d; } /* Information */
+    code span.kw { color: #d73a49; } /* Keyword */
+    code span.op { color: #24292e; } /* Operator */
+    code span.ot { color: #6f42c1; } /* Other */
+    code span.pp { color: #d73a49; } /* Preprocessor */
+    code span.re { color: #6a737d; } /* RegionMarker */
+    code span.sc { color: #005cc5; } /* SpecialChar */
+    code span.ss { color: #032f62; } /* SpecialString */
+    code span.st { color: #032f62; } /* String */
+    code span.va { color: #e36209; } /* Variable */
+    code span.vs { color: #032f62; } /* VerbatimString */
+    code span.wa { color: #ff5555; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="chap_10_files/libs/revealjs/dist/theme/quarto-cd0dc4f2d43adb95807902f0fa75376a.css">
+  <link rel="stylesheet" href="simple.css">
+  <link href="chap_10_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="chap_10_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="chap_10_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="chap_10_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="chap_10_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="chap_10_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="center">
+  <h1 class="title">Object-oriented programming</h1>
+  <p class="author"></p><p>Khiem Nguyen <br>Lecturer in Multiscale Materials <br><a href="mailto:khiem.nguyen@glasgow.ac.uk" class="email">khiem.nguyen@glasgow.ac.uk</a></p><p></p>
+</section><section id="TOC">
+<nav role="doc-toc"> 
+<h2 id="toc-title">Presentation Outline</h2>
+<ul>
+<li><a href="#/why-object-oriented-programming" id="/toc-why-object-oriented-programming">Why Object-Oriented Programming</a></li>
+<li><a href="#/struct-vs-class" id="/toc-struct-vs-class"><code>struct</code> vs <code>class</code></a></li>
+<li><a href="#/defining-a-class-syntax" id="/toc-defining-a-class-syntax">Defining a class: Syntax</a></li>
+<li><a href="#/member-functions-and-implicit-objects" id="/toc-member-functions-and-implicit-objects">Member functions and implicit objects</a></li>
+<li><a href="#/const-class-objects-and-const-member-functions" id="/toc-const-class-objects-and-const-member-functions">Const class objects and const member functions</a></li>
+</ul>
+</nav>
+</section>
+<section>
+<section id="why-object-oriented-programming" class="title-slide slide level1 center">
+<h1>Why Object-Oriented Programming</h1>
+
+</section>
+<section id="procedure-programming-vs-object-oriented-programming" class="slide level2">
+<h2>Procedure programming vs Object-oriented programming</h2>
+<ul>
+<li><p>Up to now, we’ve been doing a type of programming called <span style="color:red"><strong>procedure programming</strong></span>. In procedure programming, the functions and the data those functions operate on are separate entities.</p></li>
+<li><p>In <span style="color:red"><strong>object-oriented programming</strong></span> (OOP), the focus is on creating program-defined data types that contain both properties and a set of well-defined behaviors.</p></li>
+</ul>
+<p>We won’t discuss why we need Object-Oriented Programming (OOP) in this course:</p>
+<ul>
+<li>We have all learned the importance of OOP in “Introductory Programming 2” and other programming courses.</li>
+<li><span style="color:navy">Since the 1990s, OOP has been the industry standard.</span></li>
+</ul>
+<p><u>Instead, I walk you through some job posts in software engineer industry.</u></p>
+</section>
+<section id="the-dominance-of-oop" class="slide level2">
+<h2>The dominance of OOP</h2>
+<ul>
+<li><span style="color:navy"><strong>Why it’s popular</strong></span>: It mimics how we perceive the world – objects with properties and behaviors.</li>
+<li><span style="color:navy"><strong>Scalable</strong></span>: OOP makes it possible to manage large, complex systems where we need to “encapsulate” data to prevent bugs.</li>
+<li><span style="color:navy"><strong>The industry “lungs”</strong></span>: If you look at job postings or legacy codebases, <span style="color:navy">OOP is everywhere.</span></li>
+</ul>
+
+<img data-src="./figures/mathwork-job-post.png" class="r-stretch"><p><em>You don’t need to know MATLAB to find a job in Mathworks</em>. <span style="color:red">Instead, you need experience in C++ and OOP.</span></p>
+</section>
+<section id="c-is-highly-desired-in-industry" class="slide level2">
+<h2>C++ is highly desired in industry</h2>
+<p>I asked Gemini about software engineering roles at MathWorks (developing MATLAB you use all the time.) <img data-src="./figures/gemini-reply-regarding-jobs-at-mathworks.png"></p>
+</section>
+<section id="c-is-highly-desired-in-industry-software-architecture-at-airbus" class="slide level2">
+<h2>C++ is highly desired in industry: Software architecture at Airbus</h2>
+
+<img data-src="./figures/airbus-software-architect.png" class="r-stretch"></section>
+<section id="git-control-and-oop-are-essential-skills-in-industry" class="slide level2">
+<h2>Git Control and OOP are essential skills in industry</h2>
+<p>Note the requirement of experience with Java. For your record, <span style="color:red">Java is a pure OOP programming language</span>.</p>
+
+<img data-src="./figures/airbus-software-developer.png" class="r-stretch"></section>
+<section id="why-oop-4-key-pillars-of-oop" class="slide level2">
+<h2>Why OOP: <span class="math inline">\(4\)</span> key pillars of OOP</h2>
+<div class="my-box">
+<p><em>I hope this is more than enough to convince you why we need to learn Object-Oriented Programming, especially in C++.</em></p>
+</div>
+<div class="fragment">
+<p>✎&nbsp; But that’s a very lazy explanation.</p>
+</div>
+<div class="fragment">
+<p>✎&nbsp; There are four <strong>key pillars in Object-Oriented Programming</strong></p>
+<ol type="1">
+<li><strong>Encapsulation</strong></li>
+<li><strong>Abstraction</strong></li>
+<li><strong>Inheritance</strong></li>
+<li><strong>Polymorphism</strong></li>
+</ol>
+<p>We shall quickly go through each of them, explain what they are and why they are.</p>
+</div>
+</section>
+<section id="encapsulation" class="slide level2">
+<h2>Encapsulation</h2>
+<p>✎&nbsp; <span style="color:red"><strong>Encapsulation</strong></span> is the practice of bundling data (variables) and methods (functions) that operate on that data into a single unit called <strong>class</strong>.</p>
+<p>✎&nbsp; It involves “hiding” the internal state of the object from the outside world to prevent accidental interference.</p>
+<div class="fragment">
+<ul>
+<li><p><strong>Example 1</strong>&nbsp; Remember what you learned in Python:</p>
+<ul>
+<li><code>ndarray</code> object in NumPy library</li>
+<li><code>Figure</code> object is returned when you plot <code>pyplot.plot(x, y)</code></li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><p><strong>Example 2</strong>&nbsp; Think of this code snippet <code>a = np.array([1, 'two', 3])</code>:</p>
+<ul>
+<li>The interpreter tells you the error and <em>exactly what kind of error you made</em>.</li>
+<li>This is because there is <em>a ton of checking behind the scene</em>, and <em>the user does not need to know.</em></li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><p><strong>Example 3</strong>&nbsp; Think of registering a student at UoG (python): <code>Student(name="Bull Shit", age=7)</code></p>
+<ul>
+<li>There must be some behind-the-scene checking, or otherwise mistakes can easily slip through.</li>
+<li>Inform the user that something is wrong.</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="encapsulation-1" class="slide level2">
+<h2>Encapsulation</h2>
+<p>In C++, we use <span style="color:red"><strong>access specifiers</strong></span> to achieve this:</p>
+<p>✎&nbsp; <code>private</code>: Members are only accessible within the class.</p>
+<p>✎&nbsp; <code>public</code>: Members are accessible from outside the class.</p>
+<div class="fragment">
+<ul>
+<li><strong>Example</strong>&nbsp; Think of a <strong>Bank Account</strong>
+<ul>
+<li>You should not be able to change the <code>balance</code> variable directly from outside – otherwise, the bank is F___ed up.</li>
+<li>You should have to use <code>deposit()</code> or <code>withdraw()</code> method that checks if the transaction is valid.</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="encapsulation-2" class="slide level2">
+<h2>Encapsulation</h2>
+<p>Encapsulation enhances <strong>security</strong>.</p>
+
+<img data-src="./figures/oop.jpg" class="r-stretch"></section>
+<section id="abstraction" class="slide level2">
+<h2>Abstraction</h2>
+<p>✎&nbsp; <span style="color:red"><strong>Abstraction</strong></span> is about <strong>simplifying</strong> things.</p>
+<p>✎&nbsp; It means showing only the essential features of an object and hiding the complex background details.</p>
+
+<img data-src="./figures/oop-abstraction.jpg" class="r-stretch"></section>
+<section id="abstraction-1" class="slide level2">
+<h2>Abstraction</h2>
+<p><span style="color:red"><strong>Why use abstraction</strong></span></p>
+<ul>
+<li><strong>Reduces complexity</strong>: We only deal with a high-level interface (from a user point of view)</li>
+<li><strong>Easy Maintaince</strong>: We can change the internal “engine” of our code (from a developer point of view) without changing how other people use it.</li>
+</ul>
+<div class="fragment">
+<ul>
+<li><strong>Example</strong>&nbsp; Think of a <strong>Coffee Machine</strong>:
+<ul>
+<li>only need to know which button to press</li>
+<li>no need to understand the internal water pressure, size of grind bean, etc.</li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><strong>Example</strong>&nbsp; We want to build a graphics app:
+<ul>
+<li><p>We want to “<em>draw</em>” different shapes, but the ways we draw a Circle and a Square are different.</p></li>
+<li><p>We create an <span style="color:red"><strong>Abstract Class</strong></span> called <strong>Shape</strong>. It acts as a blueprint that says: “Anything that is a shape must have a <code>draw()</code> method,</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href=""></a><span class="kw">class</span> Shape <span class="op">{</span></span>
+<span id="cb1-2"><a href=""></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb1-3"><a href=""></a>    <span class="co">// Pure virtual function makes this an Abstract Class</span></span>
+<span id="cb1-4"><a href=""></a>    <span class="kw">virtual</span> <span class="dt">void</span> draw<span class="op">()</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> </span>
+<span id="cb1-5"><a href=""></a><span class="op">};</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="encapsulation-vs-abstraction" class="slide level2">
+<h2>Encapsulation vs Abstraction</h2>
+<ul>
+<li><span style="color:red"><strong>Encapsulation</strong></span> is about <span style="color:blue"><strong>protection and data integrity</strong></span>.
+<ul>
+<li><strong>Example</strong>&nbsp; Check if a <code>battery_level</code> is negative</li>
+<li><strong>Example</strong>&nbsp; Check if a <code>withdrawl_amount</code> exeeds a balance</li>
+</ul></li>
+<li><span style="color:red"><strong>Abstraction</strong></span> is about <span style="color:blue"><strong>interface and simplification</strong></span>.
+<ul>
+<li><strong>Example</strong>&nbsp; Allow user to simply call <code>set_battery(50)</code> without having to see the <code>if (value &lt; 0)</code> logic hidden inside.</li>
+</ul></li>
+</ul>
+<p><strong>My own opinion</strong>:</p>
+<ul>
+<li>I try my best to find examples to illustrate these two points.</li>
+<li>Sometimes, I can get confused by myself.</li>
+<li>Some examples can sit at the intersection of both encapsulation &amp; abstraction.</li>
+<li>Don’t worry if you get confused after this 🤨</li>
+</ul>
+</section>
+<section id="inheritance" class="slide level2">
+<h2>Inheritance</h2>
+<p>✎&nbsp; <span style="color:red"><strong>Inheritance</strong></span> allows us to create a new class (<strong>Derived</strong> class or <strong>Child</strong> class) based on existing class (<strong>Base</strong> class or <strong>Parent</strong> class).</p>
+<p>✎&nbsp; The child class “<em>inherits</em>” the attributes and behaviors of the parent, which helps us <span style="color:red"><em>avoid writing the same code over and over again</em></span> ➜ <span style="color:blue">Don’t repeat yourself</span>.</p>
+<div class="fragment">
+<ul>
+<li><strong>Example</strong>&nbsp; An circle is an ellipse.
+<ul>
+<li>A circle is an ellipse with the same length of two axes.</li>
+<li>If one can draw an ellipse, there is no point to copy/paste the code to draw a circle.</li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li><strong>Example</strong>&nbsp; Lecturer, Member of Teaching Office, Technician, Demonstrators are all Employee with names, age, salary, etc.
+<ul>
+<li>combine all common features and behaviors for all kinds of Employee</li>
+<li>bundle these features and behaviors into Employee</li>
+<li>no need to repeat code for each kind of Employee</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="polymorphism" class="slide level2">
+<h2>Polymorphism</h2>
+<p><span style="color:red"><strong>Polymorphism</strong></span> allows an object to be treated as an instance of its parent class, but still behave according to its own specific type.</p>
+<div class="fragment">
+<ul>
+<li><strong>Example</strong>&nbsp; We can have a list of different shapes and tell them all to <code>draw()</code>, and they will each “know” how to draw themselves correctly.</li>
+<li>We shall understand this pillar better when we reach this point.</li>
+</ul>
+</div>
+</section></section>
+<section>
+<section id="struct-vs-class" class="title-slide slide level1 center">
+<h1><code>struct</code> vs <code>class</code></h1>
+<p><strong>Importance Note</strong></p>
+<div class="my-box">
+<p><span style="color:red"><em>In C++, the difference between a <code>struct</code> and a <code>class</code> is surprising small from a technical standpoint</em></span>, but quite significant from a <strong>stylistic</strong> and <strong>architecture</strong> standpoint.</p>
+</div>
+<ul>
+<li>Therefore, any example that is implemented using a struct could be implemented using a class, or vice-versa.</li>
+<li>However, from a practical standpoint, we use <code>struct</code> and <code>class</code> differently.</li>
+</ul>
+</section>
+<section id="struct-vs-class-technical-difference-defaults" class="slide level2">
+<h2><code>struct</code> vs <code>class</code>: Technical difference (defaults)</h2>
+<p>In C++, a <code>struct</code> and a <code>class</code> are almost identical, except for the default access level of their members and inheritance. That’s it!</p>
+<p><strong>Default Access Control</strong></p>
+<ul>
+<li><code>struct</code>: Members (variables and functions) are <code>public</code> by default</li>
+<li><code>class</code> : Members are <code>private</code> by default</li>
+</ul>
+<p><strong>Default Inheritance</strong></p>
+<ul>
+<li><code>struct</code>: Inherits <code>publicly</code> by default</li>
+<li><code>class</code> : Inherits <code>privately</code> by default</li>
+</ul>
+<p>We shall study these concepts soon.</p>
+</section>
+<section id="struct-vs-class-google-c-style" class="slide level2">
+<h2><code>struct</code> vs <code>class</code>: Google C++ style</h2>
+<p>Technically, you can use <code>struct</code> and <code>class</code> interchangably. Practically, we use them with different purposes. Google suggests</p>
+
+<img data-src="./figures/google-struct-vs-class.png" class="r-stretch"></section>
+<section id="struct-vs-class-google-c-style-1" class="slide level2">
+<h2><code>struct</code> vs <code>class</code>: Google C++ style</h2>
+<p><strong>Key points</strong></p>
+<ul>
+<li>Use a <code>struct</code> only for passive objects that carry data; everything else is a <code>class</code>.</li>
+<li>The <code>struct</code> and <code>class</code> keywords behave almost identically in C++. We add our own semantic meanings to each keyword, so you should use the appropriate keyword for the data-type you’re defining.</li>
+</ul>
+</section></section>
+<section>
+<section id="defining-a-class-syntax" class="title-slide slide level1 center">
+<h1>Defining a class: Syntax</h1>
+
+</section>
+<section id="defining-a-class" class="slide level2">
+<h2>Defining a class</h2>
+<ul>
+<li>A class is a <strong>program-defined</strong> data type. Sometimes, you hear <strong>user-defined</strong> data type.</li>
+<li>Classes are defined similarly to structs: Classes are defined using the <code>class</code> keyword, structs using the <code>struct</code> keyword.</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href=""></a><span class="kw">class</span> Employee</span>
+<span id="cb2-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb2-3"><a href=""></a>    <span class="dt">int</span> <span class="va">m_id</span> <span class="op">{};</span>            <span class="co">// m_ stands for member, m_id is the member variable</span></span>
+<span id="cb2-4"><a href=""></a>    <span class="dt">int</span> <span class="va">m_age</span> <span class="op">{};</span></span>
+<span id="cb2-5"><a href=""></a>    <span class="dt">double</span> <span class="va">m_wage</span> <span class="op">{};</span>   </span>
+<span id="cb2-6"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Naming convention</strong></p>
+<p>✎&nbsp; The prefix <code>m_</code> is used to signify the member variables of a class.</p>
+<p>✎&nbsp; We discuss why member variables of a class are often prefixed with an <code>m_</code> in upcoming lesson.</p>
+</section>
+<section id="naming-convention-google-style" class="slide level2">
+<h2>Naming convention: Google style</h2>
+
+<img data-src="./figures/google-class-data-members-naming-convention.png" class="r-stretch"></section>
+<section id="naming-convention-which-to-choose" class="slide level2">
+<h2>Naming convention: Which to choose</h2>
+<ul>
+<li><p>Several companies and wide industry have adopted the prefix <code>m_</code> naming convention.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href=""></a><span class="kw">class</span> Employee</span>
+<span id="cb3-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb3-3"><a href=""></a>    <span class="dt">int</span> <span class="va">m_id</span> <span class="op">{};</span></span>
+<span id="cb3-4"><a href=""></a>    <span class="dt">int</span> <span class="va">m_age</span> <span class="op">{};</span></span>
+<span id="cb3-5"><a href=""></a>    <span class="dt">double</span> <span class="va">m_wage</span> <span class="op">{};</span>   </span>
+<span id="cb3-6"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>Google suggests trailing underscore, such as <code>id_</code>, <code>age_</code>, and <code>wage_</code></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb4-1"><a href=""></a><span class="kw">class</span> Employee</span>
+<span id="cb4-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb4-3"><a href=""></a>    <span class="dt">int</span> <span class="va">id_</span> <span class="op">{};</span></span>
+<span id="cb4-4"><a href=""></a>    <span class="dt">int</span> <span class="va">age_</span> <span class="op">{};</span></span>
+<span id="cb4-5"><a href=""></a>    <span class="dt">double</span> <span class="va">wage_</span> <span class="op">{}</span></span>
+<span id="cb4-6"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+</ul>
+<p>✎&nbsp; When we use the prefix <code>m_</code> convention, the intelliSense will suggest variable names when we type <code>m_</code>.</p>
+</section>
+<section id="naming-convention-which-to-choose-and-but" class="slide level2">
+<h2>Naming convention: Which to choose … and But</h2>
+<ul>
+<li>The prefix <code>m_</code> or the suffix <code>_</code> help us to avoid <strong>name shadowing</strong> in <strong>class constructors</strong>.</li>
+<li>When you learn more about modern C++ (in our lectures actually), you soon recognize: we don’t even need the above naming conventions.</li>
+</ul>
+<p>Conclusion:</p>
+<ul>
+<li>I would prefer not to use the prefix naming convention <code>m_</code> in our lectures.</li>
+<li>Saying that, sometimes I mix the convention <code>m_</code> in on purpose (or maybe by forgetting).</li>
+</ul>
+</section>
+<section id="a-class-can-implement-a-struct" class="slide level2">
+<h2>A <code>class</code> can implement a <code>struct</code></h2>
+<p>By declaring <code>public</code> member variables, a <code>class</code> behaves just like a <code>struct</code>.</p>
+<div id="lst-class-like-struct" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-class-like-struct-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;1: A <code>class</code> behaves like a <code>struct</code> by declaring member variables <code>public</code>. Filename=<code>class_just_like_struct.cpp</code>
+</figcaption>
+<div aria-describedby="lst-class-like-struct-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb5-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb5-2"><a href=""></a></span>
+<span id="cb5-3"><a href=""></a><span class="kw">class</span> Date       <span class="co">// we changed struct to class</span></span>
+<span id="cb5-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb5-5"><a href=""></a><span class="kw">public</span><span class="op">:</span>          <span class="co">// and added this line, which is called an access specifier</span></span>
+<span id="cb5-6"><a href=""></a>    <span class="dt">int</span> <span class="va">m_day</span><span class="op">{};</span>        <span class="co">// we can add "m_" prefixes to each of the member </span></span>
+<span id="cb5-7"><a href=""></a>    <span class="dt">int</span> <span class="va">m_month</span><span class="op">{};</span>      <span class="co">// names to avoid shadowing. But this is not really necessary</span></span>
+<span id="cb5-8"><a href=""></a>    <span class="dt">int</span> <span class="va">m_year</span><span class="op">{};</span>       <span class="co">// in modern C++.</span></span>
+<span id="cb5-9"><a href=""></a><span class="op">};</span></span>
+<span id="cb5-10"><a href=""></a></span>
+<span id="cb5-11"><a href=""></a><span class="dt">void</span> print_date<span class="op">(</span><span class="at">const</span> Date<span class="op">&amp;</span> date<span class="op">)</span></span>
+<span id="cb5-12"><a href=""></a><span class="op">{</span></span>
+<span id="cb5-13"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> date<span class="op">.</span><span class="va">m_day</span> <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> date<span class="op">.</span><span class="va">m_month</span> <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> date<span class="op">.</span><span class="va">m_year</span><span class="op">;</span></span>
+<span id="cb5-14"><a href=""></a><span class="op">}</span></span>
+<span id="cb5-15"><a href=""></a></span>
+<span id="cb5-16"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb5-17"><a href=""></a><span class="op">{</span></span>
+<span id="cb5-18"><a href=""></a>    Date date<span class="op">{</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">21</span> <span class="op">};</span></span>
+<span id="cb5-19"><a href=""></a>    print_date<span class="op">(</span>date<span class="op">);</span></span>
+<span id="cb5-20"><a href=""></a></span>
+<span id="cb5-21"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb5-22"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="most-of-the-c-standard-library-is-classes" class="slide level2">
+<h2>Most of the C++ standard library is classes</h2>
+<p>We have already been using class objects, perhaps without knowing it:</p>
+<ul>
+<li><code>std::string</code></li>
+<li><code>std::string_view</code></li>
+<li><code>std::vector</code></li>
+</ul>
+<p>In fact, most of the non-aliased types in the standard library are defined as classes!</p>
+<div class="my-box">
+<p>Classes are really the heart and soul of C++ – they are so foundational that C++ was originally named “C with classes”!</p>
+</div>
+</section></section>
+<section>
+<section id="member-functions-and-implicit-objects" class="title-slide slide level1 center">
+<h1>Member functions and implicit objects</h1>
+<ul>
+<li>In this Section, we shall use <code>struct</code> to demonstrate the concepts.</li>
+<li>By using <code>struct</code>, I can demonstrate that <code>struct</code> and <code>class</code> are technically almost the same.</li>
+</ul>
+</section>
+<section id="member-functions" class="slide level2">
+<h2>Member functions</h2>
+<ul>
+<li>In addition to having member variables, <code>class</code> types (which include <code>struct</code>, <code>class</code>, <code>union</code>) can have their own functions.</li>
+<li>Functions that belong to a class type are called <span style="color:red"><strong>member functions</strong></span>.</li>
+<li>Functions that are not member functions are called <span style="color:red"><strong>non-member functions</strong></span>.</li>
+</ul>
+</section>
+<section id="a-non-member-function-example" class="slide level2">
+<h2>A non-member function example</h2>
+<p>Let us look at the following example:</p>
+<div id="lst-nonmember-function-example" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-nonmember-function-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;2: An example of non-member function. Filename=<code>non_member_function_example.cpp</code>
+</figcaption>
+<div aria-describedby="lst-nonmember-function-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb6-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb6-2"><a href=""></a></span>
+<span id="cb6-3"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb6-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb6-5"><a href=""></a>    <span class="co">// here are our member variables</span></span>
+<span id="cb6-6"><a href=""></a>    <span class="dt">int</span> year <span class="op">{};</span></span>
+<span id="cb6-7"><a href=""></a>    <span class="dt">int</span> month <span class="op">{};</span></span>
+<span id="cb6-8"><a href=""></a>    <span class="dt">int</span> day <span class="op">{};</span></span>
+<span id="cb6-9"><a href=""></a><span class="op">};</span></span>
+<span id="cb6-10"><a href=""></a></span>
+<span id="cb6-11"><a href=""></a><span class="dt">void</span> print<span class="op">(</span><span class="at">const</span> Date<span class="op">&amp;</span> date<span class="op">)</span></span>
+<span id="cb6-12"><a href=""></a><span class="op">{</span></span>
+<span id="cb6-13"><a href=""></a>    <span class="co">// member variables accessed using member selection operator (.)</span></span>
+<span id="cb6-14"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> date<span class="op">.</span>year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> date<span class="op">.</span>month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> date<span class="op">.</span>day<span class="op">;</span></span>
+<span id="cb6-15"><a href=""></a><span class="op">}</span></span>
+<span id="cb6-16"><a href=""></a></span>
+<span id="cb6-17"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb6-18"><a href=""></a><span class="op">{</span></span>
+<span id="cb6-19"><a href=""></a>    Date today <span class="op">{</span> <span class="dv">2026</span><span class="op">,</span> <span class="bn">02</span><span class="op">,</span> <span class="dv">27</span> <span class="op">};</span> <span class="co">// aggregate initialize our struct</span></span>
+<span id="cb6-20"><a href=""></a></span>
+<span id="cb6-21"><a href=""></a>    today<span class="op">.</span>day <span class="op">=</span> <span class="dv">16</span><span class="op">;</span> <span class="co">// member variables accessed using member selection operator (.)</span></span>
+<span id="cb6-22"><a href=""></a>    print<span class="op">(</span>today<span class="op">);</span>   <span class="co">// non-member function accessed using normal calling convention</span></span>
+<span id="cb6-23"><a href=""></a></span>
+<span id="cb6-24"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb6-25"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="a-member-function-example" class="slide level2">
+<h2>A member function example</h2>
+<p>In this lesson, we’ll use structs to show examples of member functions – but everything we show here applies equally well to classes.</p>
+<div id="lst-member-function-example" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-member-function-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;3: An example of member function. Filename=<code>member_function_example.cpp</code>
+</figcaption>
+<div aria-describedby="lst-member-function-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb7-1"><a href=""></a><span class="co">// Member function version</span></span>
+<span id="cb7-2"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb7-3"><a href=""></a></span>
+<span id="cb7-4"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb7-5"><a href=""></a><span class="op">{</span></span>
+<span id="cb7-6"><a href=""></a>    <span class="dt">int</span> year <span class="op">{};</span>        <span class="co">// We don't use m_ here for struct. Generally, we don't</span></span>
+<span id="cb7-7"><a href=""></a>    <span class="dt">int</span> month <span class="op">{};</span>       <span class="co">// want to write constructor for struct. Then, there is </span></span>
+<span id="cb7-8"><a href=""></a>    <span class="dt">int</span> day <span class="op">{};</span>         <span class="co">// NO SHADOWING of variables (we talk later in `class`)</span></span>
+<span id="cb7-9"><a href=""></a></span>
+<span id="cb7-10"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="co">// defines a member function named print</span></span>
+<span id="cb7-11"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb7-12"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
+<span id="cb7-13"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb7-14"><a href=""></a><span class="op">};</span></span>
+<span id="cb7-15"><a href=""></a></span>
+<span id="cb7-16"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb7-17"><a href=""></a><span class="op">{</span></span>
+<span id="cb7-18"><a href=""></a>    Date today <span class="op">{</span> <span class="dv">2026</span><span class="op">,</span> <span class="bn">02</span><span class="op">,</span> <span class="dv">26</span> <span class="op">};</span> <span class="co">// aggregate initialize our struct</span></span>
+<span id="cb7-19"><a href=""></a>    today<span class="op">.</span>day <span class="op">=</span> <span class="dv">16</span><span class="op">;</span> <span class="co">// member variables accessed using member selection operator (.)</span></span>
+<span id="cb7-20"><a href=""></a>    today<span class="op">.</span>print<span class="op">();</span>  <span class="co">// member functions also accessed using member selection operator (.)</span></span>
+<span id="cb7-21"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb7-22"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb7-23"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="calling-member-functions-and-the-implicit-object" class="slide level2">
+<h2>Calling member functions and the implicit object</h2>
+<ul>
+<li><p>In the non-member example, we call</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb8-1"><a href=""></a>print<span class="op">(</span>today<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>In the member example, we call</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb9-1"><a href=""></a>today<span class="op">.</span>print<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>In the member function case, we don’t pass <code>today</code> as an argument.</p></li>
+<li><p>The object is <strong>implicitly</strong> passed to the member function.</p></li>
+<li><p>The object that member function is called on is called <span style="color:red"><strong>implicit object</strong></span></p></li>
+</ul>
+</section>
+<section id="assessing-members-inside-a-member-function-uses-the-implicit-object" class="slide level2">
+<h2>Assessing members inside a member function uses the implicit object</h2>
+<p>✎&nbsp; In the non-member example, we define</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb10-1"><a href=""></a><span class="co">// non-member version of print</span></span>
+<span id="cb10-2"><a href=""></a><span class="dt">void</span> print<span class="op">(</span><span class="at">const</span> Date<span class="op">&amp;</span> date<span class="op">)</span></span>
+<span id="cb10-3"><a href=""></a><span class="op">{</span></span>
+<span id="cb10-4"><a href=""></a>    <span class="co">// member variables accessed using member selection operator (.)</span></span>
+<span id="cb10-5"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> date<span class="op">.</span>year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> date<span class="op">.</span>month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> date<span class="op">.</span>day<span class="op">;</span></span>
+<span id="cb10-6"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>✎&nbsp; In the member example, we define</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb11-1"><a href=""></a><span class="dt">void</span> print<span class="op">()</span> <span class="co">// defines a member function named print()</span></span>
+<span id="cb11-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb11-3"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
+<span id="cb11-4"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>We access the members as <code>year</code>, <code>month</code>, and <code>day</code>.</li>
+<li>Any member identifier that is not prefixed with the member selection operator (<code>.</code>) is associated with the implicit object.</li>
+<li><code>year</code>, <code>month</code>, and <code>day</code> (which are not prefixed) evaluate to the values of <code>today.year</code>, <code>today.month</code>, and <code>today.day</code> respectively.</li>
+</ul>
+</section>
+<section id="a-comparison-to-oop-in-python" class="slide level2">
+<h2>A comparison to OOP in Python</h2>
+<div id="e1e765ae" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href=""></a><span class="kw">class</span> Date:</span>
+<span id="cb12-2"><a href=""></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, year<span class="op">=</span><span class="dv">2026</span>, month<span class="op">=</span><span class="dv">2</span>, date<span class="op">=</span><span class="dv">28</span>): <span class="co"># we learn constructor in C++ soon</span></span>
+<span id="cb12-3"><a href=""></a>    <span class="va">self</span>.year <span class="op">=</span> year        </span>
+<span id="cb12-4"><a href=""></a>    <span class="va">self</span>.month <span class="op">=</span> month</span>
+<span id="cb12-5"><a href=""></a>    <span class="va">self</span>.date <span class="op">=</span> date</span>
+<span id="cb12-6"><a href=""></a>  <span class="kw">def</span> <span class="bu">print</span>(<span class="va">self</span>):</span>
+<span id="cb12-7"><a href=""></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>year<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>month<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>date<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># we don't have self. in C++</span></span>
+<span id="cb12-8"><a href=""></a></span>
+<span id="cb12-9"><a href=""></a><span class="co"># Use this class in global scope</span></span>
+<span id="cb12-10"><a href=""></a>today <span class="op">=</span> Date(<span class="dv">2026</span>,<span class="dv">2</span>,<span class="dv">26</span>) <span class="co"># when this lecture first took place</span></span>
+<span id="cb12-11"><a href=""></a>today.<span class="bu">print</span>()</span>
+<span id="cb12-12"><a href=""></a><span class="co"># How about this: I know that many of you did not learn it in </span></span>
+<span id="cb12-13"><a href=""></a><span class="co"># Introductory Programming 2. I am cooler :D</span></span>
+<span id="cb12-14"><a href=""></a>Date.<span class="bu">print</span>(today) <span class="co"># exposes the implicit object in the statement today.print()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>2026/2/26
+2026/2/26</code></pre>
+</div>
+</div>
+</section>
+<section id="a-comparison-to-oop-in-python-repeat-last-slide" class="slide level2">
+<h2>A comparison to OOP in Python: Repeat last slide</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href=""></a><span class="kw">class</span> Date:</span>
+<span id="cb14-2"><a href=""></a>  <span class="co"># blah blah</span></span>
+<span id="cb14-3"><a href=""></a>  </span>
+<span id="cb14-4"><a href=""></a>  <span class="kw">def</span> <span class="bu">print</span>(<span class="va">self</span>):</span>
+<span id="cb14-5"><a href=""></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>year<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>month<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>date<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># we don't have self. in C++</span></span>
+<span id="cb14-6"><a href=""></a><span class="co"># Use this class in global scope</span></span>
+<span id="cb14-7"><a href=""></a>today <span class="op">=</span> Date(<span class="dv">2026</span>,<span class="dv">2</span>,<span class="dv">26</span>) <span class="co"># when this lecture first took place</span></span>
+<span id="cb14-8"><a href=""></a>today.<span class="bu">print</span>()</span>
+<span id="cb14-9"><a href=""></a>Date.<span class="bu">print</span>(today)   <span class="co"># this exposes the implicit object in the statement today.print()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>What we have just learned in C++ looks different from Python you know. We don’t have <code>self</code>: <code>self.year</code>, <code>self.month</code>, <code>self.day</code>.</li>
+<li>We shall learn an equivalence of <code>self</code> of Python in C++.</li>
+<li>Statement <code>Date.print(today)</code> exposes the implicit object in statement <code>today.print()</code></li>
+</ul>
+</section>
+<section id="a-comparison-to-oop-in-python-but-python-is-not-as-serious-as-c" class="slide level2">
+<h2>A comparison to OOP in Python: But Python is not as serious as C++</h2>
+<div id="dd466c35" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href=""></a><span class="kw">class</span> Date:</span>
+<span id="cb15-2"><a href=""></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, year<span class="op">=</span><span class="dv">2026</span>, month<span class="op">=</span><span class="dv">2</span>, date<span class="op">=</span><span class="dv">28</span>): <span class="co"># we learn constructor in C++ soon</span></span>
+<span id="cb15-3"><a href=""></a>    <span class="va">self</span>.year <span class="op">=</span> year        </span>
+<span id="cb15-4"><a href=""></a>    <span class="va">self</span>.month <span class="op">=</span> month</span>
+<span id="cb15-5"><a href=""></a>    <span class="va">self</span>.date <span class="op">=</span> date</span>
+<span id="cb15-6"><a href=""></a>  </span>
+<span id="cb15-7"><a href=""></a>  <span class="kw">def</span> <span class="bu">print</span>(<span class="va">self</span>):</span>
+<span id="cb15-8"><a href=""></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>year<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>month<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>date<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># we don't have self. in C++</span></span>
+<span id="cb15-9"><a href=""></a><span class="co"># Use this class in global scope</span></span>
+<span id="cb15-10"><a href=""></a>today <span class="op">=</span> Date(<span class="dv">2026</span>,<span class="dv">2</span>,<span class="dv">26</span>) <span class="co"># when this lecture first took place</span></span>
+<span id="cb15-11"><a href=""></a>my_name <span class="op">=</span> <span class="st">"khiem"</span></span>
+<span id="cb15-12"><a href=""></a>Date.<span class="bu">print</span>(my_name) <span class="co"># SYNTAX Correct, but run time error. my_name.year does not exist</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">AttributeError</span>                            Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[11]</span><span class="ansi-green-fg">, line 12</span>
+<span class="ansi-green-fg">     10</span> today = Date(<span class="ansi-green-fg">2026</span>,<span class="ansi-green-fg">2</span>,<span class="ansi-green-fg">26</span>) <span style="font-style:italic;color:rgb(95,135,135)"># when this lecture first took place</span>
+<span class="ansi-green-fg">     11</span> my_name = <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">khiem</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">12</span> <span class="ansi-yellow-bg">Date</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">print</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">my_name</span><span class="ansi-yellow-bg">)</span> <span style="font-style:italic;color:rgb(95,135,135)"># SYNTAX Correct, but run time error. my_name.year does not exist</span>
+
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[11]</span><span class="ansi-green-fg">, line 8</span>, in <span class="ansi-cyan-fg">Date.print</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-fg">      7</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg">print</span>(<span style="color:rgb(0,135,0)">self</span>):
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">8</span>   <span style="color:rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span style="font-weight:bold;color:rgb(175,95,135)">{</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">year</span><span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">/</span><span style="font-weight:bold;color:rgb(175,95,135)">{</span><span style="color:rgb(0,135,0)">self</span>.month<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">/</span><span style="font-weight:bold;color:rgb(175,95,135)">{</span><span style="color:rgb(0,135,0)">self</span>.date<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
+
+<span class="ansi-red-fg">AttributeError</span>: 'str' object has no attribute 'year'</pre>
+</div>
+</div>
+</div>
+</section>
+<section id="a-comparison-to-oop-in-python-but-python-is-not-as-serious-as-c-1" class="slide level2">
+<h2>A comparison to OOP in Python: But Python is not as serious as C++</h2>
+<div id="95485fca" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href=""></a><span class="kw">class</span> Date:</span>
+<span id="cb16-2"><a href=""></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, year<span class="op">=</span><span class="dv">2026</span>, month<span class="op">=</span><span class="dv">2</span>, date<span class="op">=</span><span class="dv">28</span>): <span class="co"># we learn constructor in C++ soon</span></span>
+<span id="cb16-3"><a href=""></a>    <span class="va">self</span>.year, <span class="va">self</span>.month, <span class="va">self</span>.date <span class="op">=</span> year, month, date</span>
+<span id="cb16-4"><a href=""></a>  <span class="kw">def</span> <span class="bu">print</span>(<span class="va">self</span>):</span>
+<span id="cb16-5"><a href=""></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>year<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>month<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>date<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># we don't have self. in C++</span></span>
+<span id="cb16-6"><a href=""></a></span>
+<span id="cb16-7"><a href=""></a><span class="kw">class</span> Foo:</span>
+<span id="cb16-8"><a href=""></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb16-9"><a href=""></a>    <span class="va">self</span>.year, <span class="va">self</span>.month, <span class="va">self</span>.date <span class="op">=</span> <span class="st">"one"</span>, <span class="st">"two"</span>, <span class="dv">3</span></span>
+<span id="cb16-10"><a href=""></a><span class="co"># Use this class in global scope</span></span>
+<span id="cb16-11"><a href=""></a>today <span class="op">=</span> Date(<span class="dv">2026</span>,<span class="dv">2</span>,<span class="dv">26</span>) <span class="co"># when this lecture first took place</span></span>
+<span id="cb16-12"><a href=""></a>foo_object <span class="op">=</span> Foo()</span>
+<span id="cb16-13"><a href=""></a></span>
+<span id="cb16-14"><a href=""></a><span class="co"># SYNTAX correct, and Code run fine too. But it is just nonsense</span></span>
+<span id="cb16-15"><a href=""></a>Date.<span class="bu">print</span>(foo_object) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>one/two/3</code></pre>
+</div>
+</div>
+</section>
+<section id="member-functions-can-be-overloaded" class="slide level2">
+<h2>Member functions can be overloaded</h2>
+<p>✎&nbsp; Just like non-member functions, member functions can be overloaded.</p>
+<div id="lst-overload-member-function" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-overload-member-function-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;4: Member functions can be overloaded. Filename=<code>overload_member_functions.cpp</code>
+</figcaption>
+<div aria-describedby="lst-overload-member-function-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb18-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb18-2"><a href=""></a><span class="pp">#include </span><span class="im">&lt;string_view&gt;</span></span>
+<span id="cb18-3"><a href=""></a></span>
+<span id="cb18-4"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb18-5"><a href=""></a><span class="op">{</span></span>
+<span id="cb18-6"><a href=""></a>    <span class="dt">int</span> year <span class="op">{};</span> <span class="dt">int</span> month <span class="op">{};</span> <span class="dt">int</span> day <span class="op">{};</span>  <span class="co">// Do not write like this! Save space for slide</span></span>
+<span id="cb18-7"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb18-8"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
+<span id="cb18-9"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb18-10"><a href=""></a>    <span class="dt">void</span> print<span class="op">(</span><span class="bu">std::</span>string_view prefix<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb18-11"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> prefix <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
+<span id="cb18-12"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb18-13"><a href=""></a><span class="op">};</span></span>
+<span id="cb18-14"><a href=""></a></span>
+<span id="cb18-15"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb18-16"><a href=""></a><span class="op">{</span></span>
+<span id="cb18-17"><a href=""></a>    Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span></span>
+<span id="cb18-18"><a href=""></a>    today<span class="op">.</span>print<span class="op">();</span> <span class="co">// calls Date::print()</span></span>
+<span id="cb18-19"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb18-20"><a href=""></a>    today<span class="op">.</span>print<span class="op">(</span><span class="st">"The date is: "</span><span class="op">);</span> <span class="co">// calls Date::print(std::string_view)</span></span>
+<span id="cb18-21"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb18-22"><a href=""></a></span>
+<span id="cb18-23"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb18-24"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="structs-and-member-functions-a-bit-of-history" class="slide level2">
+<h2>Structs and member functions: A bit of history</h2>
+<ul>
+<li class="fragment">In C, structs only have data members, not member functions.</li>
+<li class="fragment">While designing classes in C++, Bjarne Stroustrup considered whether structs (which were inherited from C) should be granted the ability to have member functions.</li>
+<li class="fragment">Upon consideration, he determined that they should.</li>
+<li class="fragment">In modern C++, it is fine for structs to have member functions.</li>
+</ul>
+<div class="my-box">
+<p>✎&nbsp; Both structs and classes are called <span style="color:red"><strong>class type</strong></span></p>
+</div>
+</section></section>
+<section>
+<section id="const-class-objects-and-const-member-functions" class="title-slide slide level1 center">
+<h1>Const class objects and const member functions</h1>
+<p>✎&nbsp; Again, we shall use <code>struct</code> for examples in this section.</p>
+</section>
+<section id="const-variables-a-quick-revisit" class="slide level2">
+<h2>Const variables: A quick revisit</h2>
+<ul>
+<li><p>We learn: All const variables must be initialized at time of creation</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb19-1"><a href=""></a><span class="at">const</span> <span class="dt">int</span> x <span class="op">{</span> <span class="dv">42</span> <span class="op">};</span> </span>
+<span id="cb19-2"><a href=""></a><span class="at">const</span> <span class="dt">double</span> <span class="dt">double</span> z <span class="op">{};</span>    <span class="co">// initialze to zero.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>Similarly, class type objects can be made const using <code>const</code> keyword</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb20-1"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb20-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb20-3"><a href=""></a>    <span class="dt">int</span> year <span class="op">{};</span></span>
+<span id="cb20-4"><a href=""></a>    <span class="dt">int</span> month <span class="op">{};</span></span>
+<span id="cb20-5"><a href=""></a>    <span class="dt">int</span> day <span class="op">{};</span></span>
+<span id="cb20-6"><a href=""></a><span class="op">};</span></span>
+<span id="cb20-7"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb20-8"><a href=""></a><span class="op">{</span></span>
+<span id="cb20-9"><a href=""></a>    <span class="co">// const class type object</span></span>
+<span id="cb20-10"><a href=""></a>    <span class="at">const</span> Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span></span>
+<span id="cb20-11"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb20-12"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+</ul>
+</section>
+<section id="modifying-the-data-members-of-const-objects-is-disallowed" class="slide level2">
+<h2>Modifying the data members of const objects is disallowed</h2>
+<p>✎&nbsp; Any attempt to modify the data members of the object is disallowed.</p>
+<div id="lst-modify-const-objects" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-modify-const-objects-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;5: Modifying the data members of const objects is disallowed. Filename=<code>modify_members_of_const_objects.cpp</code>
+</figcaption>
+<div aria-describedby="lst-modify-const-objects-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb21-1"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb21-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb21-3"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
+<span id="cb21-4"><a href=""></a></span>
+<span id="cb21-5"><a href=""></a>    <span class="dt">void</span> increment_day<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb21-6"><a href=""></a>        <span class="op">++</span>day<span class="op">;</span></span>
+<span id="cb21-7"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb21-8"><a href=""></a><span class="op">};</span></span>
+<span id="cb21-9"><a href=""></a></span>
+<span id="cb21-10"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb21-11"><a href=""></a><span class="op">{</span></span>
+<span id="cb21-12"><a href=""></a>    <span class="at">const</span> Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// const</span></span>
+<span id="cb21-13"><a href=""></a>    <span class="co">// today.day += 1;        // compile error: can't modify member of const object</span></span>
+<span id="cb21-14"><a href=""></a>    <span class="co">// today.increment_day();  // compile error: can't call member function that modifies member of const object</span></span>
+<span id="cb21-15"><a href=""></a></span>
+<span id="cb21-16"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb21-17"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+<p>➥&nbsp; Show the code with uncommented code. IntelliSense picked up the error before compilation.</p>
+</section>
+<section id="const-objects-may-not-call-non-const-member-functions" class="slide level2">
+<h2>Const objects may not call non-const member functions</h2>
+<p>✎&nbsp; You may be surprised that the following code causes compilation error.</p>
+<div id="lst-modify-const-objects" class="listing quarto-float quarto-figure quarto-figure-left" data-filename="`const_objects_call_non_const_mem_functions.cpp`&quot;">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-modify-const-objects-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;6: const object calling the non-const member functions will create compilation error.
+</figcaption>
+<div aria-describedby="lst-modify-const-objects-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb22-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb22-2"><a href=""></a></span>
+<span id="cb22-3"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb22-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb22-5"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
+<span id="cb22-6"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span>     <span class="op">{</span></span>
+<span id="cb22-7"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
+<span id="cb22-8"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb22-9"><a href=""></a><span class="op">};</span></span>
+<span id="cb22-10"><a href=""></a></span>
+<span id="cb22-11"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb22-12"><a href=""></a><span class="op">{</span></span>
+<span id="cb22-13"><a href=""></a>    <span class="at">const</span> Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// const</span></span>
+<span id="cb22-14"><a href=""></a>    <span class="co">// today.print();  // compile error: can't call non-const member function</span></span>
+<span id="cb22-15"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb22-16"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="const-member-functions" class="slide level2">
+<h2>Const member functions</h2>
+<p>✎&nbsp; To address the above issue, we make <code>print()</code> a const member function.</p>
+<p>✎&nbsp; A <span style="color:red"><strong>const member function</strong></span> is a member function that guarantees it will not modify the object or call any non-const member functions (as they may modify the object)</p>
+<div id="lst-const-member-functions" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-const-member-functions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;7: const member function can be called by const objects. Filename=<code>const_member_functions.cpp</code>
+</figcaption>
+<div aria-describedby="lst-const-member-functions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb23-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb23-2"><a href=""></a></span>
+<span id="cb23-3"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb23-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb23-5"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
+<span id="cb23-6"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="at">const</span> <span class="co">// now a const member function</span></span>
+<span id="cb23-7"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb23-8"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
+<span id="cb23-9"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb23-10"><a href=""></a><span class="op">};</span></span>
+<span id="cb23-11"><a href=""></a></span>
+<span id="cb23-12"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb23-13"><a href=""></a><span class="op">{</span></span>
+<span id="cb23-14"><a href=""></a>    <span class="at">const</span> Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// const</span></span>
+<span id="cb23-15"><a href=""></a>    today<span class="op">.</span>print<span class="op">();</span>  <span class="co">// ok: const object can call const member function</span></span>
+<span id="cb23-16"><a href=""></a></span>
+<span id="cb23-17"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb23-18"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="const-member-functions-1" class="slide level2">
+<h2>Const member functions</h2>
+<p>✎&nbsp; <strong>Not a surprise</strong>: A const member function that attempts to change a data member or call a non-const member function will cause a compiler error to occur.</p>
+<div id="lst-const-mem-function-change-mem-data" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-const-mem-function-change-mem-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;8: A const member function cannot change data members. Filename=<code>const_member_functions_change_data_members.cpp</code>
+</figcaption>
+<div aria-describedby="lst-const-mem-function-change-mem-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb24-1"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb24-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb24-3"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
+<span id="cb24-4"><a href=""></a></span>
+<span id="cb24-5"><a href=""></a>    <span class="dt">void</span> increment_day<span class="op">(</span><span class="dt">int</span> val<span class="op">)</span> <span class="at">const</span> <span class="co">// made const</span></span>
+<span id="cb24-6"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb24-7"><a href=""></a>        <span class="co">// day += val; // compile error: const function can't modify member</span></span>
+<span id="cb24-8"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb24-9"><a href=""></a><span class="op">};</span></span>
+<span id="cb24-10"><a href=""></a></span>
+<span id="cb24-11"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb24-12"><a href=""></a><span class="op">{</span></span>
+<span id="cb24-13"><a href=""></a>    <span class="at">const</span> Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// const</span></span>
+<span id="cb24-14"><a href=""></a></span>
+<span id="cb24-15"><a href=""></a>    today<span class="op">.</span>increment_day<span class="op">(</span><span class="dv">4</span><span class="op">);</span></span>
+<span id="cb24-16"><a href=""></a></span>
+<span id="cb24-17"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb24-18"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="const-member-functions-can-be-called-on-non-const-objects" class="slide level2">
+<h2>Const member functions can be called on non-const objects</h2>
+<p>✎&nbsp; <strong>Not a surprise</strong> (again): Const member functions may also be called on non-const objects.</p>
+<ul>
+<li>We promise the compiler <em>const member functions won’t change the data members.</em></li>
+<li>Indeed, non-const objects calling const member functions cannot break such promise.</li>
+</ul>
+</section>
+<section id="const-member-functions-can-be-called-on-non-const-objects-1" class="slide level2">
+<h2>Const member functions can be called on non-const objects</h2>
+<div id="lst-nonconst-obj-call-const-memfunc" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-nonconst-obj-call-const-memfunc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;9: A non-const object can call const member functions because it cannot break the promise of constant-ness. Filename=<code>nonconst_objects_call_const_mem_functions.cpp</code>
+</figcaption>
+<div aria-describedby="lst-nonconst-obj-call-const-memfunc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb25-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb25-2"><a href=""></a></span>
+<span id="cb25-3"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb25-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb25-5"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
+<span id="cb25-6"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="at">const</span> <span class="op">{</span><span class="co">// const</span></span>
+<span id="cb25-7"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
+<span id="cb25-8"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb25-9"><a href=""></a><span class="op">};</span></span>
+<span id="cb25-10"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb25-11"><a href=""></a><span class="op">{</span></span>
+<span id="cb25-12"><a href=""></a>    Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// non-const</span></span>
+<span id="cb25-13"><a href=""></a>    today<span class="op">.</span>print<span class="op">();</span>  <span class="co">// ok: can call const member function on non-const object</span></span>
+<span id="cb25-14"><a href=""></a></span>
+<span id="cb25-15"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb25-16"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="const-member-functions-can-be-called-on-non-const-objects-2" class="slide level2">
+<h2>Const member functions can be called on non-const objects</h2>
+<div class="my-box">
+<p>A member function that does not (and will not ever) modify the state of the object should be made const, so that it can be called on both const and non-const objects.</p>
+</div>
+</section>
+<section id="wait-a-minute-what-a-mess" class="slide level2">
+<h2>Wait a minute: What a mess</h2>
+<ul>
+<li>How am I supposed to remember all the const-ness thingys.</li>
+<li>I am not even Tony Stark or Spider Man.</li>
+</ul>
+<div class="fragment">
+<p>So, I asked Gemini:</p>
+<p><em>There are too many things to remember about making function const and making reference const in writing C++ code to deal with const objects. Can you please give me one or two single golden rule so that I remember what I should do?</em></p>
+<p>Gemini answers me (I shortened it a bit):</p>
+</div>
+<div class="fragment">
+<div class="my-box">
+<p>If you are working with <strong>structs</strong> or <strong>classes</strong>, here are the two golden rules that will cover 95% of your needs.</p>
+<p>✎&nbsp; <span style="color:red"><strong>Rule 1</strong></span> The “<span style="color:blue">Read-Only</span>” Rule (For Functions)</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; If a function does not change the object’s data, mark it <code>const</code> at the end.</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; Think of it as a promise to the compiler.</p>
+<p>✎&nbsp; <span style="color:red"><strong>Rule 2</strong></span> The “<span style="color:blue">Efficient Pass</span>” Rule (For Parameters)</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; Always pass objects by <code>const &amp;</code> (const reference) unless they are tiny or we need to modify its value.</p>
+</div>
+</div>
+<p>➥&nbsp; Let us combine both rules into one example</p>
+</section>
+<section id="const-objects-via-pass-by-const-reference" class="slide level2">
+<h2>Const objects via pass by const reference</h2>
+<div class="fragment">
+<p><span style="color:magenta"><strong>Recap:</strong></span></p>
+<ul>
+<li>Passing a class type argument by value causes a copy of the class to be made – which is slow.</li>
+<li><strong>Passing by reference avoids making a copy.</strong></li>
+</ul>
+</div>
+<div class="fragment">
+<p><span style="color:magenta"><strong>Note</strong></span></p>
+<ul>
+<li>Note that modifying the argument’s value is not the key point. It is a side effect.</li>
+<li>If we add <code>const</code> qualifier, we cannot modify the arguments’ value.</li>
+<li>Of course, <em>we wish to modify the argument’s value in reasonable cases.</em></li>
+</ul>
+</div>
+<div class="fragment">
+<p><span style="color:magenta"><strong>Another Note</strong></span></p>
+<ul>
+<li>Instantiating const local variables is one way to create const objects</li>
+<li>Another common way to get a const object is <span style="color:red"><em>by passing an object to a function by const reference. But, this only holds from the perspective of that function.</em></span></li>
+</ul>
+</div>
+</section>
+<section id="const-objects-via-pass-by-const-reference-1" class="slide level2">
+<h2>Const objects via pass by const reference</h2>
+<p><strong>Question</strong>&nbsp; What’s wrong with the following code?</p>
+<div id="lst-const-objects-via-pass-by-const-ref-01" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-const-objects-via-pass-by-const-ref-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;10: Passing an object by const reference make the object const in the perspective of the function. Filename=<code>const_objects_via_pass_by_const_ref_01.cpp</code>
+</figcaption>
+<div aria-describedby="lst-const-objects-via-pass-by-const-ref-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb26-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb26-2"><a href=""></a></span>
+<span id="cb26-3"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb26-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb26-5"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
+<span id="cb26-6"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="op">{</span>  <span class="co">// non-const</span></span>
+<span id="cb26-7"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
+<span id="cb26-8"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb26-9"><a href=""></a><span class="op">};</span></span>
+<span id="cb26-10"><a href=""></a></span>
+<span id="cb26-11"><a href=""></a><span class="dt">void</span> do_something<span class="op">(</span><span class="at">const</span> Date<span class="op">&amp;</span> date<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb26-12"><a href=""></a>    date<span class="op">.</span>print<span class="op">();</span></span>
+<span id="cb26-13"><a href=""></a><span class="op">}</span></span>
+<span id="cb26-14"><a href=""></a></span>
+<span id="cb26-15"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb26-16"><a href=""></a><span class="op">{</span></span>
+<span id="cb26-17"><a href=""></a>    Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// non-const</span></span>
+<span id="cb26-18"><a href=""></a>    today<span class="op">.</span>print<span class="op">();</span></span>
+<span id="cb26-19"><a href=""></a>    do_something<span class="op">(</span>today<span class="op">);</span></span>
+<span id="cb26-20"><a href=""></a></span>
+<span id="cb26-21"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb26-22"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+<p>➥&nbsp; Compile the file and show the code in VSCode.</p>
+</section>
+<section id="const-objects-via-pass-by-const-reference-2" class="slide level2">
+<h2>Const objects via pass by const reference</h2>
+<p>Yup, the fix is simple: make <code>print()</code> const</p>
+<div id="lst-const-objects-via-pass-by-const-ref-02" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-const-objects-via-pass-by-const-ref-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;11: Fix the above code listing by making <code>print()</code> const. Filename=<code>const_objects_via_pass_by_const_ref_01.cpp</code>
+</figcaption>
+<div aria-describedby="lst-const-objects-via-pass-by-const-ref-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb27-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb27-2"><a href=""></a></span>
+<span id="cb27-3"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb27-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb27-5"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
+<span id="cb27-6"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="at">const</span> <span class="op">{</span>  <span class="co">// non-const</span></span>
+<span id="cb27-7"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
+<span id="cb27-8"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb27-9"><a href=""></a><span class="op">};</span></span>
+<span id="cb27-10"><a href=""></a></span>
+<span id="cb27-11"><a href=""></a><span class="dt">void</span> do_something<span class="op">(</span><span class="at">const</span> Date<span class="op">&amp;</span> date<span class="op">)</span></span>
+<span id="cb27-12"><a href=""></a><span class="op">{</span></span>
+<span id="cb27-13"><a href=""></a>    date<span class="op">.</span>print<span class="op">();</span></span>
+<span id="cb27-14"><a href=""></a><span class="op">}</span></span>
+<span id="cb27-15"><a href=""></a></span>
+<span id="cb27-16"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb27-17"><a href=""></a><span class="op">{</span></span>
+<span id="cb27-18"><a href=""></a>    Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// non-const</span></span>
+<span id="cb27-19"><a href=""></a>    today<span class="op">.</span>print<span class="op">();</span></span>
+<span id="cb27-20"><a href=""></a></span>
+<span id="cb27-21"><a href=""></a>    do_something<span class="op">(</span>today<span class="op">);</span></span>
+<span id="cb27-22"><a href=""></a></span>
+<span id="cb27-23"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb27-24"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="chap_10_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="chap_10_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="chap_10_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="chap_10_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="chap_10_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="chap_10_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="chap_10_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="chap_10_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="chap_10_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="chap_10_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="chap_10_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: true,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

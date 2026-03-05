@@ -576,7 +576,7 @@ int main()
     const int y { 5 };      // const int
 
     // invalid: non-const lvalue reference can't bind to a non-modifiable lvalue
-    int& invalidRef { y };  
+    const int& invalidRef { y };  
 
     // invalid: non-const lvalue reference can't bind to an rvalue
     int& invalidRef2 { 0 }; 
@@ -816,3 +816,55 @@ Favor passing by const reference over passing by non-const reference unless you 
 &#10149;&nbsp; Now, we can understand the motivation for allowing const lvalue references to bind to rvalues: 
 
 &#10140;&nbsp; [Without that capability, there would be no way to pass literals (or other rvalues) to functions that used pass by reference!]{style="color:navy"}
+
+# Return by reference
+
+- When passing an argument by value, a copy of the argument is made into the function parameter.
+- We can avoid making an expensive copy by passing by (const) reference (or pass by address) instead.
+- A similar situation occurs when returning by value: [a copy of the return value is passed back to the caller]{style="color:blue"}
+
+## Return by reference
+
+&#9998;&nbsp; [**Return by reference**] returns a reference that is bound to the object being returned, which avoids making a copy of the return.
+
+&#9998;&nbsp; To return by reference, we define the return value of the function to be a reference type
+
+```{.cpp}
+// returns a reference to an existing std::string (cheap)
+std::string& return_by_reference();
+
+// returns a const reference to an existing std::string (cheap)
+const std::string& return_by_reference();
+```
+
+## Return by reference: An academic example
+
+::: {#lst-return-by-reference lst-cap="An example of return by reference. The variable `str_program_name` is made static so that it survives throughout the entire program. Filename=`return_by_ref_academic.cpp`"}
+```{.cpp}
+{{< include ./cpp/return_by_ref_academic.cpp >}}
+```
+:::
+
+## Object being returned by reference must exist after the function returns
+
+&#9998;&nbsp; Using return by reference has one major caveat: 
+
+- The programmer must be sure that the object being referenced outlives the function returning the reference. 
+- Otherwise, the reference being returned will be left dangling (referencing an object that has been destroyed)
+
+## Object being returned by reference must exist after the function returns
+&#10149;&nbsp; Look at this example \& run it.
+
+::: {#lst-return-by-reference-lifetime lst-cap="The object being returned by reference must exist after the function returns. Filename=`return_by_ref_lifetime.cpp`"}
+```{.cpp}
+{{< include ./cpp/return_by_ref_lifetime.cpp >}}
+```
+:::
+
+## Return by reference: A lengthy but simple example
+
+::: {#lst-return-by-reference-example lst-cap="A lengthy but simple example of return by reference Filename=`return_by_ref_example.cpp`"}
+```{.cpp}
+{{< include ./cpp/return_by_ref_example.cpp >}}
+```
+:::

@@ -1,0 +1,915 @@
+---
+title: "Object-oriented programming"
+author: |
+    Khiem Nguyen 
+    <br>Lecturer in Multiscale Materials
+    <br><khiem.nguyen@glasgow.ac.uk>
+author-meta: "Lecturer in Multiscale Materials"
+format: 
+    revealjs:
+        theme: simple   # other themes: beige, blood, dark, dracula, league, moon, night, serif, simple, sky, solarized
+        mouse-wheel: true
+        highlight-style: github
+        slide-number: true
+        title-slide-style: pandoc
+        echo: true
+        code-overflow: wrap
+        code-line-numbers: true
+        code-block-bg: false          # <-- remove white background in code blocks
+        # code-block-border-left: false # optional: remove left border
+        # highlight-style: monokai      # good for dark images
+        toc: true
+        toc-depth: 1
+        toc-title: Presentation Outline
+        chalkboard: true
+        css: ../../simple.css
+---
+
+# Member access
+
+We have used structs in all the example in the last Chapter.
+
+
+- This demonstrated that `struct` is pretty much the same as `class`.
+- The difference between `struct` and `class` is 
+  - By default, every data members and member functions of a `struct` is `public` by default.
+  - By default, every data members and member functions of a `struct` is `private` by default.
+
+We study now **access level** to debunk the meaning of two keywords `private` and `public`.
+
+## Member access
+
+![](./figures/private-vs-public.jpg)
+
+You feel tired on the way going home and want to sit down in peace as you are an introvert. Two choices:
+
+- The park with all the screaming kids. Not want to hear all the screamings. It is `public`, you [can access]{style="color:green"}.
+- The private residential house with warm and TV. Want to sit in silence. It is `private`, you [cannot access]{style="color:red"}.
+
+_It is not about what you want, but about what you can._
+
+## Member access
+
+&#9998;&nbsp; Each member of a class type (`struct` or `class`) have a property called an [**access level**]{style="color:red"}.
+
+&#9998;&nbsp; **Access level** determines who can access that member:
+
+1. `public`
+2. `private`
+3. `protected`
+
+We'll cover 
+
+- `public` and `private` in this Chapter
+- `protected` in Chapter "Inheritance".
+
+## Members of a struct are public by default
+
+[**Terminologies**]{style="color:magenta"}
+
+- Members that have the public access level are called [**public members**]{style="color:red"}.
+- [**Public members**]{style="color:red"} are members of a class type that [do not have any restrictions on how they can be accessed]{style="color:blue"}.
+
+::: {.fragment}
+[**Meaning**]{style="color:magenta"}
+
+
+- Public members can be accessed by other members of the same class.
+- [**Public members can also be accessed by the public**]{style="color:blue"}, which is what we call code that exists outside the members of a given class type.
+:::
+
+::: {.fragment}
+::: {.my-box}
+
+**Key points to remember**
+
+- The members of a struct are [public by default]{style="color:blue"}.
+- Public members can be accessed by other members of the class type, and [by public]{style="color:blue"}
+:::
+:::
+
+## Members of a struct are public by default: Example
+We have done this all the time before:
+
+::: {#lst-struct-public-by-default lst-cap="All the members of a struct are `public` by default. Filename=`struct_public_by_default.cpp`"}
+```{.cpp}
+{{< include ./cpp/struct_public_by_default.cpp >}}
+```
+:::
+
+## The members of a class are private by default
+
+Now, look at this example again but using `class` instead of `struct`:
+
+::: {#lst-class-private-by-default lst-cap="All the members of a class are `private` by default. Filename=`class_private_by_default.cpp`"}
+```{.cpp}
+{{< include ./cpp/class_private_by_default.cpp >}}
+```
+:::
+
+## The members of a class are private by default
+
+::: {.my-box}
+
+**Key points to remember**
+
+- The members of a class are [private by default]{style="color:blue"}.
+- Private members can be accessed by other members of the class type, [**but cannot be accessed by public**]{style="color:blue"}
+:::
+
+::: {.fragment}
+[**Repeat**]{style="color:magenta"}
+
+`struct` and `class` are only different by technical detail, but essentially interchangeable:
+:::
+
+:::{.fragment}
+- To make `struct` look like `class`, we make all the members `private`.
+- To make `class` look like `struct`, we make all the members `public`.
+:::
+
+## Naming your private member variables
+
+&#9998;&nbsp; It is a common convention to _name private data members starting with an_ `m_` _prefix._ But $\ldots$ talk later.
+
+Consider:
+
+```{.cpp}
+// Some member function that sets private member m_name to 
+// the value of the name parameter
+void set_name(std::string_view name)
+{
+    m_name = name;
+}
+```
+
+- The `m_` prefix differentiates data members from function parameters or local variables.
+- The `m_` prefix helps prevent naming collisions between private member variables and the names of local variables.
+
+## Naming your private member variables
+
+&#10149;&nbsp; If we had named private members `name` instead of `m_name`, it looks like this
+```{.cpp}
+// then we need to change the parameter's name here
+void set_name(std::string_view name) 
+{
+    // function parameter "name" shadows the private data member "name"
+    name = name // of course won't work
+}
+```
+
+
+&#10149;&nbsp; But $\ldots$ soon we will see this is even not necessary in modern C++.
+
+:::{.fragment}
+[**Well, why do I need to mention?**]{style="color:magenta"}
+
+- You need to read legacy code when you go to industry. 
+- But the use of prefix `m_` is declining.
+- Many high-profile open-source projects have moved away from `m_` in [**favor of a trailing underscore**]{style="color:blue"} (`variable_`) or [**no prefix at all**]{style="color:blue"}
+:::
+
+
+## Naming your private member variables: Examples
+
+[**Examples**]{style="color:magenta"} -- <u>Click on the links to show the students examples</u>
+
+- **Google**: trailing underscore `variable_`
+- **PyTorch** (famous Machine Learning framework): no prefix, no suffix
+  
+    [[**Link to one example**]{style="color:navy"}](https://github.com/pytorch/pytorch/blob/main/torch/csrc/api/include/torch/nn/modules/linear.h), Lines 68 -- 75
+- **deal.II** (famous finite element library): no prefix, no suffix
+  
+    [[**Link to one example**]{style="color:navy"}](https://github.com/dealii/dealii/blob/master/include/deal.II/fe/fe.h), Lines 2522 -- 2721
+
+::: {.fragmnet}
+[**Morale of the story**]{style="color:magenta"}
+
+- All the examples in real-world libraries/application look extremely complicated.
+- But $\ldots$ [_Hey! You want to earn $6$-digit salary and want it to look simple?_]{style="color:navy"}
+:::
+
+::: {.v-space style="height: 30px;"}
+:::
+
+::: {.fragment}
+::: {.my-box}
+**I am not against GenAI chatbot.** You can hate me now but I want to say this:
+
+You want to get the job in industry after using ChatGPT/Gemini to generate solution for the programming courses? 
+
+**Just think about that!?!?** 😏😏😏
+:::
+:::
+
+## Setting access levels via access specifiers
+
+&#9998;&nbsp; We can explicitly set the access level of our members by using an access specifier.
+
+&#9998;&nbsp; An access specifier sets the access level of all members that follow the specifier. 
+
+&#9998;&nbsp; Three access specifiers:
+
+- `public:`
+- `private:`
+- `protected:`
+
+## Setting access levels via access specifiers: Example
+
+::: {#lst-access-specifier-ex lst-cap="We can use access specifiers to define access levels of members. Filename=`access_specifier_example.cpp`"}
+```{.cpp}
+{{< include ./cpp/access_specifier_example.cpp >}}
+```
+:::
+
+&#9998;&nbsp; We can omit `private:` specifier in `class` as classes default to `private` access.
+
+&#10149;&nbsp; Let us compile and run this code.
+
+## Access level summary
+
+|Access level |	Access specifier |	Member access |	Derived class access |	Public access |
+|:---- | :---- | :---- | :----- | :----- |
+| Public |`public:` |	yes	| yes	| yes |
+| Protected	|`protected:`|	yes	|yes	|no|
+| Private	 |`private:`|	yes|	no|	no|
+
+**Don't worry! We talk about this later.**
+
+- Some little practice will get you understand and remember them. 
+- However, notice the triangle pattern of "yes" and triangle pattern of "no".
+
+## Access levels work on a per-class basis
+
+&#9998;&nbsp; One nuance of C++ access levels that is often missed or misunderstood is that -- otherwise, it is a real big headache:
+
+:::{.my-box}
+**Access to members is defined on a per-class basis, not on a per-object basis.**
+:::
+
+## Access levels work on a per-class basis: Example
+
+::: {#lst-access-level-per-class lst-cap="Access levels work on per-class basis, not on object basis. Filename=`access_level_per_class_basis.cpp`"}
+```{.cpp}
+{{< include ./cpp/access_level_per_class_basis.cpp >}}
+```
+:::
+&#10149;&nbsp; We can access member `name` of the object `p` in the member function `kisses`. 
+
+&#10149;&nbsp; `p.name` is not private to only `p`. Any member functions of `Person` can access `name` of other `Person` objects.
+
+# A detour back to pointers & class type (`struct` and `class`)
+
+You have just seen `this->name`. 
+
+- But we skip the lecture on `struct` on purpose.
+- I explained why we skip the lecture on `struct`.
+- Now, I have to pay the price. We must make a detour to revisit pointers.
+
+## What is an aggregate?
+
+- In general programming, an aggregate data type (also called an aggregate) is any type that can contain multiple data members.
+- Some types of aggregates allow members to have different types (e.g. structs).
+- Others require that all members must be of a single type (e.g. arrays).
+
+**In our course:** 
+
+When we use the term "aggregate" (or "non-aggregate") we will mean the C++ definition of aggregate.
+
+
+
+## Aggregate initialization of a struct: Example
+
+::: {#lst-aggregate-initialization lst-cap="We can initialize aggregate by using copy-list initialization or list initialization. Filename=`aggregate_initialization.cpp`"}
+```{.cpp}
+{{< include ./cpp/aggregate_initialization.cpp >}}
+```
+:::
+
+::: {.my-box}
+**Best practice**: Prefer the (non-copy) braced list form when initializing aggregates.
+:::
+
+
+# Member selection with references and pointers
+
+## Member selection for references
+&#9998;&nbsp; Because references to an object act just like the object itself, we can also use the member selection operator (`.`) to select a member from a reference to a struct
+
+::: {#lst-reference-selects-members lst-cap="Reference to a struct object can selects members by using selection operator (`.`) Filename=`reference_selection_operator.cpp`"}
+```{.cpp}
+{{< include ./cpp/reference_selection_operator.cpp >}}
+```
+:::
+
+## Member selection for pointers
+
+We know that this code is wrong -- **Question**: What is wrong here?
+```{.cpp}
+#include <iostream>
+
+struct Employee
+{
+    int id{};
+    int age{};
+    long double wage{};
+};
+
+int main()
+{
+    Employee khiem{ 1, 42, 429999999999999999999.42 };
+    Employee* ptr { &khiem };
+    std::cout << ptr.id << '\n'; 
+    return 0;
+}
+```
+&#10149;&nbsp; My salary is correct. It is not the error!
+
+## Member selection for pointers
+&#10149;&nbsp; To fix this, we just need to dereference first to retrieve the struct object.
+
+::: {#lst-pointer-selects-members lst-cap="Pointer to a struct object can selects members by using dereference first. Filename=`pointers_to_structs_select_members_deref.cpp`"}
+```{.cpp}
+{{< include ./cpp/pointers_to_structs_select_members_deref.cpp >}}
+```
+:::
+
+&#10149;&nbsp; Now, both my salary and code are fine.
+
+## Member selection for pointers
+
+&#9998;&nbsp; C++ offers a [**member selection from pointer operator**]{style="color:red"} (`->`) (also sometimes called the [**arrow operator**]{style="color:red"}) that can be used to select members from a pointer to an object.
+
+::: {#lst-pointer-selects-members lst-cap="Pointer to a struct object can selects members by using dereference first. Filename=`pointers_to_structs_select_members_deref.cpp`"}
+```{.cpp}
+{{< include ./cpp/pointers_to_structs_select_members_deref.cpp >}}
+```
+:::
+
+&#10149;&nbsp; `ptr->id` is just equivalent to `(*ptr).id`. That's all.
+
+## What's next
+
+From now on:
+
+- I prefer "no prefix, no suffix" naming convention, and use `this` pointer instead. 
+- We talk about this soon, but you kinda get the point here.
+
+# Introduction to constructors
+
+In Introductory Programming 2, you learn:
+
+- Constructor is defined by the special method: `__init__(self, ...)`
+- Constructor is used to do a lot of stuffs other than just assigning variable `self.age = age`, e.g., checking 
+  - whether `age < 0`
+  - whether `id` is unique
+  - whether `birthdate` is a proper date
+  - more
+
+
+**Note:**&nbsp; We can write constructors for both `struct` and `class`. We just don't see people do that for `struct`.
+
+::: {.v-space style="height: 60px;"}
+:::
+
+<center>We now learn constructors in C++.</center>
+
+
+## Intro to constructors: Rationale
+
+&#10149;&nbsp; We have just learned we can do this:
+```{.cpp}
+struct Foo // Foo is an aggregate
+{
+    int x {};
+    int y {};
+};
+
+int main()
+{
+    Foo foo { 6, 7 }; // uses aggregate initialization
+    return 0;
+}
+```
+
+## Intro to constructors: Rationale
+
+But we cannot do this:
+```{.cpp}
+class Foo // Foo is not an aggregate (has private members)
+{
+    int x {};
+    int y {};
+};
+int main()
+{
+    Foo foo { 6, 7 }; // compile error: can not use aggregate initialization
+    return 0;
+}
+```
+
+Not allowing class types with private members to be initialized via aggregate initialization makes sense:
+
+- Aggregate initialization requires knowing about the implementation of the class, which we’re intentionally trying to avoid when we hide our data members.
+- If our class had some kind of invariant (e.g., $18 < \text{age} < 65$ for working age), we would be relying on the user to initialize the class in a way that preserves the invariant.
+
+&#10140;&nbsp; [That's why we need a constructor and it can do all the security check if needed.]{style="color:red"} -- just like you learned in Python.
+
+## Constructors
+
+A [**constructor**]{style="color:red"} is a special member function that is [automatically called after a non-aggregate class type object is created]{style="color:blue"}.
+
+When a non-aggregate class type object is defined, the compiler looks to see if it can find an accessible constructor that is a match for the initialization values provided by the callers.^[Well, just like the compiler looks for functions and overloaded functions matching the funcation call.]
+
+
+::: {.my-box}
+**Key insight**
+
+- Many new programmers are confused about whether constructors create the objects or not. 
+- They do not -- the compiler sets up the memory allocation for the object prior to the constructor call. The constructor is then called on the uninitialized object.
+- After the constructor finishes executing, we say the object has been "constructed", and the object should now be in a consistent, usable state.
+:::
+
+[**Note**]{style="color:red"}
+
+&#9998;&nbsp; [Aggregates are not allowed to have constructors]{style="color:red"} -- so if we add a constructor to an aggregate, it is no longer an aggregate.
+
+## Naming constructors
+
+- Constructors must have the same name as the class (with the same capitalization).
+- For template classes, this name excludes the template parameters.^[We have not learned about this so far.]
+- Constructors have no return type (not even `void`)
+
+```{.cpp}
+class Student
+{
+private:
+    std::string name;
+    int age;
+    int ID;
+
+public:
+    Student(std::string name, int age, int ID) 
+    { 
+        // code goes here.
+    }   // Does this remind you of Python class?
+}
+```
+
+## A basic constructor example
+
+::: {#lst-basic-constructor-example lst-cap="Constructor must have the same name as class. Filename=`basic_constructor_example.cpp`"}
+```{.cpp}
+{{< include ./cpp/basic_constructor_example.cpp >}}
+```
+:::
+&#10149;&nbsp; Let run this code snippet.
+
+# Constructor member initializer lists
+
+Can we do something like `self.x = x`, `self.y = y` in Python?
+
+## Mimic Python constructor: Part 1
+
+::: {#lst-mimic-python-constructor-01 lst-cap="Let us mimic Python constructor we have learned. Filename=`mimic_python_constructor_01.cpp`"}
+```{.cpp}
+{{< include ./cpp/mimic_python_constructor_01.cpp >}}
+```
+:::
+**Question**: How about we want to keep the constructor's parameter names `x` and `y`?
+
+## Mimic Python constructor: Part 2
+Yes, we can use the pointer `this` to make distinction: `this->x`
+
+::: {#lst-mimic-python-constructor-01 lst-cap="Let us mimic Python constructor we have learned. Filename=`mimic_python_constructor_01.cpp`"}
+```{.cpp}
+{{< include ./cpp/mimic_python_constructor_02.cpp >}}
+```
+:::
+
+## Member initialization via a member initialization list
+
+&#9998;&nbsp; Modern C++ provides a mechanism even better than writing `this->variable = variable` in the constructor body: [**member initializer list**]{style="color:red"}.
+
+::: {#lst-member-initializer-list lst-cap="An example of member initializer list. Filename=`member_initializer_list.cpp`"}
+```{.cpp}
+{{< include ./cpp/member_initializer_list.cpp >}}
+```
+:::
+
+## Member initialization via a member initialization list
+
+Member initializer list
+
+- is defined [after the constructor parameters]{style="color:blue"}.
+- [begins with a colon]{style="color:red"} `:`
+- [lists each member to initialize along with the initialization value]{style="color:blue"} for that variable, [separated by comma]{style="color:blue"}
+- uses a [direct form of initialization]{style="color:blue"} -- _preferably braces, but parentheses work as well_
+
+**Example** (again)
+
+```{.cpp}
+class Vector2D
+{
+    double x {}, 
+    double y {};
+public:
+    Vector2D(double x, double y): x { x }, y { y } {}
+};
+```
+
+## Member initialization list: why better than `this->x = x`
+
+&#9998;&nbsp; [**Member Initalizer List**]{style="color:red"}: `x { x }`
+
+Why it's better:
+
+- **initialization, not assignment**: created and given value in one single step
+- **required for** `const` **and references**: if class has `const` members or reference variables (e.g. `double& ref`), we must use this method. These teypes cannot be left unintialized and assigned to later.
+- **performance**: avoid calling default constructor followed by an assignment operator, goes straight to the copy/move constructor (discussed later)
+
+
+&#9998;&nbsp; [**Assignment in the Body**]{style="color:red"}: `this->x = x`
+
+Sequence of events (you see it is worse than above)
+
+- **implicit initialization**: initializes `x` with garbage value (if defined `double x`), or to default value (if defined `double x { }`)
+- **execution**: constructor body starts
+- **assignment**: value of the parameter `x` is copied into `this->`.
+
+## `: x { x} ` versus `this->x = x`: Key differences
+
+| Feature | Member Initialization List `: x { x }` | Body Assignment `this->x = x` |
+|:--------|:---------------------------------------|:------------------------------|
+| Action | direct initialization | Default init + assignment |
+| Efficiency | Faster (no double-work) | Slower for complex objects |
+| Const/Refs | Works perfectly | Fails to compile |
+| Ordering | Follows declaration order in class | Follows code order in body |
+
+
+::: {.my-box}
+**Best practice**
+
+
+Prefer using the member initializer list to initialize your members over assigning values in the body of the constructor.
+:::
+
+## Member initializer list formatting -- Note C++ does not care space
+
+<!-- &#9998;&nbsp; C++ does not care space and tab. So you see different formats: -->
+
+- One line
+```{.cpp}
+Foo(int x, int y) : x { x }, y { y }
+{
+}
+```
+- Multiple lines with colon `:` after class name
+```{.cpp}
+Foo(int x, int y) :
+    x { x },
+    y { y }
+{
+}
+```
+- Multiple lines with colon `:` before the first initializer
+```{.cpp}
+Foo(int x, int y)
+    : x { x }
+    , y { y }
+{
+}
+```
+
+&#9998;&nbsp; If member initialization list is trivial, all initializers can go one line. Otherwise, third style is preferable
+
+
+## Member initializer list vs default member initializers
+&#10149;&nbsp; Let us consider the following examples
+
+
+::: {#lst-different-initializers lst-cap="Different initializers in classes. Filename=`different_initializers.cpp`"}
+```{.cpp}
+{{< include ./cpp/different_initializers.cpp >}}
+```
+:::
+
+## Member initializer list vs default member initializers
+
+Members are initialized in a few different ways:
+
+- If a member is listed in the member initializer list, that initialization value is used.
+- Otherwise, if the member has a default member initializer, that initialization value is used.
+- Otherwise, the member is default-initialized.
+
+## Constructor function bodies
+
+- The bodies of constructors functions are most often left empty -- because we primarily use constructor for initialization, which is done via member initializer list (if that's all we need to do).
+- We can add statements to constructor function bodies to do any other setup tasks required (e.g. open a file or databa, allocate memory, check invariant $\ldots$)
+
+&#10149;&nbsp; Consider the following example
+```{.cpp}
+class Fraction
+{
+private:
+    int numerator {};
+    int denominator {};
+
+public:
+    Fraction(int numerator, int denominator):
+        numerator { numerator }, denominator { denominator } {
+        // Invariant: Fraction should have non-zero denominator
+        // How about denominator is zero?
+        // We can do something about this invariant in the ocnstructor body.
+    }
+};
+```
+
+# Default constructors and default arguments
+
+## Default constructor
+
+[**Default constructor**] is a constructor that accepts no arguments.
+
+::: {#lst-default-constructor-example lst-cap="A very simple default constructor example. Filename=`default_constructor_example.cpp`"}
+```{.cpp}
+{{< include ./cpp/default_constructor_example.cpp >}}
+```
+:::
+
+## Value initialization vs default initialization for class types
+
+&#9998;&nbsp; If a class type has a default constructor, both value initialization and default initialization will call the default constructor.
+
+```{.cpp}
+// With default constructor, value initialization and default initialization will
+// call the default constructor.
+Foo foo1{}; // value initialization, calls Foo() default constructor
+Foo foo2;   // default initialization, calls Foo() default constructor
+```
+
+## Contructors with default argument
+
+&#9998;&nbsp; As with all functions, the rightmost parameters of constructors can have default arguments.
+
+&#9998;&nbsp; If all the params in a constructor have default args, the constructor is a default constructor -- as it can be called with no args.
+
+::: {#lst-constructor-with-default-args lst-cap="An example of constructor with default arguments. Filename=`constructor_with_default_arguments.cpp`"}
+```{.cpp}
+{{< include ./cpp/constructor_with_default_arguments.cpp >}}
+```
+:::
+
+## Overloaded constructors
+
+&#9998;&nbsp; Because constructors are functions, they can be overloaded. 
+
+```{.cpp}
+#include <iostream>
+
+class Foo
+{
+private:
+    int x {};
+    int y {};
+
+public:
+    Foo() // default constructor
+    {
+        std::cout << "Foo constructed\n";
+    }
+
+    Foo(int x=1, int y=2) // default constructor
+        : x { x }, y { y }
+    {
+        std::cout << "Foo(" << x << ", " << y << ") constructed\n";
+    }
+};
+
+int main()
+{
+    Foo foo{}; // compile error: ambiguous constructor function call
+    return 0;
+}
+```
+
+&#10140;&nbsp; The compiler will look for a default constructor \& and will find two, leading to ambiguity.
+
+## An implicit default constructor
+
+- If a non-aggregate class type (e.g. private data members) object has no user-declared constructors, the compiler will generate a public default constructor.
+- This constructor is called an [**implicit default constructor**]{style="color:red"}
+
+::: {#lst-implicit-default-constructor lst-cap="Implicit default constructor is used when no default constructor is defined. Filename=`implicit_default_constructor.cpp`"}
+```{.cpp}
+{{< include ./cpp/implicit_default_constructor.cpp >}}
+```
+:::
+
+## An implicit default constructor
+
+&#9998;&nbsp; The implicit default constructor is equivalent to a constructor that has 
+
+- no parameters
+- no member initializer list
+- no statements in the constructor body
+
+```{.cpp}
+public:
+    Foo() // implicitly generated default constructor
+    {
+    }
+```
+
+## Killing implicit default constructor
+
+&#9998;&nbsp; If we define [any other constructor]{style="color:blue"} which is not a default constructor, the compiler [automatically deletes the implicit default constructor]{style="color:blue"}.
+
+::: {#lst-killing-default-constructor lst-cap="User-defined constructor which is not default constructor would kill the implicit default constructor. Filename=`kiling_implicit_default_constructor.cpp`"}
+```{.cpp}
+class Foo {
+
+private:
+    int x {};
+    int y {};
+public:
+    Foo(int x, int y) : x{x}, y {y} {}  // "kills" the implicit default constructor
+};
+
+int main()
+{   
+    Foo foo1 { 1, 2 };  // Fine. the compiler uses Foo(int, int).
+    Foo foo2 {};    // error: there is no default constructor
+}
+```
+:::
+
+&#10149;&nbsp; Consequently, we need to write a default constructor if we need one. Instead of writing implicit default constructor "explicitly", we can use `= default`.
+
+## Using `= default` to generate an explicitly defaulted default constructor
+
+&#10149;&nbsp; Look at this example
+
+::: {#lst-explicit-default-constructor lst-cap="Using `= default` to write a default constructor explicitly. Filename=`explicit_default_constructor.cpp`"}
+```{.cpp}
+{{< include ./cpp/explicit_default_constructor.cpp >}}
+```
+:::
+
+## Using `= default` to generate an explicitly defaulted default constructor
+
+&#9998;&nbsp; In cases where we would write a _default constructor that is equivalent to the implicitly generated default constructor_:
+
+- We can tell the compiler to generate a default constructor for us by using the `= default` syntax.
+- This constructor is called an [**explicitly defaulted default constructor**]{style="color:red"}.
+
+# Intro to the copy constructor
+
+We can write code like this (try this in your assignment)
+
+```{.cpp}
+// Original vector
+std::vector<double> original = {1.1, 2.2, 3.3, 4.4};
+// List initialization (calling the copy constructor) - modern way
+std::vector<double> copy1{original};
+// Direct initialization (Calling the copy constructor) - old school
+std::vector<double> copy2(original);
+// Using the assignment syntax (Also calls copy constructor here)
+std::vector<double> copy3 = original;
+```
+
+This section explains what happens behind the scene.
+
+
+## Intro to the copy constructor
+
+&#10149;&nbsp; Let us look at this code  snippet. How can `Fraction f_copy { f }` run?
+
+::: {#lst-intro-copy-constructor lst-cap="An intro to copy constructor: Look at the statement `Fraction f_copy { f }`. Filename=`copy_constructor_intro.cpp`"}
+```{.cpp}
+{{< include ./cpp/copy_constructor_intro.cpp >}}
+```
+:::
+
+:::{.fragment}
+&#10149;&nbsp; The answer is: [**copy constructor**]{style="color:red"}
+:::
+
+## Intro to the copy instructor
+
+### Copy constructor
+
+&#9998;&nbsp; A [**copy constructor**]{style="color:red"} is a constructor that is used to initialize an object with an existing object of the same type.
+
+&#9998;&nbsp; After the copy constructor executes, the newly created object should be a copy of the object passed in as the initializer.
+
+::: {.fragment}
+### An implicit copy constructor
+
+&#9998;&nbsp; If we [do not provide a copy constructor for our classes]{style="color:red"}, C++ will [create a public implicit copy constructor for you]{style="color:blue"}.
+:::
+
+## Copy constructor
+
+&#9998;&nbsp; We can explicitly define our own copy constructor.
+
+::: {#lst-copy-constructor-fraction lst-cap="We can explicitly define our own copy constructor. Note the pass by reference. Filename=`copy_constructor_fraction.cpp`"}
+```{.cpp}
+{{< include ./cpp/copy_constructor_fraction.cpp >}}
+```
+:::
+
+## Copy constructor: Best practices
+
+- A copy constructor should not do anything other than copy an object.
+- This is because the compiler may optimize the copy constructor out in certain cases.
+
+::: {.fragment}
+::: {.my-box}
+**Best practice**
+
+Copy constructors should have no side effects beyond copying.
+:::
+:::
+
+::: {.fragment}
+::: {.my-box}
+**Best practice**
+
+Prefer the implicit copy constructor, unless you have a specific reason to create your own.
+:::
+:::
+
+## The copy constructor’s parameter must be a reference
+
+- It is a requirement that the parameter of a copy constructor must be [an lvalue reference or const lvalue reference]{style="color:red"}.
+- The copy constructor should not be modifying the parameter, using [a const lvalue reference is preferred]{style="color:red"}.
+
+
+::: {.my-box}
+**Best practice**
+
+If you write your own copy constructor, [the parameter should be a const lvalue reference]{style="color:red"}.
+:::
+
+## Pass by value and the copy constructor
+
+&#9998;&nbsp; When an object is passed by value, the argument is copied into the parameter.
+
+::: {#lst-copy-constructor-pass-by-value lst-cap="When an object is passed by value, the argument is copied into the parameter. Filename=`copy_constructor_pass_by_value.cpp`"}
+```{.cpp}
+{{< include ./cpp/copy_constructor_pass_by_value.cpp >}}
+```
+:::
+
+&#10149;&nbsp; Let us run this program.
+
+## Return by value and the copy constructor
+
+&#9998;&nbsp; Return by value creates a temporary object (holding a copy of the return value) that is passed back to the caller.
+
+&#9998;&nbsp; The temporary object is initialized by implicitly invoking the copy constructor.
+
+## Return by value and the copy constructor
+
+&#9998;&nbsp; The compiler has optimized the process of making copy and eliminates unnecessary copying of objects. There should be $4$ copy constructors invoked.
+
+&#9998;&nbsp; This is called [**copy elision**]{style="color:red"}. 
+
+::: {#lst-copy-constructor-pass-by-value lst-cap="When a function returns by value, a temporary object is initialized by implicitly invoking the copy constructor and is returned to the caller. Filename=`copy_constructor_return_by_value.cpp`"}
+```{.cpp}
+{{< include ./cpp/copy_constructor_return_by_value.cpp >}}
+```
+:::
+
+## Using `= default` to generate a default copy constructor
+
+&#9998;&nbsp; If a class has no copy constructor, the compiler will implicitly generate one for us.
+
+&#9998;&nbsp; We can explicitly request the compiler create a default copy constructor for us using the `= default` syntax:
+
+
+```{.cpp}
+// Explicitly request default copy constructor
+    Fraction(const Fraction& fraction) = default;
+```
+
+:::{.fragment}
+&#10149;&nbsp; Write your own example to understand this.
+
+I provided the code already: `default_copy_constructor_using_default.cpp`; you see on GitHub \& Moodle.
+:::
+
+## Using `= delete` to generate a default copy constructor
+
+&#9998;&nbsp; We can prevent copy by marking the copy constructor function as deleted, using the `= delete` syntax:
+
+```{.cpp}
+// Delete the copy constructor so no copies can be made
+Fraction(const Fraction& fraction) = delete;
+```
+
+:::{.fragment}
+&#10149;&nbsp; Write your own example to understand this.
+
+I provided the code already: `remove_copy_constructor_using_delete.cpp`; you see on GitHub \& Moodle.
