@@ -53,6 +53,7 @@ In C++, **there is no explicit `interface` keyword**.
 > Modern languages such as Java and C# may bend the rules, which I don't discuss here.
 
 In UML Notation, we draw:
+
 - The **realization** represents where a concrete class implements an interface. This is visualized by a **dashed line** with a **hollow arrowhead** pointing toward the interface. 
 - The **inheritance** represnets "is-a" relationship between a more specific class (the sublcass/child) and a broader, more general class (the superclass/parent), which including abstract classes. This is visualized by a **solid line** with a **hollow arrowhed** pointing toward the parent class (even if the parent class is an abstract class).
 
