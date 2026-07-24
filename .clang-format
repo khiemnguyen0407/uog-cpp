@@ -1,0 +1,8 @@
+BasedOnStyle: LLVM
+AccessModifierOffset: -2
+AlignAfterOpenBracket: Align
+AlignOperands: Align
+AllowAllArgumentsOnNextLine: false
+BreakBeforeBinaryOperators: None
+ContinuationIndentWidth: 4
+IndentWidth: 4
