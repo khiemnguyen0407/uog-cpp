@@ -22,29 +22,29 @@ format:
         # margin-left: 0.5em
         # margin-right: 0.5em
        
-        css: style.css
+        css: ../theme/notes.css
         number-sections: true
         number-depth: 2
         toc: true               # table of content
         toc-location: left      # table of content on the left
         toc-title: "Table of Content"   # table of content title
 
-    # pdf:
-    #     code-line-numbers: false
-    #     output-file: "mock.pdf"
-    #     embed-resources: true
-    #     geometry:
-    #         - top=24px
-    #         - bottom=24px
-    #         - left=36px
-    #         - right=36px
-    #     css: style.css
-    #     number-sections: true
-    #     number-depth: 2
-    #     toc: true               # table of content
-    #     toc-location: left      # table of content on the left
-    #     toc-title: "Table of Content"   # table of content title
-    #     colorlinks: true
+    pdf:
+        code-line-numbers: false
+        output-file: "mock.pdf"
+        embed-resources: true
+        geometry:
+            - top=24px
+            - bottom=24px
+            - left=36px
+            - right=36px
+        css: ../theme/notes.css
+        number-sections: true
+        number-depth: 2
+        toc: true               # table of content
+        toc-location: left      # table of content on the left
+        toc-title: "Table of Content"   # table of content title
+        colorlinks: true
 ---
 
 # Foreword
