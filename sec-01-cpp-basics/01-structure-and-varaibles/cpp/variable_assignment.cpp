@@ -1,12 +1,11 @@
 #include <iostream>
 
-int main()
-{
-	int width; // define a variable named width
-	width = 5; // copy assignment of value 5 into variable width
-	std::cout << width; // prints 5
-	width = 7; // change value stored in variable width to 7
-	std::cout << width; // prints 7
-    
-	return 0;
+int main() {
+    int width;                  // define a variable named width
+    width = 5;                  // assign the value 5 to width
+    std::cout << width << '\n'; // prints 5
+
+    width = 7;                  // assign a new value: 5 is gone
+    std::cout << width << '\n'; // prints 7
+    return 0;
 }

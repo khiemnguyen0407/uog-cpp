@@ -1,0 +1,51 @@
+/* ENG3091 lecture notes (HTML). Shared by every chapter. */
+code.sourceCode {
+  font-size: 0.9em !important;
+}
+
+.cell-code.cpp,
+.cell-code.python {
+  font-size: 0.9em !important;
+}
+
+/* Program output and terminal sessions */
+pre.output,
+pre.terminal {
+  background: #14233a;
+  color: #e6edf5;
+  border-radius: 6px;
+  padding: 0.8em 1em;
+  font-size: 0.85em;
+}
+
+pre.output code,
+pre.terminal code {
+  color: inherit;
+  background: transparent;
+}
+
+/* Code panes span the full text width, like their filename tabs */
+.code-with-filename div.sourceCode {
+  width: 100%;
+}
+
+/* Examples that are meant to fail: ```{.cpp filename="x.cpp" .no-compile} */
+.code-with-filename:has(pre.no-compile) .code-with-filename-file {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #b3261e;
+  color: #fff;
+}
+
+.code-with-filename:has(pre.no-compile) .code-with-filename-file pre strong {
+  color: #fff;
+}
+
+.code-with-filename:has(pre.no-compile) .code-with-filename-file::after {
+  content: "does not compile";
+  padding-right: 0.8em;
+  font-weight: 700;
+  font-size: 0.8em;
+  color: #fff;
+}

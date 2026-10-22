@@ -1,0 +1,67 @@
+# Shared settings for every ENG3091 lecture chapter.
+#
+# A chapter opts in with one line in its YAML header:
+#
+#     metadata-files: [../../theme/lecture.yml]
+#
+# and then only needs its title and output file names. Change the look of
+# all chapters here, in eng3091-slides.scss (slides) or in notes.css (HTML).
+# Paths are relative to the chapter's .qmd file, which always sits two
+# folders below the repo root (e.g. sec-01-cpp-basics/02-functions-and-files).
+
+author-meta: "Lecturer in Multiscale Materials"
+number-sections: true
+number-depth: 3
+highlight-style: ../../theme/eng3091.theme
+filters:
+  - ../../theme/eng3091.lua
+
+format:
+  html:
+    embed-resources: true
+    css: ../../theme/notes.css
+    grid:
+      body-width: 1600px
+      margin-width: 300px
+      sidebar-width: 350px
+    code-overflow: wrap
+    code-line-numbers: true
+    code-block-bg: true
+    code-block-border-left: false
+    toc: true
+    toc-depth: 3
+    toc-title: Contents
+
+  pdf:
+    code-line-numbers: true
+    include-in-header:
+      text: |
+        % Keep each code listing right where it appears in the text
+        % (no floating), and don't stretch the space between lines.
+        \AtBeginDocument{\raggedbottom\floatplacement{codelisting}{H}}
+    toc: true
+    toc-depth: 3
+    toc-title: Contents
+    geometry:
+      - top=24px
+      - bottom=24px
+      - left=36px
+      - right=36px
+
+  revealjs:
+    theme: [default, ../../theme/eng3091-slides.scss]
+    css: ../../theme/fonts.css
+    include-after-body: ../../theme/slides.html
+    embed-resources: true
+    width: 1280
+    height: 720
+    margin: 0.06
+    slide-number: c/t
+    toc: true
+    toc-depth: 1
+    toc-title: Contents
+    code-line-numbers: true
+    code-overflow: wrap
+    mouse-wheel: true
+    transition: none
+    preview-links: false

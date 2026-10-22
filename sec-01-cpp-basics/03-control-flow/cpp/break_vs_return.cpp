@@ -1,31 +1,23 @@
 #include <iostream>
 
-int break_or_return()
-{
-    while (true) // infinite loop
-    {
-        std::cout << "Enter 'b' to break or 'r' to return: ";
+int break_or_return() {
+    while (true) {
+        std::cout << "Type b (break) or r (return): ";
         char ch{};
         std::cin >> ch;
-
-        if (ch == 'b')
-            break; // execution will continue at the first statement beyond the loop
-
-        if (ch == 'r')
-            return 1; // return will cause the function to immediately return to the caller (in this case, main())
+        if (ch == 'b') {
+            break; // continue after the loop
+        }
+        if (ch == 'r') {
+            return 1; // leave the whole function now
+        }
     }
-
-    // breaking the loop causes execution to resume here
-
     std::cout << "We broke out of the loop\n";
-
-    return 0;   // return 0 if we broke out of the loop and did not return earlier.
+    return 0;
 }
 
-int main()
-{
-    int return_value{ break_or_return() };
-    std::cout << "Function break_or_return returned " << return_value << '\n';
-
+int main() {
+    int result{break_or_return()};
+    std::cout << "It returned " << result << '\n';
     return 0;
 }

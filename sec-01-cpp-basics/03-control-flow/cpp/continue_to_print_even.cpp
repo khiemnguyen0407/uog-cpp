@@ -1,20 +1,12 @@
 #include <iostream>
 
-int main()
-{
-    for (int count{ 0 }; count < 10; ++count)
-    {
-        // if the number is odd, skip this iteration
-        if ((count % 2) == 1)
-            continue; // go to next iteration
-
-        // If the number is even, keep going
-        std::cout << count << '\n';
-        
-        // The continue statement jumps to here 
-        // and ends the current iteration.
-    }
-
+int main() {
+    for (int count{0}; count < 10; ++count) {
+        if (count % 2 == 1) { // odd number?
+            continue;         // skip the rest of this iteration
+        }
+        std::cout << count << ' ';
+    } // continue jumps to here, then ++count runs
+    std::cout << '\n';
     return 0;
 }
-

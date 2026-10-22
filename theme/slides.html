@@ -1,0 +1,17 @@
+<!--
+  ENG3091 slides: paint the title slide and every section slide ("# Heading")
+  deep navy. Doing it here means chapters never need per-slide attributes.
+-->
+<script>
+(function () {
+  var NAVY = "#0d2742";
+  var dividers = document.querySelectorAll(
+    ".reveal .slides section#title-slide, .reveal .slides section.level1"
+  );
+  dividers.forEach(function (s) {
+    s.setAttribute("data-background-color", NAVY);
+    if (s.id !== "title-slide") s.classList.add("is-divider");
+  });
+  if (window.Reveal && Reveal.isReady && Reveal.isReady()) Reveal.sync();
+})();
+</script>

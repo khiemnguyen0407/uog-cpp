@@ -1,17 +1,16 @@
 #include <iostream>
-int main()
-{
-    switch (1 - 2 + 3 - 4 + 5)  // expression in switch statement
-    {   // note this curly brace
-        case 3:
-            std::cout << "Three.\n";
-            break;
-        case 4:
-            std::cout << "Four.\n";
-            break;
-        default:
-            std::cout << "Some integral number.\n";
-            break;
-    }   // note this curly brace
+
+int main() {
+    switch (1 - 2 + 3 - 4 + 5) { // any integer expression
+    case 3:
+        std::cout << "Three\n";
+        break;
+    case 2 + 2: // a constant expression works as a label
+        std::cout << "Four\n";
+        break;
+    default:
+        std::cout << "Something else\n";
+        break;
+    }
     return 0;
 }

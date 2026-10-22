@@ -1,15 +1,13 @@
 #include <iostream>
 
-int main()
-{
-    int count{ 0 };
-    while (count < 10)
-    {
-        if (count == 5)
-            continue; 
+int main() {
+    int count{0};
+    while (count < 10) {
+        if (count == 5) {
+            continue;
+        }
         std::cout << count << '\n';
-
-        ++count; 
+        ++count;
     }
     return 0;
 }

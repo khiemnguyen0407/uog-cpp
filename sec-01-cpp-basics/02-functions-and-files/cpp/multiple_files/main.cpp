@@ -1,10 +1,8 @@
 #include <iostream>
 
-// needed so main.cpp knows that add() is a function defined elsewhere
-float add(float x, float y);
+int add(int x, int y); // add() is defined in another file
 
-int main()
-{
-    std::cout << "The sum of 3 and 4 is: " << add(3.0, 4.0) << '\n';
+int main() {
+    std::cout << "3 + 4 = " << add(3, 4) << '\n';
     return 0;
 }

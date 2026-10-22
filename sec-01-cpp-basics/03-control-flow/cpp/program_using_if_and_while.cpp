@@ -1,29 +1,17 @@
 #include <iostream>
 
-// Iterate through every number between 1 and 50
-int main()
-{
-    int count{ 1 };
-    while (count <= 50)
-    {
-        // print the number (pad numbers under 10 with 
-        // a leading 0 for formatting purposes)
-        if (count < 10)
-        {
-            std::cout << '0';
+int main() {
+    int count{1};
+    while (count <= 50) {
+        if (count < 10) {
+            std::cout << '0'; // pad single digits: 01, 02, ...
         }
-
         std::cout << count << ' ';
 
-        // if the loop variable is divisible by 10, print a newline
-        if (count % 10 == 0)
-        {
-            std::cout << '\n';
+        if (count % 10 == 0) { // every 10th number...
+            std::cout << '\n'; // ...start a new line
         }
-
-        // increment the loop counter
         ++count;
     }
-
     return 0;
 }

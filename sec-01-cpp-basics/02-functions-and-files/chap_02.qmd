@@ -1,603 +1,779 @@
 ---
-title: "Chapter 02: Functions"
-author: Khiem Nguyen -- <khiem.nguyen@glasgow.ac.uk>
-    # <br>Lecturer in Multiscale Materials
-    # <br><khiem.nguyen@glasgow.ac.uk>
-author-meta: "Lecturer in Multiscale Materials"
-
-format: 
-    # other themes: 
-    #   beige, blood, dark, dracula, league, moon, 
-    #   night, serif, simple, sky, solarized
-    # highlight-style: monokai      # good for dark images
-    html:
-        output-file: "chap_02.html"
-        grid:
-            body-width: 1600px
-            margin-width: 300px
-            sidebar-width: 350px
-        embed-resources: true
-        theme: simple
-        highlight-style: github
-        css: doc.css
-        number-sections: true
-        number-depth: 3
-        mouse-wheel: true
-        title-slide-style: pandoc
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true     # <-- remove white background in code blocks
-        code-block-border-left: false
-        toc: true
-        toc-depth: 3
-        toc-title: Contents
-    pdf:
-        output-file: "chap_02.pdf"
-        embed-resources: true
-        theme: simple
-        highlight-style: github      # good for dark images
-        css: doc.css
-        number-sections: true
-        number-depth: 3
-        geometry:
-            - top=24px
-            - bottom=24px
-            - left=36px
-            - right=36px
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true # <-- remove white background in code blocks
-        code-block-border-left: false
-        toc: true
-        toc-depth: 3
-        toc-title: Contents
-    revealjs:
-        output-file: "chap_02_slide.html"
-        embed-resources: true
-        theme: simple
-        css: slide.css
-        number-sections: true
-        number-depth: 3
-        mouse-wheel: true
-        highlight-style: github
-        slide-number: true
-        title-slide-style: pandoc
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true   # <-- remove white background in code blocks
-        code-block-border-left: false # optional: remove left border
-        toc: true
-        toc-depth: 1
-        toc-title: Contents
-
+title: "Chapter 02: Functions and Files"
+subtitle: "ENG3091"
+author:
+  - name: Khiem Nguyen
+    email: khiem.nguyen@glasgow.ac.uk
+    affiliations: University of Glasgow
+metadata-files: [../../theme/lecture.yml]
+format:
+  html:
+    output-file: chap_02.html
+  pdf:
+    output-file: chap_02.pdf
+  revealjs:
+    output-file: chap_02_slide.html
 ---
 
-# Basic Syntax
+# Why functions?
 
-## An example of a user-defined function
+## Copy, paste, repeat
 
-The most basic syntax to define a user-defined function
-```{.cpp #lst-most-basic-syntax filename="function_basic_syntax.cpp" lst-cap="Most basic syntax to define a user-defined function." filename=`function_basic_syntax.cpp`}
-{{< include ./cpp/function_basic_syntax.cpp >}}
-```
+Here is a program that reads two integers and adds them.
 
-- The `function_name` is the name (identifier) of your user-defined function.
-- The parentheses after the identifier tell the compiler that we’re defining a function.
-
-## Define a function and call the function
-- Of course, after defining the function, we can call it multiple times.
-
-```{.cpp #lst-call-funcion lst-cap="Define function and call function. Filename: `call_function.cpp`"}
-{{< include ./cpp/call_function.cpp >}}
-```
-
-## Functions can call functions that call other functions
-```{.cpp #lst-function-call-function lst-cap="Function can call other functions"}
-{{< include ./cpp/function_call_function.cpp >}}
-```
-
-## Nested functions are not supported
-- A function whose definition is placed inside another function is a **nested function**.
-- Unlike Python and MATLAB, functions cannot be nested in C++.
-
-The following program is **not legal**:
-```{.cpp #lst-nested-function lst-cap="Function can call other functions"}
-{{< include ./cpp/nested_function.cpp >}}
-```
-# Function retrun values (value-returning functions)
-
-## Return values
-When we write a user-defined function, we get to determine whether the function will return a value back to the caller or not.
-
-- Indicate what type of value will be returnd (**return type**)
-- Use a **return statement** to indicate the specific value being returned to the caller.  
-
-```cpp
-return_type function_name()
-{   
-    // function body
-    return return_expression;
-}
-```
-
-When the return statement is executed: 
-
-1. The **return expression** is evaluated to produce a value.
-2. The value produced by the return expression is copied back to the caller. This copy is called the **return value** of the function.
-3. The function exits, and control returns to the caller.
-
-**Summary**
-
-The **return expression** produces the value to be returned. The return value is a copy of that value.
-
-## Return values: Code Demonstration
-```{.cpp #lst-return-value lst-cap="Return value in a function" filename=return_value.cpp}
-{{< include ./cpp/return_value.cpp >}}
-```
-
-## Revisiting `main()`
-
-In C++, there are two special requirements for main():
-
-- `main()` is required to return an `int`.
-- Explicit function calls to `main()` are disallowed.
-
-```{.cpp #lst-revisit-main lst-cap="This program will produce compile error!!!"}
-void foo()
-{
-    main(); // Compile error: main not allowed to be called explicitly
-}
-
-void main() // Compile error: main not allowed to have non-int return type
-{
-    foo();
-}
-```
-
-## Functions can only return a single value
-
-- A value-returning function can only return a single value back to the caller each time it is called.
-- There are various ways to work around the limitation of functions only being able to return a single value, which we’ll cover in future lessons.
-
-
-## Don't Repeat Yourself (DRY)
-
-_Golden Rule_  
-**Don't Repeat Yourself** (DRY)
-
-```{.cpp #lst-violate-DRY lst-cap="This program violates Don't Repeat Yourself and can be rewritten"}
+```{.cpp filename="repeat_yourself.cpp" code-line-numbers="|4-6,8-10"}
 {{< include ./cpp/repeat_yourself.cpp >}}
-
 ```
+
+Lines 4--6 and 8--10 do exactly the same job. Now imagine reading *ten* numbers. Or changing the prompt text in every copy, and forgetting one.
 
 ## Don't Repeat Yourself (DRY)
 
-We can rewrite the above by define a function and reuse the function multiple times.
-```{.cpp #lst-DRY lst-cap="Rewrite the above program to conform with DRY"}
+The golden rule: **write it once, give it a name, use it as often as you like.**
+
+::: {.columns}
+::: {.column width="62%"}
+```{.cpp filename="dont_repeat_yourself.cpp"}
 {{< include ./cpp/dont_repeat_yourself.cpp >}}
 ```
-
-# Void functions (non-value returning functions)
-
-## Void return values
-
-To tell the compiler that a function does not return a value, a return type of `void` is used.
-```{.cpp #lst-return-void lst-cap="non-value returning functions return void"}
-{{< include ./cpp/return_void.cpp >}}
+:::
+::: {.column width="38%"}
+```{.text .terminal}
+$ ./dont_repeat_yourself
+Enter an integer: 3
+Enter an integer: 4
+Sum: 7
 ```
 
-## Void functions do not need a return statement
+- `get_value_from_user()` is a **function**: a named, reusable block of code.
+- `main()` **calls** it twice. Change the prompt once, and both calls change.
+:::
+:::
 
-- A void function will automatically return to the caller at the end of the function. No return statement is required.
-- A return statement (with no return value) can be used in a void function -- such a statement will cause the function to return to the caller at the point where the return statement is executed.
-- Consequently, putting an empty return statement at the end of a void function is redundant.
+The rest of this chapter explains every piece of this program.
 
-```{.cpp #lst-void-return lst-cap="**return** in a void function will cause the function to return to the caller"}
-{{< include ./cpp/void_return.cpp >}}
+# Defining and calling functions
+
+## Anatomy of a function
+
+::: {.columns}
+::: {.column width="50%"}
+The general form
+
+```{.cpp}
+return_type name(parameters) {
+    statements
+}
+```
+:::
+::: {.column width="50%"}
+A real one
+
+```{.cpp}
+int add(int x, int y) {
+    return x + y;
+}
+```
+:::
+:::
+
+- The **header** (first line) gives the function's name, what goes in (the **parameters**) and what comes out (the **return type**).
+- The **body**, between `{` and `}`, holds the statements that run every time the function is called.
+- `main()` is a function too. It's special only because every program starts there.
+
+## Calling a function
+
+::: {.columns}
+::: {.column width="60%"}
+```{.cpp filename="call_function.cpp"}
+{{< include ./cpp/call_function.cpp >}}
+```
+:::
+::: {.column width="40%"}
+```{.text .output}
+Starting main()
+  In say_hello(): Hello there!
+  In say_hello(): Hello there!
+Ending main()
 ```
 
-## Returning a value from a void function is a compile error
+- A **function call** is the name followed by parentheses: `say_hello();`
+- `main()` pauses, `say_hello()` runs, then `main()` carries on right after the call.
+:::
+:::
 
-- Obviously, trying to return a value from a non-value returning function will result in a compilation error. 
-- This needs no explanation, just common sense.
+`main()` is the **caller** and `say_hello()` is the **callee**. (`void` means "gives nothing back". More on that soon.)
 
-```{.cpp #lst-return-value-in-void lst-cap="Returning a value from a void function will result in a compilation error"}
-void say_hi() // This function is non-value returning
-{
-    std::cout << "In say_hi()" << '\n';
+## Functions can call functions (that call functions...)
 
-    return 5; // compile error: we're trying to return a value
+::: {.columns}
+::: {.column width="58%"}
+```{.cpp filename="function_call_function.cpp"}
+{{< include ./cpp/function_call_function.cpp >}}
+```
+:::
+::: {.column width="42%"}
+```{.text .output}
+Starting main()
+  Starting do_a()
+    In do_b()
+  Ending do_a()
+Ending main()
+```
+
+Read the output from top to bottom: every call returns to exactly the place it was called from.
+:::
+:::
+
+## No functions inside functions
+
+```{.cpp filename="nested_function.cpp" .no-compile}
+{{< include ./cpp/nested_function.cpp >}}
+```
+
+```{.text .output .compiler}
+error: a function-definition is not allowed here before '{' token
+```
+
+A function defined inside another function is a **nested function**. C++ doesn't allow them: every function definition lives at the top level of a file. (`foo` is the name programmers use when the name doesn't matter.)
+
+::: {.callout-note title="Coming from Python"}
+Python and MATLAB let you define a function inside another one. C++ does not.
+:::
+
+# Return values
+
+## Sending a value back to the caller
+
+A function can hand **one value** back to whoever called it. It needs two things:
+
+1. a **return type** in the header, saying what kind of value comes back (e.g. `int`);
+2. a **return statement** in the body, saying which value: `return input;`
+
+When the return statement runs:
+
+1. The expression after `return` is evaluated.
+2. A **copy** of the result is sent back to the caller. This copy is the **return value**.
+3. The function ends, and the caller carries on.
+
+## Return values in action
+
+::: {.columns}
+::: {.column width="65%"}
+```{.cpp filename="return_value.cpp"}
+{{< include ./cpp/return_value.cpp >}}
+```
+:::
+::: {.column width="35%"}
+```{.text .terminal}
+$ ./return_value
+Enter an integer: 21
+21 x 2 = 42
+```
+
+On line 12, the call `get_value_from_user()` produces the value it returns (here `21`), and that value initialises `num`.
+:::
+:::
+
+## One call, one return value
+
+- Each call returns exactly **one** value.
+- Need two results from one function? There are ways around it (references, structs and classes), and we'll meet them in later chapters.
+
+::: {.callout-note title="Coming from Python"}
+`return total, average` in Python *looks* like two values, but it actually returns **one** tuple. C++ can play the same trick by returning one object that holds several values, such as a struct or a `std::pair`. Later!
+:::
+
+## `main()` is special
+
+- `main()` must return an `int`. The value goes back to the operating system: `0` means "everything went fine".
+- `main()` is the only value-returning function allowed to skip `return`: reaching its closing `}` returns `0`. We'll keep writing `return 0;` anyway. It's clearer.
+- Never call `main()` yourself. The C++ standard forbids it, although g++ only complains if you compile with `-pedantic-errors`.
+
+```{.cpp .no-compile}
+void main() { // error: '::main' must return 'int'
 }
 ```
 
-# Introduction to function parameters and arguments
+## Forgetting to return a value
 
-## Function parameters and arguments
+::: {.columns}
+::: {.column width="55%"}
+```{.cpp filename="missing_return.cpp"}
+{{< include ./cpp/missing_return.cpp >}}
+```
+:::
+::: {.column width="45%"}
+```{.text .terminal}
+$ g++ -std=c++20 -Wall missing_return.cpp
+warning: no return statement in function
+returning non-void [-Wreturn-type]
+$ ./a.out
+Thinking...
+Illegal instruction
+```
+:::
+:::
 
-### Function parameter
-- A **function parameter** is a variable used in the header of a function.
-- Function parameters work almost identically to variables defined inside the function, but with one difference.
-- Function parameters are initialized with a value provided by the caller of the function.
+- This **compiles**: g++ only gives a *warning*. But the program has **undefined behaviour**, which means anything can happen. On my machine, it crashed.
+- Warnings are free bug reports. Turn them on and read them!
 
-### Argument
-An argument is a value that is passed from the caller to the function when a function call is made.
-```{.cpp}
-say_hello();            // this call has no arguments
-print_value(6);         // 6 is the argument passed to function printValue()
-add(2.0, 3.0);          // 2.0 and 3.0 are the arguments passed to function add()
+::: {.callout-tip title="Best practice"}
+Compile with `g++ -std=c++20 -Wall -Wextra` and treat every warning as a bug to fix.
+:::
+
+## `void` functions: nothing to return
+
+::: {.columns}
+::: {.column width="58%"}
+```{.cpp filename="void_return.cpp"}
+{{< include ./cpp/void_return.cpp >}}
+```
+:::
+::: {.column width="42%"}
+```{.text .output}
+Hi
+I'm Khiem
+Back in main()
 ```
 
-## Function parameters: Examples
+- `void` means "this function returns no value".
+- A `void` function needs no `return`: it goes back to the caller at its closing `}`.
+- `return;` goes back *immediately*, so line 8 never runs.
+:::
+:::
 
-```{.cpp #lst-function-parameters lst-cap="Different functions with different number of parameters"}
+On its own, an early `return;` is pointless. Together with `if` statements (Chapter 03) it becomes really useful.
+
+## A `void` function cannot return a value
+
+No surprise here: if you promise to return nothing, the compiler holds you to your promise.
+
+```{.cpp .no-compile}
+void say_hi() {
+    std::cout << "Hi\n";
+    return 5; // we promised void!
+}
+```
+
+```{.text .output .compiler}
+error: return-statement with a value, in function returning 'void'
+```
+
+# Parameters and arguments
+
+## Parameters and arguments
+
+- A **parameter** is a variable declared in the function header. It's a placeholder for a value the caller will supply.
+- An **argument** is the actual value the caller passes in the function call.
+
+> Memory trick: **P**arameters are **P**laceholders; **A**rguments are **A**ctual values.
+
+```{.cpp}
+void print_double(int value) { // value is a PARAMETER
+    std::cout << value * 2 << '\n';
+}
+
+int main() {
+    print_double(21); // 21 is an ARGUMENT
+    return 0;
+}
+```
+
+## Zero, one or more parameters
+
+::: {.columns}
+::: {.column width="70%"}
+```{.cpp filename="function_parameters.cpp"}
 {{< include ./cpp/function_parameters.cpp >}}
 ```
+:::
+::: {.column width="30%"}
+```{.text .output}
+Hello World
+6.5
+5.5
+```
 
-## How parameters and arguments work toghether
+A call must supply one argument for each parameter, in the same order.
+:::
+:::
 
-- When a function is called, all of the parameters of the function are created as variables.
-- The value of each of the arguments is copied into the matching parameter (using copy initialization). 
-- This process is called **pass by value**. 
-- Function parameters that utilize _pass by value_ are called **value parameters**.
+## Pass by value
 
-## Call a function with the process of pass-by-value
-```{.cpp #lst-pass-by-value lst-cap="Call a function by using the process **pass by value**"}
+When a function is called:
+
+1. each parameter is created as a brand-new local variable, and
+2. it is initialised with a **copy** of the matching argument.
+
+This is called **pass by value**, and parameters like these are **value parameters**.
+
+::: {.callout-important title="Key idea"}
+With pass by value, the function works on its **own copy** of each argument. Whatever it does to the copy stays inside the function.
+:::
+
+## Pass by value in action
+
+::: {.columns}
+::: {.column width="70%"}
+```{.cpp filename="double_a_number.cpp"}
+{{< include ./cpp/double_a_number.cpp >}}
+```
+:::
+::: {.column width="30%"}
+```{.text .terminal}
+$ ./double_a_number
+Enter an integer: 7
+7 x 2 = 14
+Enter an integer: 21
+21 x 2 = 42
+```
+
+On line 18, the return value of one call becomes the argument of another.
+:::
+:::
+
+## The swap that doesn't swap
+
+What does this program print? Think before you look!
+
+```{.cpp filename="pass_by_value.cpp"}
 {{< include ./cpp/pass_by_value.cpp >}}
 ```
 
-## Call a function with the process of pass-by-value
-```{.cpp #lst-double-number lst-cap="Combine what we have learned so far to write a stupid program"}
-{{< include ./cpp/double_a_number.cpp >}}
+::: {.fragment}
+::: {.columns}
+::: {.column width="45%"}
+```{.text .output}
+In try_to_swap(): 200 100
+Back in main():   100 200
 ```
+:::
+::: {.column width="55%"}
+`try_to_swap()` swapped its own **copies**; `main()`'s `x` and `y` never changed. To change the caller's variables we need *references* (Chapter 07).
+:::
+:::
+:::
 
-## Call a function with the process of pass-by-value: More examples
-```{.cpp #lst-pass-by-value-more lst-cap="Call a function by using the process **pass by value**: More examples"}
+## Coming from Python: what gets copied?
+
+::: {.columns}
+::: {.column width="50%"}
+```{.python filename="pass_by_value.py"}
+{{< include ./pass_by_value.py >}}
+```
+:::
+::: {.column width="50%"}
+- In Python, the parameter and the argument refer to the **same object**. Change the list inside the function and the caller sees the change.
+- In C++, pass by value makes a **separate copy** of the whole argument, even if it's a big container of numbers. Nothing the function does to its copy can reach the caller.
+:::
+:::
+
+## Arguments can be any expression
+
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="pass_by_value_more.cpp"}
 {{< include ./cpp/pass_by_value_more.cpp >}}
 ```
+:::
+::: {.column width="28%"}
+```{.text .output}
+9
+15
+10
+7
+6
+```
+:::
+:::
 
-# Introduction to local scope
+Each argument is evaluated first, and the resulting value is copied into the parameter. An argument can even be another function call, like `multiply(2, 3)`.
+
+## Watch out: argument order is not guaranteed
+
+::: {.columns}
+::: {.column width="70%"}
+```{.cpp filename="evaluation_order.cpp"}
+{{< include ./cpp/evaluation_order.cpp >}}
+```
+:::
+::: {.column width="30%"}
+```{.text .terminal}
+$ ./evaluation_order
+Enter an integer: 10
+Enter an integer: 3
+3 - 10 = -7
+```
+
+Wait, what? We typed `10` first!
+
+C++ does **not** fix the order in which arguments are evaluated. g++ called the *second* `get_value_from_user()` first.
+:::
+:::
+
+**The fix:** read the values into variables in separate statements, then pass the variables.
+
+# Local variables: scope and lifetime
 
 ## Local variables
 
-- Variables defined inside the body of a function are called local variables.
-- Function parameters are also generally considered to be local variables.
-```{.cpp #lst-local-variables lst-cap="Local variables"}
-int add(int x, int y) // function parameters x and y are local variables
-{
-    int z{ x + y };         // z is a local variable
+Variables defined inside a function body are **local variables**. Parameters count as local variables too.
 
+```{.cpp}
+int add(int x, int y) { // parameters x and y are local variables
+    int z{x + y};       // z is a local variable
     return z;
 }
 ```
 
-## Local variable lifetime
+Every variable raises two different questions:
 
-- Function parameters are created and initialized when the function is entered, and variables within the function body are created and initialized at the point of definition.
-- The natural follow-up question is, "So when is an instantiated variable destroyed?". 
+|                    | **Scope**                                  | **Lifetime**                                 |
+|--------------------|--------------------------------------------|----------------------------------------------|
+| The question       | *Where* in the code can I use the name?    | *When* does the variable exist in memory?    |
+| Decided at         | compile time                               | run time                                     |
+| A local variable's | from its definition to the end of its block | from its creation to the end of its block    |
 
-**Answer**
+## Lifetime: created, used, destroyed
 
-> Local variables are destroyed in the opposite order of creation at the end of the set of curly braces in which it is defined (or for a function parameter, at the end of the function).
-
-```{.cpp #lst-local-var-lifetime lst-cap="Lifetime of local variables"}
-double add(double x, double y)       // x and y created and initialized here
-{
-    double z{ x + y };         // z created and initialized here
-
-    return z;
-} // z, y, and x destroyed here
-```
-
-## Local variable lifetime: Example
-```{.cpp #lst-local-var-lifetime-ex lst-cap="Local variable lifetime: Example"}
+```{.cpp filename="local_variable_lifetime.cpp"}
 {{< include ./cpp/local_variable_lifetime.cpp >}}
 ```
 
-## What happens when an object is destroyed?
+- Parameters are created when the function starts; other local variables when their definition runs.
+- At the closing `}`, local variables are destroyed in the **reverse** order of creation.
+- "Destroyed" usually just means the memory can be reused. For class objects, a special function called a **destructor** runs first (Chapter 12).
 
-- In most cases, nothing happens. The destroyed object simply becomes invalid.
-- At some point after destruction, the memory used by the object will be deallocated (freed up for reuse).
+## Scope: two variables, one name
 
-### Destructor
-
-- If the object is a class type object, prior to destruction, a special function called a destructor is invoked. 
-- We study destructors when we study "**Object-oriented Programming**" (**OOP**).
-
-## Local scope (block scope)
-
-::: {.fragment}
-### Scope
-::: {.incremental}
-- An identifier's **scope** determines where the identifier can be seen and used within the source code.
-- When an identifier can be seen and used, we say it is in **scope**.
-- When an identifier can not be seen, we can not use it, and we say it is **out of scope**.
-:::
-:::
-
-::: {.fragment}
-### Local scope
-::: {.incremental}
-- The identifier of a local variable has **local scope**.
-- An identifier with local scope (technically called block scope) is usable from the point of definition to the end of the innermost pair of curly braces containing the identifier (or for function parameters, at the end of the function).
-:::
-:::
-
-::: {.fragment}
-> **Scope is a compile-time property**, and trying to use an identifier when it is not in scope will result in a compile error.
-:::
-
-## Local scope: Example 01
-This program compiles fine and outputs what we expected.
-```{.cpp #lst-local-scope-01 lst-cap="Local scope: Example 01"}
+::: {.columns}
+::: {.column width="62%"}
+```{.cpp filename="local_scope_01.cpp"}
 {{< include ./cpp/local_scope_01.cpp >}}
 ```
+:::
+::: {.column width="38%"}
+```{.text .output}
+In print_x(): x = 42
+In main():    x = 7
+```
+:::
+:::
 
-## Local scope: Example 02
-Let us look at this program.
-```{.cpp #lst-local-scope-01 lst-cap="Local scope: Example 02"}
+- Each function has its own `x`. They just happen to share a name.
+- A local name only means something inside its own function, so you can reuse good names freely.
+
+## Scope: blocks inside functions
+
+```{.cpp filename="local_scope_02.cpp" .no-compile}
 {{< include ./cpp/local_scope_02.cpp >}}
 ```
 
-## Scope versus Lifetime
+::: {.columns}
+::: {.column width="52%"}
+```{.text .output .compiler}
+error: 'b' was not declared in this scope
+```
 
-In programming in general, **scope** and **lifetime** are two closely related but distinct concepts that determine how and when a variable can be used.
-
-The simplest way to remember:
-
-- **Scope** is about **Visibility** (Where can I see this variable in the code?).
-- **Lifetime** is about **Existence** (How long does this variable stay in memory?).
-
-## Scope versus Lifetime
-
-### Scope (the "**where**")
-- **Scope** refers to the region of your program's source code where a variable's name is recognized and can be used. 
-- If you try to access a variable outside its scope, the compiler will throw an error saying the variable is undefined. 
-- Therefore, **Scope**  is a **compile-time property** in C/C++.
-
-> **Remark**: Other languages, we have Dynamic Scope (versus Static Scope as in C++) which is a runtime property
-
-::: { .fragment}
-### Lifetime
-- **Lifetime** (also called storage duration) refers to the time interval during which the variable actually occupies a physical spot in your computer's memory. 
-- It starts when the memory is allocated and ends when it is reclaimed by the system.
-- Therefore, **Lifetime**  is a **run-time property**.
+A name can be used from its definition to the end of the innermost `{ }` around it, hence the name **block scope**. Break that rule and you get a **compile-time** error.
+:::
+::: {.column width="48%"}
+::: {.callout-note title="Coming from Python"}
+Python has no block scope: a variable created inside an `if` or `for` body is still usable after it, until the function ends. In C++, it's gone at the `}`.
+:::
+:::
 :::
 
-## Scope versus Lifetime: Example
+## Scope is not lifetime
 
-```{.cpp #lst-scope-vs-lifetime lst-cap="Scope versus Lifetime"}
+::: {.columns}
+::: {.column width="60%"}
+```{.cpp filename="scope_vs_lifetime.cpp"}
 {{< include ./cpp/scope_vs_lifetime.cpp >}}
 ```
-::: { .fragment}
-But I don't think you actually believe me. Let me prove this to you!
 :::
-## Scope versus Lifetime: Example
-```{.cpp #lst-scope-vs-lifetime-proof lst-cap="Prove that Scope and Lifetime are different concepts"}
+::: {.column width="40%"}
+- While `second_function()` runs, `x` is **out of scope**: the name `x` can't be used there.
+- But `x` is still **alive**: `first_function()` hasn't finished yet, and line 11 still prints `10`.
+
+::: {.fragment}
+I don't think you believe me. Let me prove it to you!
+:::
+:::
+:::
+
+## Scope is not lifetime: the proof
+
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="scope_vs_lifetime_proof.cpp"}
 {{< include ./cpp/scope_vs_lifetime_proof.cpp >}}
 ```
-::: { .fragment}
-I hope you believe me now. Actually, you can debug the code in the last slide and still see that variable `x` is alive during the execution of `second_function()`.
+:::
+::: {.column width="28%"}
+```{.text .output}
+x is at 0x7fffdc7401c4
+x holds 10
+```
+
+No *name* `x` in sight, yet `10` is still there. So `x` is alive!
+
+::: {.callout-note title="Sneak peek"}
+`&x` is the address of `x`; `*address_of_x` reads the value stored there. These are **pointers** (Chapter 08).
+:::
+:::
 :::
 
-# Forward declarations and definitions
+Your address will differ. Prefer a debugger? Pause inside `second_function()` and you'll see `x` alive and well in `first_function()`.
 
-## Quick introduction
+# Declarations and definitions
 
-```{.cpp #lst-without-forward-declaration lst-cap="Seemingly innocent sampe program that gives compile error"}
+## An innocent-looking program
+
+```{.cpp filename="without_forward_declaration.cpp" .no-compile}
 {{< include ./cpp/without_forward_declaration.cpp >}}
 ```
 
-- This program doesn’t compile is as the compiler compiles the contents of code files sequentially. 
-- When the compiler reaches the function call `add()` in `main()`, it does not know what `add` is.
+```{.text .output .compiler}
+error: 'add' was not declared in this scope
+```
 
-## Fix the "innocent" program -- Option 1: Reorder the function definitions
-```{.cpp #lst-fix-innocent-program-01 lst-cap="Reorder the function definitions to fix the innocent program." filename="reorder_function_defs.cpp"}
+- The compiler reads a file **from top to bottom**.
+- When it reaches `add(3, 4)` on line 4, it has never heard of `add`. The definition further down comes too late.
+
+## Fix 1: define before use
+
+```{.cpp filename="reorder_function_defs.cpp"}
 {{< include ./cpp/reorder_function_defs.cpp >}}
 ```
-- The fixing is simple.
-- But, what happens if we have _many functions_ and _the functions may call each other_.
-- We must figure out which functions call which other functions.
 
-## Fix the "innocent" program -- Option 1: Use a forward declaration
+- Simple! But with many functions calling each other, you have to work out a valid order by hand.
+- Sometimes no valid order exists: think of two functions that call each other.
 
-```{.cpp #lst-forward-declration lst-cap="Use forward decleration to fix the innocent program" filename="with_forward_declaration.cpp"}
+## Fix 2: a forward declaration
+
+```{.cpp filename="with_forward_declaration.cpp"}
 {{< include ./cpp/with_forward_declaration.cpp >}}
 ```
 
-## Why forward declarations!!!
-::: { .incremental}
-- Why would we use a **forward declaration** if we could just reorder the functions to make our programs work?
-- Most often, forward declarations are used to tell the compiler about the existence of some function that has been defined in a different code file.
-- Reordering isn’t possible in this scenario because the caller and the callee are in completely different files!
-- _Forward declarations allow us to define functions in whatever order maximizes organization_ (e.g. by clustering related functions together) or reader understanding.
-:::
+- `int add(int x, int y);` is a **forward declaration**, also called a **function prototype**: the function header followed by a semicolon.
+- It tells the compiler "`add` exists, and this is how to call it. The body comes later."
+- The parameter names are optional in a declaration (`int add(int, int);`), but good names document what each parameter is for.
 
-::: { .fragment}
-> Less often, there are times when we have two functions that call each other. Reordering isn’t possible in this case either, as there is no way to reorder the functions such that each is before the other. Forward declarations give us a way to resolve such circular dependencies.
-:::
+## Declarations and definitions
 
-# Programs with multiple code files
+- A **declaration** introduces a name and its type: `int add(int x, int y);`
+- A **definition** also provides the body: `int add(int x, int y) { return x + y; }`
+- Every definition is also a declaration.
 
-## Adding files to your project
+> Declare as often as you like; define **exactly once**. That's the gist of C++'s *one definition rule*.
 
-- As programs get larger, it is common to split them into multiple files for organizational or reusability purposes. 
-- One advantage of working with an IDE is that they make working with multiple files much easier. 
-- You already know how to create and compile single-file projects. Adding new files to existing projects is not difficult.
+What if we declare a function but never define it?
 
-> - It is not easy to teach how to add files to the project using lecture slide. 
-> - I will illustrate the steps here in live lecture and also in the recorded video (to be uploaded!)
-
-## A multi-file example
-Let us revisit
-```{.cpp #lst-without-forward-declaration lst-cap="Seemingly innocent sampe program that gives compile error"}
-{{< include ./cpp/without_forward_declaration.cpp >}}
+```{.cpp filename="declared_not_defined.cpp"}
+{{< include ./cpp/declared_not_defined.cpp >}}
 ```
 
-## A multi-file example
-Now, let us take a look at a similar multi-file program
+## Compiler happy, linker not
 
-```{.cpp #lst-add-file lst-cap="File `add.cpp`"}
-float add(float x, float y)
-{
-    return x + y;
-}
+```{.text .terminal}
+$ g++ -std=c++20 declared_not_defined.cpp
+/usr/bin/ld: in function `main':
+undefined reference to `add(int, int)'
+collect2: error: ld returned 1 exit status
 ```
-```{.cpp #lst-main-file lst-cap="File `main.cpp`"}
+
+- The **compiler** is happy: it trusted the declaration.
+- Then the **linker** (`ld`) tries to connect the call `add(3, 4)` to the body of `add`, and there is no body to be found.
+- Learn to tell them apart: *"was not declared in this scope"* comes from the compiler; *"undefined reference"* comes from the linker.
+
+## Why bother with forward declarations?
+
+- **The main reason:** the function is defined in **another file**. Reordering can't help when caller and callee live in different files. That's the next section!
+- **Two functions that call each other:** no order works, but a declaration does.
+- **Readability:** you can arrange functions in whatever order reads best, for example `main()` first.
+
+::: {.callout-note title="Coming from Python"}
+Python looks up a name when a line *runs*. A function body can call a function defined further down the file, as long as that definition has run by the time the call happens. C++ checks every name when it *compiles*, from top to bottom.
+:::
+
+# Programs with multiple files
+
+## Why split a program into files?
+
+- **Organisation:** related functions live together, e.g. `geometry.cpp`, `input.cpp`.
+- **Reuse:** the same file can serve several programs.
+- **Teamwork:** different people can work on different files.
+- **Speed:** after an edit, only the changed file needs recompiling.
+
+Adding a new file to your project in the IDE is a couple of clicks. That's much easier to show than to put on a slide, so watch me do it live (it's also in the recorded video).
+
+## How g++ builds a multi-file program
+
+![](figures/compile_link.png){fig-alt="Two source files, main.cpp and add.cpp, are each compiled into object files main.o and add.o. The linker joins both object files and the standard library into one program." width="92%"}
+
+- **Compile:** each `.cpp` file is compiled *on its own* into an **object file** (`.o`). While compiling one file, the compiler knows nothing about the others.
+- **Link:** the **linker** joins the object files (plus the standard library) into one program, connecting each function call to its body.
+
+## The same problem, now across two files
+
+```{.cpp filename="add.cpp"}
+int add(int x, int y) { return x + y; }
+```
+
+```{.cpp filename="main.cpp" .no-compile}
 #include <iostream>
-int main()
-{
-    std::cout << "The sum of 3 and 4 is: " << add(3.0, 4.0) << '\n';
+
+int main() {
+    std::cout << "3 + 4 = " << add(3, 4) << '\n';
     return 0;
 }
 ```
 
-- Your compiler may compile either `add.cpp` or `main.cpp` first. 
-- Either way, `main.cpp` will fail to compile, giving the same compiler error as the previous example.
-
-    ```bash
-    'add': identifier not found
-    ```
-
-## Why limited visibility and short memory in compilation process
-
-This limited visibility and short memory is intentional, for a few reasons:
-
-::: { .incremental}
-- It allows the source files of a project to be compiled in any order.
-- When we change a source file, only that source file needs to be recompiled.
-- It reduces the possibility of naming conflicts between identifiers in different files.
-:::
-
-::: { .fragment}
-**What to do next**
-::: 
-
-::: { .fragment}
-- Our options for a solution here are the same as before: place the definition of function `add` before function `main`, or **satisfy the compiler with a forward declaration**. 
-- In this case, because function `add` is in another file, the _reordering option isn't possible_.
-::: 
-
-## A multi-file example: Using forward declaration
-
-```{.cpp #lst-main-file lst-cap="File `main.cpp`"}
-#include <iostream>
-
-// needed so main.cpp knows that add() is a function defined elsewhere
-float add(float x, float y)
-
-int main()
-{
-    std::cout << "The sum of 3 and 4 is: " << add(3.0, 4.0) << '\n';
-    return 0;
-}
+```{.text .terminal}
+$ g++ -std=c++20 main.cpp add.cpp -o program
+main.cpp:4:32: error: 'add' was not declared in this scope
 ```
 
-```{.cpp #lst-add-file lst-cap="File `add.cpp`"}
-float add(float x, float y)
-{
-    return x + y;
-}
+- `main.cpp` is compiled on its own, so the compiler never sees `add.cpp` while compiling it.
+- Reordering is no help: `add` lives in a different file.
+
+## The fix: forward-declare `add` in `main.cpp`
+
+```{.cpp filename="add.cpp"}
+{{< include ./cpp/multiple_files/add.cpp >}}
 ```
 
-How to compile:
-```bash
-g++ main.cpp add.cpp -o program
+```{.cpp filename="main.cpp"}
+{{< include ./cpp/multiple_files/main.cpp >}}
 ```
+
+```{.text .terminal}
+$ g++ -std=c++20 -Wall main.cpp add.cpp -o program
+$ ./program
+3 + 4 = 7
+```
+
+List **every** `.cpp` file on the command line. (On Windows, the program is `program.exe`.)
+
+## Why are files compiled in isolation?
+
+That short memory is deliberate:
+
+- Files can be compiled in any order, or several at once.
+- After an edit, only the changed file needs recompiling. In a big project that saves minutes, sometimes hours.
+- A name used privately in one file can't clash with the same name in another.
 
 # Header files
 
-## Header files
-::: { .incremental}
-- As programs grow larger (and make use of more files and functions), having to manually add a large number of (possibly different) forward declarations to the top of each file becomes extremely tedious.
+## Forward declarations don't scale
 
-    > For example, if you have a 5 file program, each of which requires 10 forward declarations, you’re going to have to copy/paste in 50 forward declarations.  
-    > Now consider the case where you have 100 files and they each require 100 forward declarations. This simply doesn’t scale!
-    
-- To address this issue, C++ programs typically take a different approach: **Header Files**
+- 5 files, each needing 10 forward declarations: 50 declarations to copy, paste and keep in sync.
+- 100 files needing 100 each: 10,000. Change one function's parameters and enjoy fixing them all.
+
+::: {.fragment}
+The C++ answer: write the declarations **once**, in a **header file**, and `#include` it wherever it's needed.
 :::
 
 ## Header files
 
-- Header files usually have a `.h` extension, but you will occasionally see them with a `.hpp` extension or no extension at all.
-- Conventionally, header files are used to propagate a bunch of related forward declarations into a code file.
+- A header file (`.h`, sometimes `.hpp`) holds **declarations**, not function bodies.
+- `#include "add.h"` asks the **preprocessor** to paste the text of `add.h` in place of that line, before the compiler sees the file.
+- You've used headers since your first program: `#include <iostream>` pastes in the declarations of `std::cout` and friends.
 
-> **Key insight**
->   
-> Header files allow us to put declarations in one place and then import them wherever we need them. This can save a lot of typing in multi-file programs.
+::: {.callout-important title="Key idea"}
+Header files let you write each declaration once and reuse it everywhere.
+:::
 
-## Using header files to propagate forward declarations
+## Our first header
 
-- Let us go back to the example we were discussing in a previous lesson.
-```{.cpp #lst-add-file lst-cap="File `add.cpp`"}
-float add(float x, float y)
-{
-    return x + y;
-}
+::: {.columns}
+::: {.column width="40%"}
+```{.cpp filename="add.h"}
+{{< include ./cpp/header_files/add.h >}}
+```
+:::
+::: {.column width="60%"}
+```{.cpp filename="add.cpp"}
+{{< include ./cpp/header_files/add.cpp >}}
+```
+:::
+:::
+
+- `add.h` holds the declaration of `add()`. The `#ifndef`/`#define`/`#endif` lines are a **header guard**, explained in two slides.
+- `add.cpp` includes its own header, so the compiler checks that the declaration and the definition match.
+
+## Using the header
+
+```{.cpp filename="main.cpp"}
+{{< include ./cpp/header_files/main.cpp >}}
 ```
 
-```{.cpp #lst-main-file lst-cap="File `main.cpp`"}
-#include <iostream>
-
-float add(float x, float y) // forward declaration for "main" to see "add"
-
-int main()
-{
-    std::cout << "The sum of 3 and 4 is: " << add(3.0, 4.0) << '\n';
-    return 0;
-}
+```{.text .terminal}
+$ g++ -std=c++20 -Wall main.cpp add.cpp -o program
+$ ./program
+3 + 4 = 7
 ```
 
-## Using header files to propagate forward declarations
+- `"add.h"` in quotes: a header from **your project**, searched for next to your file first.
+- `<iostream>` in angle brackets: a header from the **standard library**.
+- Headers are never compiled on their own, so they never go on the command line.
 
-Here's our completed header file:
+## Building step by step
 
-```{.cpp #lst-add.h lst-cap="Header file for function `add()`: `add.h`"}
-// This is the content of the .h file, which is where the declarations go
-float add(float x, float y);    // function prototype for add.h 
-                                // don't forget the semicolon!
+![](figures/include_compile_link.png){fig-alt="The headers iostream and add.h are pasted into main.cpp and add.cpp. Each .cpp file is compiled into an object file, and the linker joins main.o, add.o and the standard library into one program." width="70%"}
+
+```{.text .terminal}
+$ g++ -std=c++20 -c main.cpp     # compile only: makes main.o
+$ g++ -std=c++20 -c add.cpp      # compile only: makes add.o
+$ g++ main.o add.o -o program    # link: makes program
 ```
 
-```{ .cpp #lst-main.cpp lst-cap="Main program file: `main.cpp`"}
-#include "add.h"    // Insert contents of add.h at this point.  
-                    // Note use of double quotes here.
-#include <iostream>
-int main() {
-    std::cout << "The sum of 3 and 4 is " << add(3, 4) << '\n';
-    return 0;
-}
+`-c` means "compile, but don't link". Change `add.cpp` and only `add.o` needs rebuilding. Build tools like `make` and CMake automate exactly this.
+
+## Header guards
+
+```{.cpp filename="add.h"}
+#ifndef ADD_H  // if ADD_H isn't defined yet...
+#define ADD_H  // ...define it and keep everything up to #endif
+
+int add(int x, int y);
+
+#endif         // second time round, all of this is skipped
 ```
 
-```{.cpp #lst-add.cpp lst-cap="File implementing function `add()`: `add.cpp`"}
-#include "add.h"    // Insert contents of add.h at this point.  
-                    // Note use of double quotes here.
-float add(float x, float y) { return x + y; }
-```
+- A header can end up included twice in the same `.cpp` file, often indirectly through another header. Its text would then be pasted twice.
+- Repeating a *declaration* is harmless, but soon our headers will hold *class definitions* (Chapter 11), and defining something twice is an error.
+- With a guard, the second `#include` pastes nothing. Give every header a guard with a unique name (`ADD_H`, `GEOMETRY_H`, ...).
+- You'll also see `#pragma once`: one line, same job, supported by all major compilers, though not part of the C++ standard.
 
-## Compiling and Linking
-![Compiling and Linking](./figures/IncludeHeader.png)
+## Header files: rules of thumb
 
-Compile the program as follows:
-```bash
-g++ main.cpp add.h -c main.o
-g++ add.cpp add.h -c add.o
-g++ main.o add.o -o program
-```
+- Pair them up: `add.cpp` shares its functions through `add.h`.
+- Declarations go in the header; definitions go in the `.cpp` file. (Classes and templates bend this rule; we'll see why later.)
+- Every header gets a header guard.
+- `#include` header files only. Never `#include` a `.cpp` file.
+- Include what you use: if a file uses `std::cout`, it includes `<iostream>` itself rather than relying on another header to do it.
 
-# What's next after this chapter
+# Wrapping up
 
-## Things you can learn after this chapter
+## Summary
 
-You can learn the following topics through
+- Functions let you write code once and use it many times (DRY).
+- A function has a **header** (return type, name, parameters) and a **body**.
+- Arguments are **copied** into parameters: this is *pass by value*.
+- `return` sends one value back to the caller; `void` functions send none.
+- **Scope** is *where* a name can be used (compile time); **lifetime** is *when* a variable exists (run time).
+- The compiler reads each file top to bottom and one file at a time: declare before you use.
+- Header files share declarations between files; header guards make them safe to include.
 
-- Google Gemini using Guided Learning mode
-- Website [learncpp.com](https://www.learncpp.com)
+## Keep learning
 
-Extra content to learn:
+Explore these on your own, with Google Gemini in Guided Learning mode or on [learncpp.com](https://www.learncpp.com):
 
-1. Naming collisions and an introduction to namespaces - [Click on this link](https://www.learncpp.com/cpp-tutorial/naming-collisions-and-an-introduction-to-namespaces/)
-2. Introduction to preprocessor - [Click on this link](https://www.learncpp.com/cpp-tutorial/introduction-to-the-preprocessor/)
-3. Header guards - [Click on this link](https://www.learncpp.com/cpp-tutorial/header-guards/)
+1. [Naming collisions and an introduction to namespaces](https://www.learncpp.com/cpp-tutorial/naming-collisions-and-an-introduction-to-namespaces/)
+2. [Introduction to the preprocessor](https://www.learncpp.com/cpp-tutorial/introduction-to-the-preprocessor/)
+3. [Header guards](https://www.learncpp.com/cpp-tutorial/header-guards/), in more depth
 
+**Next up, Chapter 03:** control flow. With `if`, `switch` and loops, our functions can finally make decisions.

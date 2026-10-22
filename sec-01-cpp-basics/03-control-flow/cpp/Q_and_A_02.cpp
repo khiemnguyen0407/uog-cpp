@@ -1,19 +1,18 @@
 #include <iostream>
-int main()
-{
-    int count{ 0 }; // count how many times the loop iterates
-    bool keep_looping { true }; // controls whether the loop ends or not
-    while (keep_looping)
-    {
-        std::cout << "Enter 'e' to exit this loop or any other character to continue: ";
+
+int main() {
+    int count{0};            // how many times we've looped
+    bool keep_looping{true}; // controls whether the loop ends
+    while (keep_looping) {
+        std::cout << "Enter e to exit: ";
         char ch{};
         std::cin >> ch;
 
-        if (ch == 'e')
+        if (ch == 'e') {
             keep_looping = false;
-        else {
+        } else {
             ++count;
-            std::cout << "We've iterated " << count << " times\n";
+            std::cout << "We've looped " << count << " times\n";
         }
     }
     return 0;

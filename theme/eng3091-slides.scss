@@ -1,0 +1,588 @@
+/*-- scss:defaults --*/
+
+// ENG3091 slide theme.
+//
+// Design idea: source code is the star of every lecture, so code is shown the
+// way students meet it in real life. Source files sit in light "editor" panes
+// with a filename tab. Anything that runs (commands and program output) sits
+// in dark "terminal" panes. Examples that are *meant* to fail get a red tab
+// that says so, which matters in a course full of "spot the error" programs.
+// Everything else stays quiet: white slides, deep navy ink, one typeface
+// family built for legibility on a projector.
+
+// Palette
+$ink:        #1b2a41;  // body text
+$navy:       #12355b;  // headings, structure
+$navy-deep:  #0d2742;  // title and section slides
+$sky:        #9cc3ec;  // accents on dark slides
+$paper:      #ffffff;
+$muted:      #586579;  // secondary text
+$rule:       #d3dae4;  // borders
+$code-paper: #f3f5f8;  // editor pane
+$code-tab:   #e2e8f0;  // filename tab
+$term-paper: #14233a;  // terminal pane
+$term-ink:   #e6edf5;
+$red:        #b3261e;
+$green:      #1f7a3d;
+$amber:      #9a5b00;
+$blue:       #2563a6;
+
+// Type
+$font-family-sans-serif: "Atkinson Hyperlegible Next", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+$font-family-monospace:  "Atkinson Hyperlegible Mono", "Cascadia Code", "Fira Mono", Consolas, monospace;
+
+$body-bg:    $paper;
+$body-color: $ink;
+$link-color: $blue;
+$selection-bg: #cfe2f7;
+
+$presentation-font-size-root: 27px;
+$presentation-line-height: 1.38;
+$presentation-heading-font: $font-family-sans-serif;
+$presentation-heading-color: $navy;
+$presentation-heading-font-weight: 700;
+$presentation-heading-letter-spacing: -0.01em;
+$presentation-heading-text-transform: none;
+$presentation-heading-line-height: 1.15;
+$presentation-h1-font-size: 2.1em;
+$presentation-h2-font-size: 1.4em;
+$presentation-h3-font-size: 1.05em;
+$presentation-h4-font-size: 0.95em;
+$presentation-slide-text-align: left;
+$presentation-title-slide-text-align: left;
+$presentation-block-margin: 14px;
+
+$code-block-bg: $code-paper;
+$code-block-border-color: $rule;
+$code-block-font-size: 0.68em;
+$code-color: $ink;
+$code-bg: #e9eef5;
+
+/*-- scss:rules --*/
+
+// ---------------------------------------------------------------------------
+// Text
+// ---------------------------------------------------------------------------
+
+.reveal {
+  font-feature-settings: "kern";
+}
+
+.reveal .slides section {
+  font-size: 1em;
+}
+
+.reveal h2 {
+  margin-bottom: 0.55em;
+}
+
+// Slide titles drop the "4.3" numbering; section slides keep the big number.
+.reveal h2 .header-section-number {
+  display: none;
+}
+
+.reveal h3 {
+  color: $navy;
+  margin-top: 0.4em;
+  margin-bottom: 0.3em;
+}
+
+.reveal strong {
+  font-weight: 700;
+  color: $navy;
+}
+
+.reveal ul,
+.reveal ol {
+  margin-left: 1.1em;
+}
+
+.reveal li {
+  margin-bottom: 0.25em;
+}
+
+.reveal li::marker {
+  color: $navy;
+}
+
+.reveal li > ul,
+.reveal li > ol {
+  margin-top: 0.2em;
+  font-size: 0.92em;
+}
+
+.reveal p {
+  margin: 0.45em 0;
+}
+
+.reveal .smaller,
+.reveal .muted {
+  font-size: 0.85em;
+}
+
+.reveal .muted {
+  color: $muted;
+}
+
+.reveal blockquote {
+  width: auto;
+  margin: 0.6em 0;
+  padding: 0.4em 0.9em;
+  background: #f1f5fa;
+  border-left: 5px solid $navy;
+  box-shadow: none;
+  font-style: normal;
+  color: $ink;
+}
+
+.reveal blockquote p {
+  margin: 0.2em 0;
+}
+
+// Inline code
+.reveal code {
+  font-family: $font-family-monospace;
+  font-variant-ligatures: none;
+}
+
+.reveal p code,
+.reveal li code,
+.reveal td code,
+.reveal th code,
+.reveal blockquote code,
+.reveal .callout code {
+  background: $code-bg;
+  color: $ink;
+  padding: 0.04em 0.28em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+// Tables
+.reveal table {
+  font-size: 0.85em;
+  border-collapse: collapse;
+}
+
+.reveal table th {
+  color: $navy;
+  border-bottom: 2px solid $navy;
+}
+
+.reveal table td,
+.reveal table th {
+  padding: 0.3em 0.7em;
+}
+
+.reveal table tr:not(:last-child) td {
+  border-bottom: 1px solid $rule;
+}
+
+// ---------------------------------------------------------------------------
+// Editor panes: source code
+// ---------------------------------------------------------------------------
+
+.reveal div.sourceCode,
+.reveal .code-with-filename {
+  width: 100%;
+}
+
+.reveal div.sourceCode {
+  background: $code-paper;
+  border: 1px solid $rule;
+  border-radius: 8px;
+  margin: 0.45em 0;
+  overflow: hidden;
+}
+
+.reveal div.sourceCode pre {
+  width: 100%;
+  margin: 0;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+.reveal div.sourceCode pre code {
+  padding: 0.5em 0.9em;
+  line-height: 1.32;
+  max-height: none;
+  white-space: pre-wrap; // safety net: never cut code off on a projector
+}
+
+.reveal pre.sourceCode code a::before,
+.reveal pre.number-lines code > span > a::before {
+  color: #8792a2;
+}
+
+// The filename tab
+.reveal .code-with-filename {
+  margin: 0.45em 0;
+}
+
+.reveal .code-with-filename .code-with-filename-file {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: $code-tab;
+  border: 1px solid $rule;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  padding: 0.2em 0.8em;
+}
+
+.reveal .code-with-filename .code-with-filename-file pre {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  width: auto;
+}
+
+.reveal .code-with-filename .code-with-filename-file pre strong {
+  font-family: $font-family-monospace;
+  font-weight: 600;
+  font-size: 0.85em;
+  color: $navy;
+}
+
+.reveal .code-with-filename div.sourceCode {
+  margin-top: 0;
+  border-radius: 0 0 8px 8px;
+}
+
+// Examples that are meant to fail: add class .no-compile to the code block.
+.reveal .code-with-filename:has(pre.no-compile) .code-with-filename-file {
+  background: $red;
+  border-color: $red;
+}
+
+.reveal .code-with-filename:has(pre.no-compile) .code-with-filename-file pre strong {
+  color: #fff;
+}
+
+.reveal .code-with-filename:has(pre.no-compile) .code-with-filename-file::after,
+.reveal div.sourceCode:has(> pre.no-compile)::before {
+  content: "does not compile";
+  font-family: $font-family-sans-serif;
+  font-weight: 700;
+  font-size: 0.6em;
+  color: #fff;
+}
+
+.reveal .code-with-filename:has(pre.no-compile) div.sourceCode {
+  border-color: $red;
+}
+
+// A failing snippet without a filename gets a red strip of its own.
+.reveal div.sourceCode:has(> pre.no-compile) {
+  border-color: $red;
+}
+
+.reveal div.sourceCode:has(> pre.no-compile)::before {
+  display: block;
+  background: $red;
+  padding: 0.25em 1.2em;
+}
+
+.reveal .code-with-filename div.sourceCode:has(> pre.no-compile)::before {
+  display: none;
+}
+
+// ---------------------------------------------------------------------------
+// Terminal panes: commands and program output
+// Use ```{.text .terminal} for a shell session, ```{.text .output} for output.
+// ---------------------------------------------------------------------------
+
+.reveal pre.terminal,
+.reveal pre.output {
+  background: $term-paper;
+  color: $term-ink;
+  border: none;
+  border-radius: 8px;
+  box-shadow: none;
+  margin: 0.45em 0;
+  width: 100%;
+  position: relative;
+  font-size: $code-block-font-size;
+}
+
+.reveal pre.terminal code,
+.reveal pre.output code {
+  display: block;
+  background: transparent;
+  color: $term-ink;
+  font-size: 1em;
+  line-height: 1.32;
+  padding: 1.75em 1em 0.65em 1em;
+  max-height: none;
+  white-space: pre-wrap;
+}
+
+.reveal pre.terminal::before,
+.reveal pre.output::before {
+  position: absolute;
+  top: 0.5em;
+  left: 0.85em;
+  font-family: $font-family-sans-serif;
+  font-size: 0.72em;
+  font-weight: 700;
+  color: $sky;
+}
+
+.reveal pre.terminal::before {
+  content: "Terminal";
+}
+
+.reveal pre.output::before {
+  content: "Output";
+}
+
+// Compiler messages: the error lines stand out.
+.reveal pre.output.compiler code,
+.reveal pre.terminal.compiler code {
+  color: #ffd2cc;
+}
+
+.reveal pre.output.compiler::before {
+  content: "Compiler says";
+}
+
+// ---------------------------------------------------------------------------
+// Line highlighting (code-line-numbers="|3|5-7")
+// ---------------------------------------------------------------------------
+
+.reveal div.sourceCode pre code.has-line-highlights > span:not(.highlight-line) {
+  opacity: 0.35;
+}
+
+.reveal div.sourceCode pre code.has-line-highlights > span.highlight-line {
+  background: #fff1c2;
+}
+
+// ---------------------------------------------------------------------------
+// Callouts
+// "Coming from Python"  -> callout-note
+// "Key idea"            -> callout-important
+// "Best practice"       -> callout-tip
+// "Watch out"           -> callout-warning
+// ---------------------------------------------------------------------------
+
+@mixin eng-callout($c, $tint) {
+  border-left: 6px solid $c !important;
+  border-radius: 6px;
+  background: $tint;
+
+  .callout-title {
+    color: $c;
+    background: transparent !important;
+  }
+
+  .callout-icon::before {
+    color: $c;
+  }
+}
+
+.reveal .slides div.callout {
+  margin: 0.6em 0;
+  font-size: 0.86em !important; // Quarto's default (0.7em) is too small for a lecture theatre
+  box-shadow: none;
+  border: none;
+}
+
+.reveal div.callout .callout-title {
+  font-weight: 700;
+  padding: 0.35em 0.8em 0 0.8em !important;
+  margin-bottom: 0;
+}
+
+.reveal div.callout .callout-title p {
+  margin: 0;
+}
+
+.reveal div.callout .callout-content {
+  padding: 0.1em 0.9em 0.45em 0.9em;
+}
+
+.reveal div.callout .callout-content > :first-child {
+  margin-top: 0.2em;
+}
+
+.reveal div.callout .callout-content > :last-child {
+  margin-bottom: 0.1em;
+}
+
+.reveal div.callout-note      { @include eng-callout($blue,  #edf4fc); }
+.reveal div.callout-important { @include eng-callout($navy,  #eef2f8); }
+.reveal div.callout-tip       { @include eng-callout($green, #ecf6ef); }
+.reveal div.callout-warning   { @include eng-callout($amber, #fbf3e4); }
+.reveal div.callout-caution   { @include eng-callout($red,   #fcecea); }
+
+.reveal div.callout div.sourceCode {
+  background: $paper;
+}
+
+// ---------------------------------------------------------------------------
+// Columns: keep things top-aligned (code next to its output)
+// ---------------------------------------------------------------------------
+
+.reveal .columns {
+  display: flex;
+  gap: 1.2em;
+  align-items: flex-start;
+}
+
+.reveal .columns > .column {
+  min-width: 0;
+}
+
+// ---------------------------------------------------------------------------
+// Figures
+// ---------------------------------------------------------------------------
+
+.reveal figure,
+.reveal .quarto-figure {
+  text-align: center;
+}
+
+.reveal figcaption,
+.reveal .figure-caption {
+  color: $muted;
+  font-size: 0.7em;
+}
+
+// ---------------------------------------------------------------------------
+// Title slide and section slides (marked .is-divider by slides.html)
+// ---------------------------------------------------------------------------
+
+.reveal .slides section.is-divider {
+  color: $term-ink;
+}
+
+.reveal .slides section.is-divider h1 {
+  color: #fff;
+  font-size: 2.3em;
+  font-weight: 700;
+  margin-top: 4.4em;
+  max-width: 85%;
+}
+
+.reveal .slides section.is-divider h1 code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+.reveal .slides section.is-divider h1 .header-section-number {
+  display: block;
+  font-family: $font-family-monospace;
+  font-weight: 400;
+  font-size: 0.9em;
+  color: $sky;
+  margin-bottom: 0.1em;
+}
+
+.reveal .slides section#title-slide {
+  color: $term-ink;
+}
+
+.reveal .slides section#title-slide .title {
+  color: #fff;
+  font-size: 2.3em;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-top: 3.2em;
+  max-width: 90%;
+}
+
+.reveal .slides section#title-slide .subtitle {
+  color: $sky;
+  font-size: 1.15em;
+  font-weight: 400;
+  margin-top: 0.4em;
+}
+
+.reveal .slides section#title-slide .quarto-title-authors {
+  display: block;
+  text-align: left;
+}
+
+.reveal .slides section#title-slide .quarto-title-author {
+  padding-left: 0;
+}
+
+.reveal .slides section#title-slide .quarto-title-author-name {
+  color: #fff;
+  font-size: 0.95em;
+  font-weight: 700;
+}
+
+.reveal .slides section#title-slide .quarto-title-author-email,
+.reveal .slides section#title-slide .quarto-title-affiliation {
+  color: $term-ink;
+  font-size: 0.8em;
+  margin-top: 0.15em;
+}
+
+.reveal .slides section#title-slide .quarto-title-author-email a,
+.reveal .slides section#title-slide a {
+  color: $sky;
+}
+
+.reveal .slides section#title-slide .quarto-title-authors {
+  margin-top: 2em;
+}
+
+// Contents slide
+.reveal #TOC ul,
+.reveal nav[role="doc-toc"] ul {
+  list-style: none;
+  margin-left: 0;
+}
+
+.reveal #TOC li,
+.reveal nav[role="doc-toc"] li {
+  margin-bottom: 0.3em;
+}
+
+.reveal #TOC a,
+.reveal nav[role="doc-toc"] a {
+  color: $ink;
+}
+
+.reveal #TOC .header-section-number,
+.reveal nav[role="doc-toc"] .header-section-number {
+  display: inline-block;
+  width: 1.6em;
+  font-family: $font-family-monospace;
+  color: $navy;
+  font-weight: 600;
+}
+
+// ---------------------------------------------------------------------------
+// Chrome
+// ---------------------------------------------------------------------------
+
+.reveal .slide-number {
+  background: transparent !important;
+  color: $muted !important;
+  font-family: $font-family-sans-serif;
+  font-size: 14px !important;
+  right: 18px !important;
+  bottom: 12px !important;
+}
+
+.reveal .progress {
+  color: $navy;
+  height: 4px;
+}
+
+.has-dark-background .slide-number,
+.reveal.has-dark-background .slide-number {
+  color: $sky !important;
+}
+
+.reveal .slide-menu-button {
+  opacity: 0.6;
+}

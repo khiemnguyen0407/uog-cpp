@@ -1,11 +1,10 @@
-#include <iostream>  // for std::cout and std::cin
+#include <iostream> // for std::cout and std::cin
 
-int main()
-{
-    std::cout << "Enter a number: "; // ask user for a number
+int main() {
+    std::cout << "Enter a number: "; // prompt the user
 
-    int x{};       // define variable x to hold user input (and value-initialize it)
-    std::cin >> x; // get number from keyboard and store it in variable x
+    int x{};       // a variable to hold the input
+    std::cin >> x; // read a number into x
 
     std::cout << "You entered " << x << '\n';
     return 0;

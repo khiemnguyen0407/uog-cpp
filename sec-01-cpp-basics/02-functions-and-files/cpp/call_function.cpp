@@ -1,15 +1,13 @@
-#include <iostream> // for std::cout
+#include <iostream>
 
-void say_hello()    // user-defined function
-{
-    std::cout << "In say_hello(): Hello there!\n";
+void say_hello() { // definition of say_hello()
+    std::cout << "  In say_hello(): Hello there!\n";
 }
 
-int main()          // Definition of function main()
-{
+int main() {
     std::cout << "Starting main()\n";
-    say_hello(); // say_hello() called for the first time
-    say_hello(); // say_hello() called for the second time
+    say_hello(); // first call
+    say_hello(); // second call
     std::cout << "Ending main()\n";
     return 0;
 }

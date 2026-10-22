@@ -1,305 +1,344 @@
 ---
-title: "Chapter 01: Structure of program & Variables in C++"
-author: Khiem Nguyen -- <khiem.nguyen@glasgow.ac.uk>
-    # <br>Lecturer in Multiscale Materials
-    # <br><khiem.nguyen@glasgow.ac.uk>
-author-meta: "Lecturer in Multiscale Materials"
-
-format: 
-    # other themes: 
-    #   beige, blood, dark, dracula, league, moon, 
-    #   night, serif, simple, sky, solarized
-    # highlight-style: monokai      # good for dark images
-    html:
-        output-file: "chap_01.html"
-        grid:
-            body-width: 1600px
-            margin-width: 300px
-            sidebar-width: 350px
-        embed-resources: true
-        theme: simple
-        highlight-style: github
-        css: doc.css
-        number-sections: true
-        number-depth: 3
-        mouse-wheel: true
-        title-slide-style: pandoc
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true     # <-- remove white background in code blocks
-        code-block-border-left: false
-        toc: true
-        toc-depth: 3
-        toc-title: Contents
-    pdf:
-        output-file: "chap_01.pdf"
-        embed-resources: true
-        theme: simple
-        highlight-style: github      # good for dark images
-        css: doc.css
-        number-sections: true
-        number-depth: 3
-        geometry:
-            - top=24px
-            - bottom=24px
-            - left=36px
-            - right=36px
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true # <-- remove white background in code blocks
-        code-block-border-left: false
-        toc: true
-        toc-depth: 3
-        toc-title: Contents
-    revealjs:
-        output-file: "chap_01_slide.html"
-        embed-resources: true
-        theme: simple
-        css: slide.css
-        number-sections: true
-        number-depth: 3
-        mouse-wheel: true
-        highlight-style: github
-        slide-number: true
-        title-slide-style: pandoc
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true   # <-- remove white background in code blocks
-        code-block-border-left: false # optional: remove left border
-        toc: true
-        toc-depth: 1
-        toc-title: Contents
-
+title: "Chapter 04: Constants and Strings"
+subtitle: "ENG3091"
+author:
+  - name: Khiem Nguyen
+    email: khiem.nguyen@glasgow.ac.uk
+    affiliations: University of Glasgow
+metadata-files: [../../theme/lecture.yml]
+format:
+  html:
+    output-file: chap_04.html
+  pdf:
+    output-file: chap_04.pdf
+  revealjs:
+    output-file: chap_04_slide.html
 ---
 
-# Statements and the `main` function
+# Constant variables
 
-## Statements
+## Some values should never change
 
-- When we convey an idea to another person, we communicate in sentences. 
-- In C++, when we want to have our program do something, we write statements.
-- Statements are by far the most common type of instruction in a C++ program.
-- Most (but not all) statements in C++ end in a semicolon.
+So far, every variable could be changed at any time:
 
-### Different kinds of statements
-- Declaration statements
-- Jump statements
-- Expression statements
-- Compound statements
-- Selection statements (conditionals)
-- Iteration statements (loops)
-- Try blocks
+```{.cpp}
+double x{42.0};
+x = 24.0;        // fine: x is meant to change
 
-## Function and the `main` function
+double gravity{9.81};
+gravity = 1.89;  // allowed... but gravity shouldn't change!
 
-- A **function** is a collection of statements that get executed sequentially (in order, from top to bottom).
-
-**Rule**  
-Every C++ program must have a special function named `main` (all lower case letters).
-
-```{.cpp #lst-hello lst-cap="Hello world"}
-{{< include ./cpp/hello.cpp >}}
+double pi{3.1415926535};
+pi = 3.0;        // some engineers do see pi as 3.0, but we don't want that!
 ```
 
-## Syntax and syntax errors
-- In the English language, sentences are constructed according to specific grammatical rules that you probably learned in English class in school.
-- The C++ programming language also has a syntax, which describes how the elements of your program must be written and arranged in order for the program to be considered valid.
-- When you compile your program, the compiler is responsible for making sure your program follows these syntactical rules.
+A **constant** is a value that can't change while the program runs. C++ has two kinds:
 
-```{.cpp #lst-hello lst-cap="Hello world with syntax error!"}
-{{< include ./cpp/hello_error.cpp >}}
-```
-**Note**&nbsp; See the compilation process in live lecture.
+- **named constants**, which have a name (this section);
+- **literal constants**, or just **literals**, written straight into the code, like `9.81` (next section).
 
-# Comments
+## Declaring a constant variable
 
-## Comments
-We all know what comments in programming language are and do.
+Put the keyword `const` (the **const qualifier**) next to the type:
 
-In C++ there are two different styles of comments.
-
-- Single-line comments
-- Multi-line comments
-
-## Single-line comments
-The `//` symbol begins a C++ single-line comment, which tells the compiler to ignore everything from the `//` symbol to the end of the line.
-
-```{.cpp #lst-comment-short lst-cap="Comment at the end of the code"}
-std::cout << "Hello world!"; // Everything from here is ignored.
+```{.cpp}
+const double gravity{9.81};    // the usual style
+int const sides_in_square{4};  // also legal, but less common
 ```
 
-```{.cpp #lst-comment-long lst-cap="Break the comments to prevent long line of code"}
-// std::cout lives in the iostream library
-std::cout << "Hello world!\n";
-// this is much easier to read
-std::cout << "It is very nice to meet you!\n";
-// don't you think so?
-std::cout << "Yeah!\n";
+- `const` can go before or after the type. Before is more common: think "a green ball", not "a ball green".
+- `const` is part of the type: the type of `gravity` is `const double`.
+
+## A `const` variable must be initialized
+
+You can't assign to a `const` variable, so it must get its value when it's defined:
+
+```{.cpp filename="const_must_be_initialized.cpp" .no-compile}
+{{< include ./cpp/const_must_be_initialized.cpp >}}
 ```
 
-## Multi-line comments
-The `/*` and `*/` pair of symbols denotes a C-style multi-line comment. Everything in between the symbols is ignored.
-
-```{.cpp #lst-multiline-comment lst-cap="Multi-line comment"}
-/* This is a multi-line comment.
-   This line will be ignored.
-   So will this one. */
+```{.text .output .compiler}
+error: uninitialized 'const gravity' [-fpermissive]
+error: assignment of read-only variable 'gravity'
 ```
 
-Since everything between the symbols is ignored, you will sometimes see programmers “beautify” their multi-line comments:
-```{.cpp #lst-multiline-comment lst-cap="Beautify multi-line comment"}
-/* This is a multi-line comment.
- * the matching asterisks to the left
- * can make this easier to read
- */
+## Initializing from a variable
+
+A `const` variable can be initialized with any value, even one that's only known when the program runs:
+
+```{.cpp filename="initialize_const_variables.cpp" .no-compile}
+{{< include ./cpp/initialize_const_variables.cpp >}}
 ```
 
-# Objects and variables
-
-## Objects and variables
-
-- In C++, direct memory access is discouraged. Instead, we access memory indirectly through an **object**.
-- An **object** represents a region of storage (typically RAM or a CPU register) that can hold a value.
-- Although objects in C++ can be unnamed (anonymous), more often we name our objects using an **identifier**. 
-- An object with a name is called a **variable**.
-
-We shall learn more about **object** in **Object-Oriented Programming**.
-
-## Variable definition
-- In order to use a variable in our C++ program, we need to tell the compiler that we want one.
-- The most common way to do this is by use of a special kind of declaration statement called a **definition**.
-
-```{.cpp #lst-define-variable lst-cap="Define variables"}
-int x; // define a variable named x (of type int)
+```{.text .output .compiler}
+error: assignment of read-only variable 'const_age'
 ```
 
-```{.cpp #lst-define-variable-program lst-cap="Full program: define a variable named x"}
-{{< include ./cpp/define_variable.cpp >}}
+## Naming constants
+
+You'll meet several conventions:
+
+- `EARTH_GRAVITY`: upper case with underscores, popular with programmers coming from C;
+- `kEarthGravity`: a "k" prefix, common in some C++ style guides;
+- `earth_gravity`: just like any other variable.
+
+My take: a `const` variable behaves like a normal variable except that it can't be assigned to, so it doesn't need a special name. Your IDE will tell you it's `const` anyway. In this course we use `snake_case` for constants too.
+
+## `const` value parameters
+
+::: {.columns}
+::: {.column width="65%"}
+```{.cpp filename="const_func_parameters.cpp"}
+{{< include ./cpp/const_func_parameters.cpp >}}
+```
+:::
+::: {.column width="35%"}
+```{.text .output}
+42
+```
+:::
+:::
+
+- A `const` **value parameter** can't be changed inside the function.
+- But it's only a copy (pass by value, Chapter 02): whatever the function does to it, nobody outside can tell. So the `const` adds clutter and protects nothing.
+
+## `const` return values
+
+::: {.columns}
+::: {.column width="65%"}
+```{.cpp filename="const_return_value.cpp"}
+{{< include ./cpp/const_return_value.cpp >}}
+```
+:::
+::: {.column width="35%"}
+```{.text .output .compiler}
+warning: type qualifiers
+ignored on function
+return type
+```
+:::
+:::
+
+A `const` return value of a fundamental type is simply ignored, and `-Wextra` says so.
+
+::: {.callout-tip title="Best practice"}
+Don't use `const` on value parameters or on values returned by value. (`const` *references* are a different story: Chapter 07.)
+:::
+
+## Why make variables constant?
+
+> **If a variable can be made constant, it generally should be.**
+
+::: {.incremental}
+- **No accidents.** Nobody, including you, can change it by mistake.
+- **Faster programs.** When the compiler knows a value won't change, it can optimize more.
+- **Simpler code.** When you're reading or debugging, a `const` variable is one less moving part: you never have to ask whether, where or to what it changed.
+:::
+
+::: {.fragment}
+Look at well-written open-source C++ libraries on GitHub: you'll see `const` almost everywhere.
+:::
+
+## `constexpr`: constants known at compile time
+
+::: {.columns}
+::: {.column width="68%"}
+```{.cpp filename="constexpr_example.cpp"}
+{{< include ./cpp/constexpr_example.cpp >}}
+```
+:::
+::: {.column width="32%"}
+```{.text .terminal}
+$ ./constexpr_example
+Radius: 2
+Area: 12.5664
 ```
 
-## Variable definition
-- Study the following example -- Watch my compilation process!
-```{.cpp #lst-define-variable-program lst-cap="Full program: define multiple variables"}
-{{< include ./cpp/define_variables.cpp >}}
+::: {.callout-tip title="Best practice"}
+`constexpr` for values known at compile time, `const` for the rest.
+:::
+:::
+:::
+
+- A `constexpr` variable needs a value the compiler can work out **while compiling**, like `9.81` or `std::numbers::pi` (from `<numbers>`, C++20: don't type `pi` yourself!).
+- `area` depends on user input, so it's only known when the program **runs**: it can be `const` but not `constexpr`.
+
+# Literals
+
+## Literals
+
+A **literal** is a value written directly in the code. Like a variable, every literal has a type, and C++ works it out from how the literal is written:
+
+| Literal | Type | Literal | Type |
+|---------|------|---------|------|
+| `42` | `int` | `'A'` | `char` (single quotes) |
+| `42u` | `unsigned int` | `"Hello"` | text (double quotes) |
+| `3.14` | `double` | `true`, `false` | `bool` |
+| `3.14f` | `float` | `1.5e3` | `double` (1500.0) |
+
+::: {.callout-note title="Coming from Python"}
+In Python, `'A'` and `"A"` mean the same thing. In C++ they don't: single quotes make one `char`, double quotes make text.
+:::
+
+## Magic numbers
+
+Remember `if (height >= 140)` from Chapter 03? What is `140`: a height, a weight, an age? A literal with no explanation is a **magic number**, and if the rule changes, you have to hunt down every copy.
+
+::: {.columns}
+::: {.column width="70%"}
+```{.cpp filename="magic_numbers.cpp"}
+{{< include ./cpp/magic_numbers.cpp >}}
+```
+:::
+::: {.column width="30%"}
+```{.text .terminal}
+$ ./magic_numbers
+Enter your height (in cm): 120
+Sorry, too short to ride.
 ```
 
-# Variable assignment and initialization
+::: {.callout-tip title="Best practice"}
+Give magic numbers a name with `constexpr`.
+:::
+:::
+:::
 
-## Variable assignment
-- After a variable has been defined, we can give it a value (in a separate statement) using the `=` operator. 
-- This process is called **assignment**, and the `=` operator is called the assignment operator.
-```{.cpp #lst-variable-assignment lst-cap="Variable assignment"}
-{{< include ./cpp/variable_assignment.cpp >}}
+# Strings
+
+## `std::string`: text in C++
+
+![](figures/string_chars.png){fig-alt="The string Khiem drawn as five boxes, K, h, i, e and m, labelled name[0] to name[4]. name.length() is 5 and the first index is 0." width="82%"}
+
+- A `std::string` holds a piece of text: a sequence of characters, numbered from **0**.
+- It lives in the standard library, so `#include <string>`.
+
+## Your first strings
+
+```{.cpp filename="string_basics.cpp"}
+{{< include ./cpp/string_basics.cpp >}}
 ```
 
-## Variable initialization
-- One downside of assignment is that assigning a value to a just-defined object requires two statements: one to define the variable, and another to assign the value.
-- These two steps can be combined. When an object is defined, we can optionally provide an initial value for the object.
-- The process of specifying an initial value for an object is called **initialization**, and the syntax used to initialize an object is called an **initializer**.
-```{.cpp #lst-variable-initialization lst-cap="Variable initialization"}
-{{< include ./cpp/variable_initialization.cpp >}}
+```{.text .output}
+Hello, Khiem
+Hello, Ada Lovelace
+Ada Lovelace has 12 characters
 ```
 
-## Different forms of initialization
-- There are $5$ common forms of initialization in C++
-```{.cpp #lst-different-forms lst-cap="Different forms of initialization in C++"}
-int a;         // default-initialization (no initializer)
+- A string can change, and it grows or shrinks as needed: no need to say how long it is.
+- `name.length()` tells you how many characters it holds. (It counts the space too.)
 
-// Traditional initialization forms:
-int b = 5;     // copy-initialization (initial value after equals sign)
-int c ( 6 );   // direct-initialization (initial value in parenthesis)
+## Joining, indexing and comparing
 
-// Modern initialization forms (preferred):
-int d { 7 };   // direct-list-initialization (initial value in braces)
-int e {};      // value-initialization (empty braces)
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="string_operations.cpp"}
+{{< include ./cpp/string_operations.cpp >}}
 ```
-- As of C++17, **copy-initialization**, **direct-initialization**, and **direct-list-initialization** behave identically in most cases.
-- _The modern way to initialize objects in C++ is to use a form of initialization that makes use of curly braces_. This is called **list-initialization** (or **uniform initialization** or **brace initialization**).
-
-<u>**Best practice**</u>&nbsp; Prefer **direct-list-initialization** or **value-initialization** to initialize your variables.
-
-## Unused initialized variables warnings
-```{.cpp #lst-unused-variable lst-cap="Unused variable"}
-{{< include ./cpp/unused_variable.cpp >}}
+:::
+::: {.column width="28%"}
+```{.text .output}
+Khiem Nguyen
+First letter: K
+Hello, lecturer!
 ```
+:::
+:::
 
-# Introduction to iostream: `cout`, `cin`, and `endl`
-## The input/output library
+::: {.callout-note title="Coming from Python"}
+`+` joins and `==` compares, as in Python; `len(s)` becomes `s.length()`. But a C++ string can be changed in place (Python strings can't), and `s[-1]` does **not** give the last character: there are no negative indices.
+:::
 
-- The input/output library (io library) is part of the C++ standard library that deals with basic input and output.
-- The _io_ part of _iostream_ stands for input/output.
-- To use the functionality defined within the iostream library, we need to include the iostream header at the top of any code file.
+## Reading a string: `>>` stops at a space
 
-## Using `std::cout` to output to console
-- The `iostream` library contains a few predefined variables for us to use. 
-- `std::cout` allows us to send data to the console to be printed as text. 
-- `cout` stands for “character output”.
-
-```{.cpp #lst-use-stdcout lst-cap="Use of `std::cout`"}
-{{< include ./cpp/use_stdcout.cpp >}}
+::: {.columns}
+::: {.column width="65%"}
+```{.cpp filename="string_input_cin.cpp"}
+{{< include ./cpp/string_input_cin.cpp >}}
 ```
-
-## Using `std::endl` to output a newline
-- One way to output a newline is to output `std::endl` (which stands for “end line”)
-```{.cpp #lst-newline lst-cap="Use `std::newline` to enter a new line"}
-{{< include ./cpp/use_stdnewline.cpp >}}
+:::
+::: {.column width="35%"}
+```{.text .terminal}
+$ ./string_input_cin
+Enter your full name: Khiem Nguyen
+Hello, Khiem
 ```
+:::
+:::
 
-## Using `std::cin` to input from console
-- `std::cin` is another predefined variable in the iostream library.
-- `std::cin` (which stands for “character input”) reads input from keyboard.
+Where did "Nguyen" go? `>>` reads one *word*: it stops at the first space, and the rest stays in the input buffer (remember Chapter 01?).
 
-```{.cpp #lst-use-stdcin lst-cap="Use `std::cin` to input from keyboard"}
-{{< include ./cpp/use_stdcin.cpp >}}
-```
+## `std::getline` reads the whole line
 
+![](figures/cin_vs_getline.png){fig-alt="The typed input Khiem, space, Nguyen, Enter. std::cin >> name takes only Khiem and leaves the rest in the buffer. std::getline takes Khiem space Nguyen, up to the Enter, which it throws away." width="85%"}
 
-## `std::cin` is buffered
-We'll demonstrate this using the following program and run it two times -- See compilation process.
+To read text that may contain spaces, use `std::getline(std::cin, name)`. It reads everything up to the Enter key.
 
-```{.cpp #lst-stdin-buffered lst-cap="`std::cin` is buffered"}
-{{< include ./cpp/stdcin_buffered.cpp >}}
+## Watch out: mixing `>>` and `std::getline`
+
+```{.cpp filename="string_input_getline_bug.cpp"}
+{{< include ./cpp/string_input_getline_bug.cpp >}}
 ```
 
-## Operator `<<` and Operator `>>`
-
-New programmers often mix up `std::cin`, `std::cout`, the insertion operator `<<` and the extraction operator `>>`. Here's an easy way to remember:
-
-- `std::cout` is used to output a value (`cout` = character output).
-- `std::cin` is used to get an input value (`cin` = character input).
-
-- `<<` is used with `std::cout`, and *shows the direction that data is moving*.  
-`std::cout << 4` moves the value `4` to the `std::cout` and thus to the console.
-- `>>` is used with std::cin, and *shows the direction that data is moving*.  
-`std::cin >> x` moves the value the user entered from the keyboard into variable x.
-
-## Uninitialized variables
-- C/C++ does not automatically initialize most variables to a given value (such as zero).
-- When a variable that is not initialized is given a memory address to use to store data, the default value of that variable is whatever (garbage) value happens to already be in that memory address!
-- A variable that has not been given a known value (through initialization or assignment) is called an uninitialized variable.
-
-The terms "_initialized_" and "_uninitialized_" are not strict opposites: 
-
-- "_initialized_" means the object was provided with an initial value at the point of definition. 
-- "_unitialized_" means the object has not been given a known value yet (through any means, including assignment)
-
-To Recap:
-
-- Initialized = The object is given a known value at the point of definition.
-- Assignement = The object is given a known value beyond the point of definition.
-- Uninitialized = The object has not been given a known value yet.
-
-## Unitialized variables
-
-```{.cpp #lst-uninitialized-variable lst-cap="Uninitialized variables"}
-{{< include ./cpp/uninitialized_variable_01.cpp >}}
+```{.text .terminal}
+$ ./string_input_getline_bug
+Enter your age: 35
+Enter your full name: Hello, , age 35
 ```
 
-## Unitialized variables
+The program didn't even wait for the name! `>>` read `35` but left the **Enter** in the buffer, and `std::getline` happily read that empty line.
 
-```{.cpp #lst-uninitialized-variable lst-cap="Uninitialized variables"}
-{{< include ./cpp/uninitialized_variable_02.cpp >}}
+## The fix: `std::ws`
+
+```{.cpp filename="string_input_getline.cpp"}
+{{< include ./cpp/string_input_getline.cpp >}}
 ```
+
+::: {.columns}
+::: {.column width="55%"}
+```{.text .terminal}
+$ ./string_input_getline
+Enter your age: 35
+Enter your full name: Khiem Nguyen
+Hello, Khiem Nguyen, age 35
+```
+:::
+::: {.column width="45%"}
+::: {.callout-tip title="Best practice"}
+`std::ws` skips leftover spaces and Enters, so this works whatever came before.
+:::
+:::
+:::
+
+## Strings and functions
+
+```{.cpp}
+void print_greeting(std::string name) { // pass by value: a copy
+    std::cout << "Hello, " << name << '\n';
+}
+```
+
+- Passing a `std::string` by value works, but it **copies** every character. For a name that's nothing; for a whole book it's slow.
+- In Chapter 07 we'll learn to pass strings without copying them, using **references**. C++17 also offers `std::string_view`, a cheap read-only view of a string.
+- Until then, passing strings by value is fine.
+
+# Wrapping up
+
+## Summary
+
+- `const` makes a variable read-only. It must be initialized, and **if a variable can be `const`, it should be**.
+- `constexpr` is for values known at compile time; `const` for the rest. Get `pi` from `<numbers>`.
+- Don't put `const` on value parameters or on return values.
+- Every literal has a type: `'A'` is a `char`, `"A"` is text. Replace magic numbers with named `constexpr` constants.
+- `std::string` holds text: `+` joins, `==` compares, `s[0]` is the first character, `s.length()` counts them.
+- `>>` reads one word; `std::getline(std::cin >> std::ws, s)` reads a whole line.
+
+## Keep learning
+
+Explore these on your own, with Google Gemini in Guided Learning mode or on [learncpp.com](https://www.learncpp.com):
+
+1. [Literals](https://www.learncpp.com/cpp-tutorial/literals/), including suffixes like `u` and `f`
+2. [Numeral systems](https://www.learncpp.com/cpp-tutorial/numeral-systems-decimal-binary-hexadecimal-and-octal/): binary, hexadecimal and octal
+3. [Introduction to `std::string`](https://www.learncpp.com/cpp-tutorial/introduction-to-stdstring/) and [`std::string_view`](https://www.learncpp.com/cpp-tutorial/introduction-to-stdstring_view/)
+4. [Constexpr variables](https://www.learncpp.com/cpp-tutorial/constexpr-variables/)
+
+**Next up:** Section 2, C++ Intermediate, starting with function overloading.

@@ -1,19 +1,15 @@
 #include <iostream>
 
-void second_function(int* pointer_to_x) {
-    // We cannot use the name 'x' here (Out of Scope)
-    // But we can look at the memory address we were given
-    std::cout << "Inside second_function:" << std::endl;
-    std::cout << "Value at memory address: " << *pointer_to_x << std::endl;
-    std::cout << "Memory address: " << pointer_to_x << std::endl;
-    // std::cout << x;
+void second_function(int *address_of_x) {
+    // The NAME x is out of scope, but we know its ADDRESS
+    std::cout << "x is at " << address_of_x << '\n';
+    std::cout << "x holds " << *address_of_x << '\n';
 }
 
 void first_function() {
-    int x = 10; // 'x' starts its lifetime here
-    // We pass the ADDRESS of x (&x) to the next function
-    second_function(&x); 
-} // 'x' dies here
+    int x{10};           // x is alive from here...
+    second_function(&x); // &x means "the address of x"
+} // ...to here
 
 int main() {
     first_function();

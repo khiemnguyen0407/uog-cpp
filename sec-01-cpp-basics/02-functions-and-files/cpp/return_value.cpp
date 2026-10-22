@@ -1,20 +1,16 @@
 #include <iostream>
 
-int get_value_from_user() // this function now returns an integer value
-{
- 	std::cout << "Enter an integer: ";
-	int input{};
-	std::cin >> input;
-
-	return input; // return the value the user entered back to the caller
+int get_value_from_user() { // returns an int
+    std::cout << "Enter an integer: ";
+    int input{};
+    std::cin >> input;
+    return input; // send a copy of input back
 }
 
-int main()
-{
-	// initialize num with the return value of get_value_from_user()
-	int num { get_value_from_user() }; 
-	
-	std::cout << num << " doubled is: " << num * 2 << '\n';
+int main() {
+    // num is initialised with the return value
+    int num{get_value_from_user()};
 
-	return 0;
+    std::cout << num << " x 2 = " << num * 2 << '\n';
+    return 0;
 }

@@ -1,16 +1,16 @@
-#include <iostream> // for std::cout
-void do_thing_B() {
-    std::cout << "In do_thing_B()\n";
+#include <iostream>
+
+void do_b() { std::cout << "    In do_b()\n"; }
+
+void do_a() {
+    std::cout << "  Starting do_a()\n";
+    do_b();
+    std::cout << "  Ending do_a()\n";
 }
-void do_thing_A() {
-    std::cout << "Starting do_thing_A()\n";
-    do_thing_B();
-    std::cout << "Ending do_thing_A()\n";
-}
-// Definition of function main()
+
 int main() {
     std::cout << "Starting main()\n";
-    do_thing_A();
+    do_a();
     std::cout << "Ending main()\n";
     return 0;
 }

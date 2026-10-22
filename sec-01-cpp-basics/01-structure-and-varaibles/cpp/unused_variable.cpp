@@ -1,10 +1,4 @@
-int main()
-{
-    int x { 5 }; // variable x defined
-
-    // but not used anywhere
-
+int main() {
+    int x{5}; // defined, but never used
     return 0;
 }
-// Use the compiling command to see the warning
-// g++ -Wall unused_variable.cpp

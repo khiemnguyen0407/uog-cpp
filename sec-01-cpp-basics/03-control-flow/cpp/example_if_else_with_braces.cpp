@@ -1,23 +1,15 @@
 #include <iostream>
 
-namespace constants
-{
-    constexpr int minRideHeightCM { 140 };
-}
-
-int main()
-{
+int main() {
     std::cout << "Enter your height (in cm): ";
-    int x{};
-    std::cin >> x;
+    int height{};
+    std::cin >> height;
 
-    if (x >= constants::minRideHeightCM)
+    if (height >= 140) {
         std::cout << "You are tall enough to ride.\n";
-    else
-    { // note addition of block here
+    } else { // the braces make both lines part of the else
         std::cout << "You are not tall enough to ride.\n";
         std::cout << "Too bad!\n";
     }
-
     return 0;
 }

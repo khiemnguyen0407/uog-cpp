@@ -1,0 +1,3 @@
+# These examples are deliberately badly indented: that is the lesson.
+example_if_else_without_braces.cpp
+define_variable_in_implicit_block_01.cpp

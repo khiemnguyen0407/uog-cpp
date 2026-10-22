@@ -1,15 +1,12 @@
-int main()
-{
-    int x;              // definition of variable x
-    int y;              // definition of variable y
-    // Define multiple variables in one line
-    int a, b;           // note the comma between a and b
-    // This is wrong:
-    // int a, int b;    // wrong (compiler error)
+int main() {
+    int x; // define a variable named x, of type int
+    int y; // define another one, named y
 
-    int a1; double a2; // correct (but not recommended)
-    // correct and recommended -- write in separte lines(easier to read)
-    int b1;
-    double b2;
+    int a, b; // two variables in one statement: note the comma
+    // int c, int d;  // wrong: this is a compile error
+
+    // Better: one definition per line, easier to read
+    int total;
+    double average;
     return 0;
 }

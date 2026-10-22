@@ -1,278 +1,344 @@
 ---
-title: "Chapter 04: Constants and Strings in C++"
-author: Khiem Nguyen -- <khiem.nguyen@glasgow.ac.uk>
-    # <br>Lecturer in Multiscale Materials
-    # <br><khiem.nguyen@glasgow.ac.uk>
-author-meta: "Lecturer in Multiscale Materials"
-
-format: 
-    # other themes: 
-    #   beige, blood, dark, dracula, league, moon, 
-    #   night, serif, simple, sky, solarized
-    # highlight-style: monokai      # good for dark images
-    html:
-        output-file: "chap_04.html"
-        grid:
-            body-width: 1600px
-            margin-width: 300px
-            sidebar-width: 350px
-        embed-resources: true
-        theme: simple
-        highlight-style: github
-        css: doc.css
-        number-sections: true
-        number-depth: 3
-        mouse-wheel: true
-        title-slide-style: pandoc
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true     # <-- remove white background in code blocks
-        code-block-border-left: false
-        toc: true
-        toc-depth: 3
-        toc-title: Contents
-    pdf:
-        output-file: "chap_04.pdf"
-        embed-resources: true
-        theme: simple
-        highlight-style: github      # good for dark images
-        css: doc.css
-        number-sections: true
-        number-depth: 3
-        geometry:
-            - top=24px
-            - bottom=24px
-            - left=36px
-            - right=36px
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true # <-- remove white background in code blocks
-        code-block-border-left: false
-        toc: true
-        toc-depth: 3
-        toc-title: Contents
-    revealjs:
-        output-file: "chap_04_slide.html"
-        embed-resources: true
-        theme: simple
-        css: slide.css
-        number-sections: true
-        number-depth: 3
-        mouse-wheel: true
-        highlight-style: github
-        slide-number: true
-        title-slide-style: pandoc
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true   # <-- remove white background in code blocks
-        code-block-border-left: false # optional: remove left border
-        toc: true
-        toc-depth: 1
-        toc-title: Contents
-
+title: "Chapter 04: Constants and Strings"
+subtitle: "ENG3091"
+author:
+  - name: Khiem Nguyen
+    email: khiem.nguyen@glasgow.ac.uk
+    affiliations: University of Glasgow
+metadata-files: [../../theme/lecture.yml]
+format:
+  html:
+    output-file: chap_04.html
+  pdf:
+    output-file: chap_04.pdf
+  revealjs:
+    output-file: chap_04_slide.html
 ---
 
 # Constant variables
 
-## Introduction to constants
+## Some values should never change
 
+So far, every variable could be changed at any time:
 
-- A [**constant**]{style="color:red"} is a value that may not be changed during the program's execution.
-- C++ supports two different kinds of constants:
-    1. **named constants** are constant values that associated with an identifier.
-    2. **literal constants** are constant values that are not associated with an identifier.
-   
-In fact, it is not "too difficult" to understand the ideas behind *named constants* and *literal constants*. 
-
-$\ldots$ let us first study **named constants**
-
-## Types of named constants
-
-Three ways to define a named constant in C++:
-
-1. constant variables (covered in this lecture)
-2. object-like macros with substitution text (introduced in preprocessor)
-3. Enumerated constants (study later in topic "unscoped enumerations")
-
-> **Constant variables** are the most common type of named constant, and we will see their uses in many open-source libarires.
-
-In fact, we have been using non-constant variables -- see for example
-
-:::{#lst-non-constant-variables lst-cap="We have seen non-constant variables so far."}
 ```{.cpp}
-int main()
-{   
-    double x { 42 };    // x is a non-constant variable
-    x = 24;     // change value of x to 24 using assignment operator
-    
-    double gravity {9.81};  // gravity is a non-constant variable
-    gravity = 1.89;         // BUT we don't want to change it.
+double x{42.0};
+x = 24.0;        // fine: x is meant to change
 
-    double pi {3.1415926535}    // pi is a non-constant variable
-    pi = 3.0    // several engineers see pi as 3.0. BUT we don't want that...
+double gravity{9.81};
+gravity = 1.89;  // allowed... but gravity shouldn't change!
 
-    return 0;
-}
+double pi{3.1415926535};
+pi = 3.0;        // some engineers do see pi as 3.0, but we don't want that!
 ```
-:::
+
+A **constant** is a value that can't change while the program runs. C++ has two kinds:
+
+- **named constants**, which have a name (this section);
+- **literal constants**, or just **literals**, written straight into the code, like `9.81` (next section).
 
 ## Declaring a constant variable
 
-To declare a constant variable, we place the `const` keyword (called a **const qualifier**) adjacent to the object's type
+Put the keyword `const` (the **const qualifier**) next to the type:
 
 ```{.cpp}
-const double gravity { 9.81 };
-int const num_sides_in_square { 4 };
+const double gravity{9.81};    // the usual style
+int const sides_in_square{4};  // also legal, but less common
 ```
 
-- C++ accepts the `const` qualifier either before or after the type.
-- It's more common to use `const` before the type (it better follows standard English convention -- think "a green ball" vs "a ball green")
+- `const` can go before or after the type. Before is more common: think "a green ball", not "a ball green".
+- `const` is part of the type: the type of `gravity` is `const double`.
 
-> Remark
->
-> The type of an object includes the const qualifier. So when we define `const double gravity {9.81};` the type of gravity is `const double`.
+## A `const` variable must be initialized
 
+You can't assign to a `const` variable, so it must get its value when it's defined:
 
-## `const` variables must be initialized
-
-- `const` variables *must be initialized* when we define them (of course that value cannot be changed via assignment)
-
-```{.cpp}
-int main()
-{
-    const double gravity;   // Error: const variables must be initialized
-    // Engineers may try this. 
-    gravity = 10;           // Error: const variables can not be changed
-
-    return 0;
-}
+```{.cpp filename="const_must_be_initialized.cpp" .no-compile}
+{{< include ./cpp/const_must_be_initialized.cpp >}}
 ```
-- `const` variables can be initialized from other variables (including non-const ones)
 
-::: {#lst-initialize_const_var lst-cap="Initialize const variables by using non-const variables" filename="`initialize_const_variables.cpp"}
-```{.cpp}
+```{.text .output .compiler}
+error: uninitialized 'const gravity' [-fpermissive]
+error: assignment of read-only variable 'gravity'
+```
+
+## Initializing from a variable
+
+A `const` variable can be initialized with any value, even one that's only known when the program runs:
+
+```{.cpp filename="initialize_const_variables.cpp" .no-compile}
 {{< include ./cpp/initialize_const_variables.cpp >}}
 ```
-:::
 
-## Naming const variables
+```{.text .output .compiler}
+error: assignment of read-only variable 'const_age'
+```
 
-::: {.incremental}
-- Programmers who have transitioned from C often prefer underscored, upper-case names for const variables (e.g. `EARTH_GRAVITY`). 
-- More common in C++ is to use intercapped names with a "`k`" prefix (e.g. `kEarthGravity`).
+## Naming constants
 
-:::{.fragment}
-> - Because const variables act like normal variables (except they cannot be assigned to), there is no reason that they need a special naming convention. 
-> - The modern IDE easily pick the const qualifier up and tells us that piece of info.
-:::
+You'll meet several conventions:
 
-:::
+- `EARTH_GRAVITY`: upper case with underscores, popular with programmers coming from C;
+- `kEarthGravity`: a "k" prefix, common in some C++ style guides;
+- `earth_gravity`: just like any other variable.
 
-## Const function parameters
+My take: a `const` variable behaves like a normal variable except that it can't be assigned to, so it doesn't need a special name. Your IDE will tell you it's `const` anyway. In this course we use `snake_case` for constants too.
 
-- Function parameters can be made constants via the `const` keyword. 
-- Const function parameters are widely used in developing software. See, e.g., the following reference: [namespace]([namespaceGmsh](https://dealii.org/current/doxygen/deal.II/namespaceGmsh.html))
-- Marking a function parameter constant enlists the compiler's help to ensure the parameter's value cannot be changed inside the function.
+## `const` value parameters
 
-::: {#lst-const-func-parameters lst-cap="Const function parameters" filename="`const_func_parameters.cpp"}
-```{ .cpp}
+::: {.columns}
+::: {.column width="65%"}
+```{.cpp filename="const_func_parameters.cpp"}
 {{< include ./cpp/const_func_parameters.cpp >}}
 ```
 :::
+::: {.column width="35%"}
+```{.text .output}
+42
+```
+:::
+:::
 
+- A `const` **value parameter** can't be changed inside the function.
+- But it's only a copy (pass by value, Chapter 02): whatever the function does to it, nobody outside can tell. So the `const` adds clutter and protects nothing.
 
-## Const function parameters: Advice
+## `const` return values
 
-- In modern C++ we _do not_ make **value parameters** (value parameters vs reference parameters) `const` because we generally do not care if the function changes the vlaue of the parameter. It is just a copy that will be destroyed at the end of the function anyway.
-- The `const` keyword adds a small amount of unnecessary clutter to the function prototype.
-- We shall learn later two other ways to pass arguments to functions:
-    - pass by reference
-    - pass by address
-
-> **Best practice**
->
-> Do NOT use `const` for _value parameters_.
-
-
-## Const return values
-
-- A function's return value may also be made const.
-- For fundamental types, the `const` qualifier on a return type is simply ignored -- The compiler may give a warning but it should run fine.
-- For other types (which we shall learn), _there is typically little point in returning const objects by value because they are temporary copies that will be destroyed anyway._
-
-::: {#lst-return-const-value lst-cap="About const function's return value"}
-```{.cpp}
+::: {.columns}
+::: {.column width="65%"}
+```{.cpp filename="const_return_value.cpp"}
 {{< include ./cpp/const_return_value.cpp >}}
 ```
 :::
+::: {.column width="35%"}
+```{.text .output .compiler}
+warning: type qualifiers
+ignored on function
+return type
+```
+:::
+:::
 
-> **Best pratice**
->
-> Do NOT use `const` when _returning by value_.
+A `const` return value of a fundamental type is simply ignored, and `-Wextra` says so.
 
-## const function parameters and const return value: Best practice Sumarry
+::: {.callout-tip title="Best practice"}
+Don't use `const` on value parameters or on values returned by value. (`const` *references* are a different story: Chapter 07.)
+:::
 
-> **Best practice**
->
-> - Do **NOT** use `const` for _value parameters_.
-> - Do **NOT** use `const` when _returning by value_.
+## Why make variables constant?
 
-## Why variables should be made constant
-
-> [**If a variable can be made constant, it generally should be made constant.**]{style="color:blue"}
-
-This is important for a number of reasons:
+> **If a variable can be made constant, it generally should be.**
 
 ::: {.incremental}
-- [By making a variable constant, you ensure that the value cannot be changed accidentally.]{style="color:red"}
-- [It provides more opportunity for the compiler to optimize programs.]{style="color:red"}
-
-    When the compiler can assume a value isn’t changing, it is able to leverage more techniques to optimize the program, resulting in a compiled program that is smaller and faster.
-
-- [Most importantly, it reduces the overall complexity of our programs.]{style="color:red"}
-
-    When trying to determine what a section of code is doing or trying to debug an issue, we know that a const variable can’t have its value changed, so we don’t have to worry about whether its value is actually changing, what value it is changing to, and whether that new value is correct.
-
-- Every moving part in a system increases complexity and the risk of defect or failure. Non-constant variables are moving parts, while constant variables are not.
+- **No accidents.** Nobody, including you, can change it by mistake.
+- **Faster programs.** When the compiler knows a value won't change, it can optimize more.
+- **Simpler code.** When you're reading or debugging, a `const` variable is one less moving part: you never have to ask whether, where or to what it changed.
 :::
 
-:::{.fragment}
-> **Best practice**
->
-> [Make variables constant whenever possible.]{style="color:blue"}
-> 
-> In fact, you will see that open-source libraries on Github mostly to strictly follow this practice
+::: {.fragment}
+Look at well-written open-source C++ libraries on GitHub: you'll see `const` almost everywhere.
 :::
+
+## `constexpr`: constants known at compile time
+
+::: {.columns}
+::: {.column width="68%"}
+```{.cpp filename="constexpr_example.cpp"}
+{{< include ./cpp/constexpr_example.cpp >}}
+```
+:::
+::: {.column width="32%"}
+```{.text .terminal}
+$ ./constexpr_example
+Radius: 2
+Area: 12.5664
+```
+
+::: {.callout-tip title="Best practice"}
+`constexpr` for values known at compile time, `const` for the rest.
+:::
+:::
+:::
+
+- A `constexpr` variable needs a value the compiler can work out **while compiling**, like `9.81` or `std::numbers::pi` (from `<numbers>`, C++20: don't type `pi` yourself!).
+- `area` depends on user input, so it's only known when the program **runs**: it can be `const` but not `constexpr`.
 
 # Literals
 
 ## Literals
 
-::: {.fragment}
-### Literals { .mt-5}
-::: {.incremental}
-- Literals are values that are inserted directly into the code.
-- Just like objects have a type, all literals have a type. The type of a literal is deduced from the literal's value.
+A **literal** is a value written directly in the code. Like a variable, every literal has a type, and C++ works it out from how the literal is written:
+
+| Literal | Type | Literal | Type |
+|---------|------|---------|------|
+| `42` | `int` | `'A'` | `char` (single quotes) |
+| `42u` | `unsigned int` | `"Hello"` | text (double quotes) |
+| `3.14` | `double` | `true`, `false` | `bool` |
+| `3.14f` | `float` | `1.5e3` | `double` (1500.0) |
+
+::: {.callout-note title="Coming from Python"}
+In Python, `'A'` and `"A"` mean the same thing. In C++ they don't: single quotes make one `char`, double quotes make text.
+:::
+
+## Magic numbers
+
+Remember `if (height >= 140)` from Chapter 03? What is `140`: a height, a weight, an age? A literal with no explanation is a **magic number**, and if the rule changes, you have to hunt down every copy.
+
+::: {.columns}
+::: {.column width="70%"}
+```{.cpp filename="magic_numbers.cpp"}
+{{< include ./cpp/magic_numbers.cpp >}}
+```
+:::
+::: {.column width="30%"}
+```{.text .terminal}
+$ ./magic_numbers
+Enter your height (in cm): 120
+Sorry, too short to ride.
+```
+
+::: {.callout-tip title="Best practice"}
+Give magic numbers a name with `constexpr`.
+:::
 :::
 :::
 
-::: {.fragment} 
-### Wait a minute { .mt-5}
-::: {.incremental}
-- There is much more to learn about _literals_, but it involves quite technical details.
-- It is very boring to teach and to learn in live lectures.
-- So, let us make it as a on-bed reading $\ldots$ 
+# Strings
+
+## `std::string`: text in C++
+
+![](figures/string_chars.png){fig-alt="The string Khiem drawn as five boxes, K, h, i, e and m, labelled name[0] to name[4]. name.length() is 5 and the first index is 0." width="82%"}
+
+- A `std::string` holds a piece of text: a sequence of characters, numbered from **0**.
+- It lives in the standard library, so `#include <string>`.
+
+## Your first strings
+
+```{.cpp filename="string_basics.cpp"}
+{{< include ./cpp/string_basics.cpp >}}
+```
+
+```{.text .output}
+Hello, Khiem
+Hello, Ada Lovelace
+Ada Lovelace has 12 characters
+```
+
+- A string can change, and it grows or shrinks as needed: no need to say how long it is.
+- `name.length()` tells you how many characters it holds. (It counts the space too.)
+
+## Joining, indexing and comparing
+
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="string_operations.cpp"}
+{{< include ./cpp/string_operations.cpp >}}
+```
+:::
+::: {.column width="28%"}
+```{.text .output}
+Khiem Nguyen
+First letter: K
+Hello, lecturer!
+```
 :::
 :::
 
-::: {.fragment}
-### Homework { .mt-5}
-> [**Gemini: Guided Learning**]{style="color:purple"}
-> 
-> Please use Gemini Guided Learning to learn more about this topic. 
->
-> We will not spend much time on this topic in our course.
+::: {.callout-note title="Coming from Python"}
+`+` joins and `==` compares, as in Python; `len(s)` becomes `s.length()`. But a C++ string can be changed in place (Python strings can't), and `s[-1]` does **not** give the last character: there are no negative indices.
 :::
+
+## Reading a string: `>>` stops at a space
+
+::: {.columns}
+::: {.column width="65%"}
+```{.cpp filename="string_input_cin.cpp"}
+{{< include ./cpp/string_input_cin.cpp >}}
+```
+:::
+::: {.column width="35%"}
+```{.text .terminal}
+$ ./string_input_cin
+Enter your full name: Khiem Nguyen
+Hello, Khiem
+```
+:::
+:::
+
+Where did "Nguyen" go? `>>` reads one *word*: it stops at the first space, and the rest stays in the input buffer (remember Chapter 01?).
+
+## `std::getline` reads the whole line
+
+![](figures/cin_vs_getline.png){fig-alt="The typed input Khiem, space, Nguyen, Enter. std::cin >> name takes only Khiem and leaves the rest in the buffer. std::getline takes Khiem space Nguyen, up to the Enter, which it throws away." width="85%"}
+
+To read text that may contain spaces, use `std::getline(std::cin, name)`. It reads everything up to the Enter key.
+
+## Watch out: mixing `>>` and `std::getline`
+
+```{.cpp filename="string_input_getline_bug.cpp"}
+{{< include ./cpp/string_input_getline_bug.cpp >}}
+```
+
+```{.text .terminal}
+$ ./string_input_getline_bug
+Enter your age: 35
+Enter your full name: Hello, , age 35
+```
+
+The program didn't even wait for the name! `>>` read `35` but left the **Enter** in the buffer, and `std::getline` happily read that empty line.
+
+## The fix: `std::ws`
+
+```{.cpp filename="string_input_getline.cpp"}
+{{< include ./cpp/string_input_getline.cpp >}}
+```
+
+::: {.columns}
+::: {.column width="55%"}
+```{.text .terminal}
+$ ./string_input_getline
+Enter your age: 35
+Enter your full name: Khiem Nguyen
+Hello, Khiem Nguyen, age 35
+```
+:::
+::: {.column width="45%"}
+::: {.callout-tip title="Best practice"}
+`std::ws` skips leftover spaces and Enters, so this works whatever came before.
+:::
+:::
+:::
+
+## Strings and functions
+
+```{.cpp}
+void print_greeting(std::string name) { // pass by value: a copy
+    std::cout << "Hello, " << name << '\n';
+}
+```
+
+- Passing a `std::string` by value works, but it **copies** every character. For a name that's nothing; for a whole book it's slow.
+- In Chapter 07 we'll learn to pass strings without copying them, using **references**. C++17 also offers `std::string_view`, a cheap read-only view of a string.
+- Until then, passing strings by value is fine.
+
+# Wrapping up
+
+## Summary
+
+- `const` makes a variable read-only. It must be initialized, and **if a variable can be `const`, it should be**.
+- `constexpr` is for values known at compile time; `const` for the rest. Get `pi` from `<numbers>`.
+- Don't put `const` on value parameters or on return values.
+- Every literal has a type: `'A'` is a `char`, `"A"` is text. Replace magic numbers with named `constexpr` constants.
+- `std::string` holds text: `+` joins, `==` compares, `s[0]` is the first character, `s.length()` counts them.
+- `>>` reads one word; `std::getline(std::cin >> std::ws, s)` reads a whole line.
+
+## Keep learning
+
+Explore these on your own, with Google Gemini in Guided Learning mode or on [learncpp.com](https://www.learncpp.com):
+
+1. [Literals](https://www.learncpp.com/cpp-tutorial/literals/), including suffixes like `u` and `f`
+2. [Numeral systems](https://www.learncpp.com/cpp-tutorial/numeral-systems-decimal-binary-hexadecimal-and-octal/): binary, hexadecimal and octal
+3. [Introduction to `std::string`](https://www.learncpp.com/cpp-tutorial/introduction-to-stdstring/) and [`std::string_view`](https://www.learncpp.com/cpp-tutorial/introduction-to-stdstring_view/)
+4. [Constexpr variables](https://www.learncpp.com/cpp-tutorial/constexpr-variables/)
+
+**Next up:** Section 2, C++ Intermediate, starting with function overloading.

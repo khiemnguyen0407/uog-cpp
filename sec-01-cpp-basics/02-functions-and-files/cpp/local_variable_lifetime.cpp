@@ -1,18 +1,12 @@
 #include <iostream>
-#include <string>
 
-// my_name is not in scope anywhere in this function
-void say_hello(std::string name)
-{
-    // name's lifetime begins here
-    std::cout << "Hello, " << name << "!\n";
-}   // name's lifetime ends here
+void print_double(int value) { // value is created here
+    int result{value * 2};     // result is created here
+    std::cout << result << '\n';
+} // result, then value, are destroyed here
 
-int main()
-{
-    std::string my_name { "Khiem" };    // my_name's lifetime begins here
-
-    say_hello(my_name); // my_name is still alive during this function call
-
+int main() {
+    int number{21}; // number is created here
+    print_double(number);
     return 0;
-}       // my_name's lifetime ends here
+} // number is destroyed here

@@ -1,25 +1,20 @@
 #include <iostream>
-// using namespace std;
-int get_value_from_user()
-{
- 	cout << "Enter an integer: ";
-	int input{};
-	std::cin >> input;
 
-	return input;
+int get_value_from_user() {
+    std::cout << "Enter an integer: ";
+    int input{};
+    std::cin >> input;
+    return input;
 }
 
-void print_double(int value) // This function now has an integer parameter
-{
-	std::cout << value << " doubled is: " << value * 2 << '\n';
+void print_double(int value) { // one int parameter
+    std::cout << value << " x 2 = " << value * 2 << '\n';
 }
 
-int main()
-{
-	int num { get_value_from_user() };
-	print_double(num);
+int main() {
+    int num{get_value_from_user()};
+    print_double(num);
 
-    // We can also combine two statements into one.
     print_double(get_value_from_user());
-	return 0;
+    return 0;
 }

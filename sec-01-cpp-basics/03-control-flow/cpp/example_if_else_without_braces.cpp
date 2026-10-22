@@ -1,21 +1,15 @@
 #include <iostream>
 
-namespace constants     // This is a namespace to hold constants
-{
-    constexpr int minRideHeightCM { 140 };  // constexpr for compile-time constant
-}
-
-int main()
-{
+int main() {
     std::cout << "Enter your height (in cm): ";
-    int x{};
-    std::cin >> x;
+    int height{};
+    std::cin >> height;
 
-    if (x >= constants::minRideHeightCM)
+    if (height >= 140)
         std::cout << "You are tall enough to ride.\n";
     else
         std::cout << "You are not tall enough to ride.\n";
-        std::cout << "Too bad!\n"; // focus on this line
+        std::cout << "Too bad!\n"; // in the else?
 
     return 0;
 }

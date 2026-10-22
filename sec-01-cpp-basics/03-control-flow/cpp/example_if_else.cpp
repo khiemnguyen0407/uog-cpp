@@ -1,15 +1,14 @@
 #include <iostream>
 
-int main()
-{
+int main() {
     std::cout << "Enter a number: ";
     int x{};
     std::cin >> x;
 
-    if (x > 10)
+    if (x > 10) {
         std::cout << x << " is greater than 10\n";
-    else
+    } else {
         std::cout << x << " is not greater than 10\n";
-
+    }
     return 0;
 }
