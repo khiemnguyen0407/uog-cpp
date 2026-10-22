@@ -1,27 +1,19 @@
 #include <iostream>
-class Date
-{
-// Any members defined here would default to private
 
-public: // here's our public access specifier
-
-    void print() const // public due to above public: specifier
-    {
-        // members can access other private members
-        std::cout << year << '/' << month << '/' << day;
+class Date {
+  public:                // everything below is public...
+    void print() const { // members may use private members
+        std::cout << year << '/' << month << '/' << day << '\n';
     }
 
-private: // here's our private access specifier
-
-    int year { 2020 };  // private due to above private: specifier
-    int month { 14 }; // private due to above private: specifier
-    int day { 10 };   // private due to above private: specifier
+  private: // ...and everything below is private
+    int year{2026};
+    int month{2};
+    int day{26};
 };
 
-int main()
-{
-    Date d{};
-    d.print();  // okay, main() allowed to access public members
-
+int main() {
+    Date today{};
+    today.print(); // fine: print() is public
     return 0;
 }

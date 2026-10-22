@@ -1,30 +1,20 @@
 #include <iostream>
 
-class Foo
-{
-private:
-    int x {};
-    int y {};
+class Foo {
+  private:
+    int x{}, y{};
 
-public:
-    // if x_out is named as x, we have shadowing
-    Foo(int x_out, int y_out)
-    {
-        x = x_out; // we don't have self.x
-        y = y_out;
-        std::cout << "Foo(" << x << ", " << y << ") constructed\n";
+  public:
+    Foo(int x_in, int y_in) { // different names, to avoid shadowing
+        x = x_in;             // assign in the body, like Python
+        y = y_in;
     }
 
-    void print() const
-    {
-        std::cout << "Foo(" << x << ", " << y << ")\n";
-    }
+    void print() const { std::cout << "Foo(" << x << ", " << y << ")\n"; }
 };
 
-int main()
-{
-    Foo foo{ 6, 7 };
+int main() {
+    Foo foo{6, 7};
     foo.print();
-
     return 0;
 }

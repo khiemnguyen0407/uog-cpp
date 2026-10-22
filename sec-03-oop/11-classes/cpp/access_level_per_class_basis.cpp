@@ -1,33 +1,24 @@
 #include <iostream>
 #include <string>
-#include <string_view>
 
-class Person
-{
-private:
+class Person {
+  private:
     std::string name{};
 
-public:
-    void kisses(const Person& p) const
-    {   // we access data member "name" of object "p"
-        std::cout << name << " kisses " << p.name << '\n';  
-    }
+  public:
+    void set_name(const std::string& new_name) { name = new_name; }
 
-    void set_name(std::string_view name)
-    {   // this is the pointer to the "current" object.
-        // This is why we don't need to use m_name, or name_
-        // and everything still appears normal and sensible.
-        this->name = name;      
+    void greet(const Person& other) const {
+        // We may use other.name: other is a Person too
+        std::cout << name << " says hello to " << other.name << '\n';
     }
 };
 
-int main()
-{
-    Person joe;
+int main() {
+    Person joe{};
     joe.set_name("Joe");
-    Person kate;
+    Person kate{};
     kate.set_name("Kate");
-    joe.kisses(kate);
-
+    joe.greet(kate);
     return 0;
 }

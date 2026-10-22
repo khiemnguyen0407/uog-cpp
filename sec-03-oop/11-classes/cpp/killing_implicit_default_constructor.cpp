@@ -1,14 +1,13 @@
 class Foo {
+  private:
+    int x{}, y{};
 
-private:
-    int x {};
-    int y {};
-public:
-    Foo(int x, int y) : x{x}, y {} {}  // This "kills" the implicit default constructor
+  public:
+    Foo(int x, int y) : x{x}, y{y} {} // removes the implicit default one
 };
 
-int main()
-{   
-    Foo foo1 { 1, 2 };  // Fine. the compiler uses Foo(int, int) to construct the object.
-    // Foo foo2 {};    // error: there is no default constructor
+int main() {
+    Foo foo1{1, 2}; // fine: uses Foo(int, int)
+    Foo foo2{};     // error: there is no default constructor now
+    return 0;
 }

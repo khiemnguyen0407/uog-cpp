@@ -1,28 +1,20 @@
 #include <iostream>
 
-class Foo
-{
-private:
-    int x {};
-    int y {};
+class Foo {
+  private:
+    int x{}, y{};
 
-public:
-    Foo() // default constructor
-    {
-        std::cout << "Foo constructed\n";
-    }
+  public:
+    Foo() { std::cout << "Foo constructed\n"; } // default constructor
 
-    Foo(int x, int y) // non-default constructor
-        : x { x }, y { y }
-    {
+    Foo(int x, int y) // another constructor
+        : x{x}, y{y} {
         std::cout << "Foo(" << x << ", " << y << ") constructed\n";
     }
 };
 
-int main()
-{
-    Foo foo1{};     // Calls Foo() constructor
-    Foo foo2{6, 7}; // Calls Foo(int, int) constructor
-
+int main() {
+    Foo foo1{};     // calls Foo()
+    Foo foo2{6, 7}; // calls Foo(int, int)
     return 0;
 }

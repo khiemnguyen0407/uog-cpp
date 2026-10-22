@@ -1,14 +1,10 @@
-#include <iostream>
-
 class Foo {
-private:
-    int x{};
-    int y{};
-    // Note: no constructors declared
+  private:
+    int x{}, y{};
+    // no constructors declared
 };
 
-int main()
-{
-    Foo foo{};  // implicit default constructor is used
+int main() {
+    Foo foo{}; // fine: the compiler wrote a default constructor for us
     return 0;
 }

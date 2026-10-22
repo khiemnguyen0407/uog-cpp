@@ -1,25 +1,16 @@
 #include <iostream>
 
-struct Date
-{
-    // here are our member variables
-    int year {};
-    int month {};
-    int day {};
+struct Date {
+    int year{}, month{}, day{};
 };
 
-void print(const Date& date)
-{
-    // member variables accessed using member selection operator (.)
-    std::cout << date.year << '/' << date.month << '/' << date.day;
+void print(const Date& date) { // a non-member function
+    std::cout << date.year << '/' << date.month << '/' << date.day << '\n';
 }
 
-int main()
-{
-    Date today { 2026, 02, 27 }; // aggregate initialize our struct
-
-    today.day = 16; // member variables accessed using member selection operator (.)
-    print(today);   // non-member function accessed using normal calling convention
-
+int main() {
+    Date today{2026, 2, 26};
+    today.day = 27; // select a member with .
+    print(today);   // pass the object as an argument
     return 0;
 }

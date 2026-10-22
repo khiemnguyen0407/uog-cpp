@@ -1,18 +1,14 @@
 #include <iostream>
 
-struct Employee
-{
+struct Employee {
     int id{};
     int age{};
-    long double wage{};
+    double wage{};
 };
 
-int main()
-{
-    Employee khiem{ 1, 42, 429999999999999999999.42 };
-    Employee* ptr{ &khiem };
-    // Not great but works: First dereference ptr, then use member selection
-    std::cout << ptr->wage << '\n'; 
-
+int main() {
+    Employee khiem{1, 42, 4.2e20};
+    Employee* ptr{&khiem};
+    std::cout << ptr->wage << '\n'; // the same thing, with ->
     return 0;
 }

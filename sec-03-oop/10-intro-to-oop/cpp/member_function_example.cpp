@@ -1,23 +1,16 @@
-// Member function version
 #include <iostream>
 
-struct Date
-{
-    int year {};        // We don't use m_ here for struct. Generally, we don't
-    int month {};       // want to write constructor for struct. Then, there is 
-    int day {};         // NO SHADOWING of variables (we talk later in `class`)
+struct Date {
+    int year{}, month{}, day{};
 
-    void print() // defines a member function named print
-    {
-        std::cout << year << '/' << month << '/' << day;
+    void print() { // a member function
+        std::cout << year << '/' << month << '/' << day << '\n';
     }
 };
 
-int main()
-{
-    Date today { 2026, 02, 26 }; // aggregate initialize our struct
-    today.day = 16; // member variables accessed using member selection operator (.)
-    today.print();  // member functions also accessed using member selection operator (.)
-    std::cout << '\n';
+int main() {
+    Date today{2026, 2, 26};
+    today.day = 27; // select a member variable with .
+    today.print();  // ...and a member function too
     return 0;
 }

@@ -1,20 +1,17 @@
 #include <iostream>
 
-struct Date
-{
-    int year {}, month {}, day {};
-    void print() const // now a const member function
-    {
-        std::cout << year << '/' << month << '/' << day;
-        double another_year {42};
-        another_year += 1;
+struct Date {
+    int year{}, month{}, day{};
+
+    void print() const { // a const member function
+        std::cout << year << '/' << month << '/' << day << '\n';
+        int next_year{year + 1}; // locals can still change
+        ++next_year;
     }
 };
 
-int main()
-{
-    const Date today { 2020, 10, 14 }; // const
-    today.print();  // ok: const object can call const member function
-
+int main() {
+    const Date today{2026, 2, 26};
+    today.print(); // fine
     return 0;
 }

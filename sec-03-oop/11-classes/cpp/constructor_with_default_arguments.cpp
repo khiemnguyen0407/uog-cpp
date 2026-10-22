@@ -1,24 +1,18 @@
 #include <iostream>
 
-class Foo
-{
-private:
-    int x { };
-    int y { };
+class Foo {
+  private:
+    int x{}, y{};
 
-public:
-    Foo(int x=0, int y=0) // has default arguments
-        : x { x }
-        , y { y }
-    {
+  public:
+    Foo(int x = 0, int y = 0) // also a default constructor
+        : x{x}, y{y} {
         std::cout << "Foo(" << x << ", " << y << ") constructed\n";
     }
 };
 
-int main()
-{
-    Foo foo1{};     // calls Foo(int, int) constructor using default arguments
-    Foo foo2{6, 7}; // calls Foo(int, int) constructor
-
+int main() {
+    Foo foo1{};     // Foo(int, int) with both defaults
+    Foo foo2{6, 7}; // Foo(int, int)
     return 0;
 }
