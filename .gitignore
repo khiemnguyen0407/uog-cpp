@@ -40,14 +40,15 @@
 *.zip
 # debug information files
 *.dwo
-
-__pycached__
+.clang-format
+CHANGES-chapter*.md
+scripts/
 typst-test/
 lecture_note/
 test/
 slides/
 .vscode/
-
+assignments/assignment-03/forward.qmd
 sec-01-cpp-basics/00-intro-to-eng3091/spreadsheets
 sec-01-cpp-basics/00-intro-to-eng3091/figures/software_engineering_video.mp4
 
