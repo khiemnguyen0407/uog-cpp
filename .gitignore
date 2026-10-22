@@ -1,5 +1,6 @@
 # Prerequisites
 *.d
+*.pyc
 
 # Compiled Object files
 *.slo
@@ -40,6 +41,7 @@
 # debug information files
 *.dwo
 
+__pycached__
 typst-test/
 lecture_note/
 test/
