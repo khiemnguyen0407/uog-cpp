@@ -1,19 +1,17 @@
-// T is a type template parameter
-// double is a non-template parameter
-// We don't need to provide names for these parameters since they aren't used
+#include <iostream>
+
+// T: template parameter; times: an ordinary int
 template <typename T>
-int print(T x, double y)
-{
-    std::cout << "first argument: " << x << "-- 2nd argument = " << y;
+void print_repeated(T value, int times = 1) {
+    for (int i{0}; i < times; ++i) {
+        std::cout << value << ' ';
+    }
+    std::cout << '\n';
 }
 
-int main()
-{
-    print(1, 3.4);      // print(int, double)
-    print(1, 3.4f);     // print(int, double) -- float is promoted to double
-    print(1.2, 3.4);    // print(double, double)
-    print(1.2f, 3.4);   // print(float, double)
-    print(1.2f, 3.4f);  // print(float, double) --  float is promoted to double
-
+int main() {
+    print_repeated(5);      // T = int, times = 1
+    print_repeated('a', 3); // T = char, times = 3
+    print_repeated(2.5, 2); // T = double, times = 2
     return 0;
 }

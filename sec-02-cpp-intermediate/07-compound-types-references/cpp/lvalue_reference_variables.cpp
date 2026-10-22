@@ -1,12 +1,10 @@
 #include <iostream>
 
-int main()
-{
-    int x { 5 };    // x is a normal integer variable
-    int& ref { x }; // ref is an lvalue reference variable that can now be used as an alias for variable x
+int main() {
+    int x{5};    // an ordinary int variable
+    int& ref{x}; // ref is a reference to x: another name for x
 
-    std::cout << x << '\n';  // print the value of x (5)
-    std::cout << ref << '\n'; // print the value of x via ref (5)
-
+    std::cout << x << '\n';   // prints 5
+    std::cout << ref << '\n'; // prints 5, through ref
     return 0;
 }

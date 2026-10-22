@@ -1,24 +1,16 @@
 #include <iostream>
 
-int main()
-{
-    int x{ 5 };
-    int& ref { x };  // get a reference to x
-    int* ptr { &x }; // get a pointer to x
+int main() {
+    int x{5};
+    int& ref{x};  // a reference to x
+    int* ptr{&x}; // a pointer to x
 
-    std::cout << x;
-    std::cout << ref;  // use the reference to print x's value (5)
-    std::cout << *ptr << '\n'; // use the pointer to print x's value (5)
+    std::cout << x << ' ' << ref << ' ' << *ptr << '\n';
 
-    ref = 6; // use the reference to change the value of x
-    std::cout << x;
-    std::cout << ref;  // use the reference to print x's value (6)
-    std::cout << *ptr << '\n'; // use the pointer to print x's value (6)
+    ref = 6; // change x through the reference
+    std::cout << x << ' ' << ref << ' ' << *ptr << '\n';
 
-    *ptr = 7; // use the pointer to change the value of x
-    std::cout << x;
-    std::cout << ref;  // use the reference to print x's value (7)
-    std::cout << *ptr << '\n'; // use the pointer to print x's value (7)
-
+    *ptr = 7; // change x through the pointer
+    std::cout << x << ' ' << ref << ' ' << *ptr << '\n';
     return 0;
 }

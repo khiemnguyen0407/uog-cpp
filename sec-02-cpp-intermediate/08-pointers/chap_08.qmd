@@ -1,370 +1,344 @@
 ---
 title: "Chapter 08: Pointers"
-author: Khiem Nguyen -- <khiem.nguyen@glasgow.ac.uk>
-    # <br>Lecturer in Multiscale Materials
-    # <br><khiem.nguyen@glasgow.ac.uk>
-author-meta: "Lecturer in Multiscale Materials"
-
-format: 
-    # other themes: 
-    #   beige, blood, dark, dracula, league, moon, 
-    #   night, serif, simple, sky, solarized
-    # highlight-style: monokai      # good for dark images
-    html:
-        output-file: "chap_08.html"
-        grid:
-            body-width: 1600px
-            margin-width: 300px
-            sidebar-width: 350px
-        embed-resources: true
-        theme: simple
-        highlight-style: github
-        css: doc.css
-        number-sections: true
-        number-depth: 3
-        mouse-wheel: true
-        title-slide-style: pandoc
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true     # <-- remove white background in code blocks
-        code-block-border-left: false
-        toc: true
-        toc-depth: 3
-        toc-title: Contents
-    pdf:
-        output-file: "chap_08.pdf"
-        embed-resources: true
-        theme: simple
-        highlight-style: github      # good for dark images
-        css: doc.css
-        number-sections: true
-        number-depth: 3
-        geometry:
-            - top=24px
-            - bottom=24px
-            - left=36px
-            - right=36px
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true # <-- remove white background in code blocks
-        code-block-border-left: false
-        toc: true
-        toc-depth: 3
-        toc-title: Contents
-    revealjs:
-        output-file: "chap_08_slide.html"
-        embed-resources: true
-        theme: simple
-        css: slide.css
-        number-sections: true
-        number-depth: 3
-        mouse-wheel: true
-        highlight-style: github
-        slide-number: true
-        title-slide-style: pandoc
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true   # <-- remove white background in code blocks
-        code-block-border-left: false # optional: remove left border
-        toc: true
-        toc-depth: 1
-        toc-title: Contents
-
+subtitle: "ENG3091"
+author:
+  - name: Khiem Nguyen
+    email: khiem.nguyen@glasgow.ac.uk
+    affiliations: University of Glasgow
+metadata-files: [../../theme/lecture.yml]
+format:
+  html:
+    output-file: chap_08.html
+  pdf:
+    output-file: chap_08.pdf
+  revealjs:
+    output-file: chap_08_slide.html
 ---
 
-# Introduction to pointers
+# Memory and addresses
 
-## Memory and address
+## Every variable lives at an address
 
-&#10149;&nbsp; Consider a normal variable like this:
-```{.cpp}
-int x { 425 };
-```
+![](figures/memory_address.png){fig-alt="A row of memory boxes with addresses 0x1230, 0x1234, 0x1238 and 0x123c. The box at 0x1234 holds 425 and is named x." width="80%"}
 
-**Behind the scene**
+- When `int x{425};` runs, the program sets aside a piece of memory for `x`, at some **address**, say `0x1234`.
+- Whenever we use `x`, the program goes to address `0x1234` and reads or writes the value stored there.
+- The same is true for a reference: `int& ref{x};` is just another name for whatever lives at `0x1234`.
 
-::: {.incremental}
-- When this code is executed, [a piece of memory from RAM will be assigned to this object]{style="color:navy"}.
-- The variable `x` is (hypothetically, see the figure before) assigned memory address `0x1234`.
-- Whenever we use the variable `x`, the program will go to the memory `0x1234` to access the value stored there.
-:::
+## The address-of operator `&`
 
-::: {.fragment}
-&#10149;&nbsp; This is also true with references:
-```{.cpp}
-int main()
-{
-    int x { 42 };
-    int& ref { x };
-    std::cout << "x = " << x << ", ref = " << ref << '\n';
-    return 0;
-}
-```
+`&x` gives the **address** of `x`:
 
-&#10140;&nbsp; Whenever we use `ref`, the program will go to the memory address of the variable `x` (hypothetically address = `0x1234`) to access the value.
-:::
-
-
-
-## The address-of operator (&): The ampersand character
-
-&#10149;&nbsp; The [**address-of operator (&)**]{style="color:red"} returns the memory of address of its operand.
-
-::: {#lst-address-of-operator lst-cap="We can retrieve the address of a variable by using the address-of operator, the ampersand character &. Filename=`address_of_operator_example.cpp`"}
-```{.cpp}
+::: {.columns}
+::: {.column width="65%"}
+```{.cpp filename="address_of_operator_example.cpp"}
 {{< include ./cpp/address_of_operator_example.cpp >}}
 ```
 :::
-
-&#10149;&nbsp; Let us run this code snippet.
-
-::: {.fragment}
-- Memory addresses are typically printed as hexadecimal values.
-- For objects that use more than one byte of memory, address-of will return the memory address of the first byte used by the object.
+::: {.column width="35%"}
+```{.text .output}
+5
+0x7ffd9bdba4ac
+0x7ffd9bdba4b0
+```
+:::
 :::
 
-## The dereference operator (*): The asterisk character
+- Addresses are usually printed in hexadecimal. Yours will be different, and may change every run.
+- An object bigger than one byte occupies several addresses; `&` gives the first one.
 
-&#10149;&nbsp; The [**dereference operator (*)**]{style="color:red"} (also occasionally called the [**indirection operator**]{style="color:red"}) returns the value at a given memory address as an lvalue.
+## The dereference operator `*`
 
-::: {#lst-address-of-operator lst-cap="Dereference operator returns the value at a given memory address. Filename=`dereference_operator_example.cpp`"}
-```{.cpp}
+`*` does the opposite: given an address, it gives you the **object at that address**.
+
+::: {.columns}
+::: {.column width="68%"}
+```{.cpp filename="dereference_operator_example.cpp"}
 {{< include ./cpp/dereference_operator_example.cpp >}}
 ```
 :::
-
-&#10149;&nbsp; Let us run this code snippet.
-
-## Address-of and dereference operators: Some points to note
-
-::: {.my-box}
-**Key insight**
-
-The [_address-of operator_]{style="color:red"} (&) and [_dereference operator_]{style="color:blue"} (*) work as opposites: address-of gets the address of an object, and dereference gets the object at an address. 
+::: {.column width="32%"}
+```{.text .output}
+5
+0x7ffcc49e7ee0
+5
+```
+:::
 :::
 
-
-::: {.fragment}
-**Regarding the ampersand**
-
-The [`&`]{style="color:red"} may cause confusion because it has different meanings depending on context:
-
-- When following a type name, `&` denotes an lvalue reference: 
-
-    &#10140;&nbsp; `int& ref`.
-- When used in a unary context in an expression, `&` is the address-of operator:
-  
-    &#10140;&nbsp; `std::cout << &x`.
-- When used in a binary context in an expression, `&` is the Bitwise AND operator:
-  
-    &#10140;&nbsp; `std::cout << x & y`.
+::: {.callout-important title="Key idea"}
+`&` and `*` are opposites: `&` gets the address of an object, and `*` gets the object at an address. So `*(&x)` is just `x`.
 :::
+
+## One symbol, three meanings
+
+The ampersand `&` means different things in different places:
+
+| Where | Meaning | Example |
+|---|---|---|
+| after a type | lvalue reference (Chapter 07) | `int& ref{x};` |
+| before an expression | address-of | `std::cout << &x;` |
+| between two expressions | bitwise AND (not covered here) | `int z{x & y};` |
+
+The asterisk `*` is similar: after a type it declares a pointer (next!), before an expression it dereferences, and between two expressions it multiplies.
 
 # Pointers
 
-[_A pointer is an object that holds a memory address (typically of another variable) as its value._]{style="color:navy"} 
+## A pointer holds an address
 
-## Pointers
-
-A [**pointer**]{style="color:red"} [<u>is an object</u>]{style="color:navy"} that holds a memory address (typically of another variable) as its value.
-
-&#10149;&nbsp; A type that specifies a pointer is called a [**pointer type**]{style="color:red"}.
-
-&#10149;&nbsp; Pointer types are declared using an asterisk (*).
+A **pointer** is an **object** whose value is a memory address, usually the address of another object.
 
 ```{.cpp}
-double;     // a normal double
-double&;    // an lvalue reference to a double value
-double*;    // a pointer to an double value (holds the address of a double value)
+double   // a double
+double&  // a reference to a double
+double*  // a pointer to a double: holds the address of a double
 ```
 
-## Pointers: Example
+![](figures/pointer_concept.png){fig-alt="ptr lives at address 0x1550 and holds the value 0x1234. x lives at address 0x1234 and holds 425. An arrow from ptr to x: ptr points at x, and *ptr is 425." width="78%"}
 
-::: {#lst-pointer-example lst-cap="An example of using pointers, address-of operator and dereference operator. Filename=`pointer_example.cpp`"}
-```{.cpp}
+That's where pointers get their name: `ptr` holds the address of `x`, so `ptr` **points at** `x`.
+
+## Your first pointer
+
+```{.cpp filename="pointer_example.cpp"}
 {{< include ./cpp/pointer_example.cpp >}}
 ```
-::: 
-&#10149;&nbsp; Let us run this code snippet. 
 
-[**Question**]{style="color:navy"}: What would you expect to see?
-
-**Note**: The asterisk is part of the declaration syntax for pointers, not the use of dereference.
-
-## Pointers: Declare multiple pointers in one line
-
-We generally should not declare multiple variables on a single line. 
-
-If we do, the asterisk has to be included with each variable.
-
-```{.cpp}
-int* ptr1, ptr2;    // incorrect: ptr1 is a pointer to an int, 
-                    // but ptr2 is just a plain int!
-int* ptr3, * ptr4;  // correct: ptr3 and ptr4 are both pointers to an int
+```{.text .output}
+x lives at:   0x7ffc45506a0c
+ptr holds:    0x7ffc45506a0c
+*ptr gives:   425
+ptr lives at: 0x7ffc45506a10
 ```
 
-## Pointers: Demonstration
-![This is an excellent demonstration of a pointer in C++](./figures/cpp-pointers.jpg)
+`ptr` holds the address of `x`, `*ptr` is `x` itself, and `ptr` has an address of its own, because it's an object.
 
-# Pointer initialization
+## Declaring pointers
 
-A pointer that has not been initialized is sometimes called a [**wild pointer**]{style="color:red"}.
+The `*` in a declaration belongs to **each** variable, not to the type:
 
-Always initialize your pointers.
+```{.cpp}
+int* ptr1, ptr2;  // careful: ptr1 is a pointer, but ptr2 is a plain int!
+int* ptr3, *ptr4; // both are pointers
+```
 
-## Pointer initialization
+Yet another reason to define one variable per line.
 
-- A pointer that has not been initialized is sometimes called a [**wild pointer**]{style="color:red"}.
-- Wild pointers contain garbage address.
-- Dereferencing a wild pointer will result in undefined behavior (pretty much like using uninitialized variables)
-
-::: {.my-box}
-**Best practice**
-
-Always initialize your pointers.
+::: {.callout-tip title="Best practice"}
+Write the asterisk next to the type, `int* ptr`, just as with references (`int& ref`).
 :::
 
+## Always initialize your pointers
 
-::: {.fragment}
-::: {#lst-initialize-pointers lst-cap="Best practice: Always initialize pointers. Filename=`initialize_pointers.cpp`"}
-```{.cpp}
+```{.cpp filename="initialize_pointers.cpp"}
 {{< include ./cpp/initialize_pointers.cpp >}}
 ```
+
+- An uninitialized pointer is a **wild pointer**: dereferencing its garbage address is undefined behaviour.
+- `int* ptr2{};` creates a **null pointer**: one that points at nothing. More on these soon.
+
+::: {.callout-tip title="Best practice"}
+Always initialize your pointers: with an address, or with `nullptr`.
 :::
+
+## Changing the pointer, or what it points at
+
+::: {.columns}
+::: {.column width="65%"}
+```{.cpp filename="pointer_assignment.cpp"}
+{{< include ./cpp/pointer_assignment.cpp >}}
+```
 :::
-
-## Pointer initialization
-
-&#10149;&nbsp; Since pointers hold addresses, when we initialize or assign a value to a pointer, that value has to be an address -- Just common sense.
-
-::: {.fragment}
-::: {#lst-initialize-pointers-using-addresses lst-cap="Initialize pointers using addresses. Filename=`initialize_pointers_using_addresses.cpp`"}
-```{.cpp}
-{{< include ./cpp/initialize_pointers_using_addresses.cpp >}}
+::: {.column width="35%"}
+```{.text .output}
+x = 10
+y = 12
 ```
 :::
 :::
 
-## Pointer initialization: Demonstration
-
-![Repeat the pointer concept in figure](./figures/pointer-concept.png)
-
-This is where **pointers** get their name from:
-
-- `ptr` is holding address of `x`.
-- `ptr` is **pointing to** `x`.
-
-# Pointers and Assignment
-
-Because pointers are objects, we can perform assignment on them.
-
-## Pointers and assignment
-
-Use assignment with pointers in two ways:
-
-- To change what the pointer is pointing at: Assign the pointer a new address.
-- To change the value being pointed at: Assign the _dereferenced_ pointer a new value
-
-::: {#lst-assign-pointer-to-new-address lst-cap="Assign a pointer to a new address. Filename=`assign_pointer_to_new_address.cpp`"}
-```{.cpp}
-{{< include ./cpp/assign_pointer_to_new_address.cpp >}}
-```
-:::
-&#10149;&nbsp; Let us run this code snippet. [**Question**]{style="color:navy"} Write code to change the value of `x` to `24` via using `ptr`.
-
-
-## Pointers and assignment
-
-::: {#lst-change-value-using-dereference lst-cap="Change value of variable via dereferencing a pointer. Filename=`change_value_using_dereference.cpp`"}
-```{.cpp}
-{{< include ./cpp/change_value_using_dereference.cpp >}}
-```
+::: {.callout-important title="Key idea"}
+- `ptr = &y;` assigns to the **pointer**: it points somewhere else.
+- `*ptr = 12.0;` assigns to the **object pointed at**.
 :::
 
-## Pointers and assignment: Key insight
+## Pointers behave much like references...
 
-:::{.my-box}
-**Key insight**
-
-- When we use a pointer without a dereference (`ptr`), we are accessing the address held by the pointer. Modifying this (`ptr = &y;`) changes what the pointer is pointing at.
-
-- When we dereference a pointer (`*ptr`), we are accessing the object being pointed at. Modifying this (`*ptr = 6;`) changes the value of the object being pointed at.
-:::
-
-At this point, you should already feel:
-
-[Pointers behave much like lvalue references]{style="color:navy"}
-
-## Pointers behave much like lvalue reference
-
-Important to note: [pointer is not lvalue reference]{style="color:navy"}. But we can write code like this:
-
-::: {#lst-pointers-behave-much-like-references lst-cap="Pointers behave much like lvalue references. But they are not the same. Filename=`pointers_behave_like_references.cpp`"}
-```{.cpp}
+::: {.columns}
+::: {.column width="65%"}
+```{.cpp filename="pointers_behave_like_references.cpp"}
 {{< include ./cpp/pointers_behave_like_references.cpp >}}
 ```
 :::
-
-&#10149;
-
-## Pointers behave much like lvalue reference: Figure demonstration
-
-![](./figures/pointer-behave-much-like-reference.png)
-
-## But references are not pointers
-
-There are some other differences between pointers:
-
-| References | Pointers |
-|:------|:---------|
-| must be initialized | not required to be initialized |
-| are not objects | are objects |
-| cannot be reseated | can change what they are pointing at |
-| must always be bound to an object | can point to nothing (null pointer)|
-| "safe" (outside of dangling reference) | are inherently dangerous (we'll discuss in the next lesson) | 
-
-# The address-of operator returns a pointer
-
-
-
-## The address-of operator returns a pointer
-
-- The address-of operator _does not_ return the address of its operand _as a literal_.
-- [It returns a pointer]{style="color:navy"} to the operand (whose value is the address of the operand).
-
-&#10149;&nbsp; **Example**: Given variable `int x`, `&x` returns an `int*` holding the address of `x`.
-
-::: {#lst-address-of-returns-pointer lst-cap="The address-of operator does not return the address of its operand as a literal. It returns a pointer to the operand. Filename=`address_of_returns_pointer.cpp`"}
-```{.cpp}
-{{< include ./cpp/address_of_returns_pointer.cpp >}}
+::: {.column width="35%"}
+```{.text .output}
+5 5 5
+6 6 6
+7 7 7
 ```
 :::
+:::
 
-&#10149;&nbsp; Let us run this code snippet. [**Question**]{style="color:navy"}: What do you think about the size of pointers?
+![](figures/pointer_vs_reference.png){fig-alt="One object, x, whose value goes from 5 to 6 to 7. The names x and ref both label it directly. ptr is a separate object holding the address of x and pointing at it." width="70%"}
 
+## ...but a pointer is not a reference
 
+| References | Pointers |
+|:---|:---|
+| must be initialized | don't have to be (but should be!) |
+| are not objects | are objects |
+| can't be reseated | can be made to point somewhere else |
+| always refer to an object | can point at nothing (null) |
+| "safe", apart from dangling | dangerous: wild, null and dangling pointers |
 
-## The size of pointers
+## The type of `&x`
 
-The size of a pointer is dependent upon the architecture the executable is compiled for:
+`&x` doesn't produce a bare number: it produces a **pointer**. For an `int x`, `&x` has type `int*`:
 
-- a pointer on a 32-bit machine is 32 bits (4 bytes)
-- a pointer on a 64-bit machine is 64 bits (8 bytes)
+```{.cpp filename="address_of_type.cpp" .no-compile}
+{{< include ./cpp/address_of_type.cpp >}}
+```
 
-This is true regardless of the size of the object being pointed to. 
+```{.text .output .compiler}
+error: cannot convert 'int*' to 'double*' in initialization
+```
 
-&#10140;&nbsp; This is just common sense: [A pointer is just a memory address, and the number of bits needed to access a memory address is constant.]{style="color:navy"}
+A pointer's type says what kind of object lives at the address, so an `int*` can't be used as a `double*`.
 
-## The size of pointers
+## The size of a pointer
 
-::: {#lst-size-of-pointer lst-cap="Size of pointers depends on the architecture the executable is compiled for. Filename=`size_of_pointers.cpp`"}
-```{.cpp}
+::: {.columns}
+::: {.column width="65%"}
+```{.cpp filename="size_of_pointers.cpp"}
 {{< include ./cpp/size_of_pointers.cpp >}}
 ```
 :::
+::: {.column width="35%"}
+```{.text .output}
+8
+8
+8
+```
+:::
+:::
 
-&#10149;&nbsp; Let us run this code snippet.
+- A pointer is just an address, so all pointers are the same size, whatever they point at.
+- That size depends on the machine: 8 bytes (64 bits) on a 64-bit system like mine, 4 bytes on a 32-bit one.
 
+# Null pointers
+
+## `nullptr`: pointing at nothing
+
+::: {.columns}
+::: {.column width="65%"}
+```{.cpp filename="null_pointer.cpp"}
+{{< include ./cpp/null_pointer.cpp >}}
+```
+:::
+::: {.column width="35%"}
+```{.text .output}
+ptr is null
+ptr points at 5
+```
+:::
+:::
+
+- `nullptr` is a special value meaning "no address". A pointer holding it is a **null pointer**.
+- A null pointer converts to `false` and any other pointer to `true`, so `if (ptr)` asks "does `ptr` point at something?"
+
+## Never dereference a null pointer
+
+::: {.columns}
+::: {.column width="60%"}
+```{.cpp filename="null_dereference.cpp"}
+{{< include ./cpp/null_dereference.cpp >}}
+```
+:::
+::: {.column width="40%"}
+```{.text .terminal}
+$ ./null_dereference
+Segmentation fault
+```
+:::
+:::
+
+There's no object at "no address", so `*ptr` is undefined behaviour. On most systems, the program crashes with a **segmentation fault**.
+
+::: {.callout-tip title="Best practice"}
+If a pointer might be null, check it before you dereference it.
+:::
+
+## Dangling pointers
+
+::: {.columns}
+::: {.column width="65%"}
+```{.cpp filename="dangling_pointer.cpp"}
+{{< include ./cpp/dangling_pointer.cpp >}}
+```
+:::
+::: {.column width="35%"}
+```{.text .terminal}
+$ g++ -Wall dangling_pointer.cpp
+warning: using dangling
+pointer 'ptr' to 'x'
+$ ./a.out
+5
+```
+:::
+:::
+
+- Like a dangling reference, a **dangling pointer** still holds the address of an object that has been destroyed.
+- It printed `5` here, but with `-O2` the same code printed `0`. Undefined behaviour: anything can happen. Thank you, `-Wall`!
+
+# Pass by address
+
+## Pass by address
+
+A function can take a **pointer** parameter. The caller passes an **address**:
+
+::: {.columns}
+::: {.column width="65%"}
+```{.cpp filename="pass_by_address.cpp"}
+{{< include ./cpp/pass_by_address.cpp >}}
+```
+:::
+::: {.column width="35%"}
+```{.text .output}
+42
+(no object)
+```
+
+`const int*` is a pointer to a `const int`: the function may read `*ptr` but not change it. With a plain `int*`, it could change the caller's `x` through `*ptr`.
+:::
+:::
+
+## References or pointers?
+
+Pass by address can do what pass by reference does: avoid copies, and change the caller's object. The one extra thing it can do is mean **"no object at all"**, with `nullptr`.
+
+::: {.callout-tip title="Best practice"}
+Prefer pass by (const) reference. Use pass by address only when "no object" is a valid argument.
+:::
+
+Pointers really earn their place when we create objects while the program runs (next chapter!) and when we work with class hierarchies. Remember the "proof" that scope is not lifetime in Chapter 02? That was pass by address.
+
+# Wrapping up
+
+## Summary
+
+- Every object lives at an **address**. `&x` gives the address of `x`; `*ptr` gives the object at the address in `ptr`.
+- A **pointer** (`int* ptr{&x};`) is an object that holds an address. Assign to `ptr` to point elsewhere; assign to `*ptr` to change the object pointed at.
+- Always initialize pointers. `nullptr` means "points at nothing"; check before dereferencing.
+- **Wild**, **null** and **dangling** pointers lead to undefined behaviour when dereferenced.
+- References are safer; prefer them. Use a pointer when "no object" must be possible.
+
+## Keep learning
+
+Explore these on your own, with Google Gemini in Guided Learning mode or on [learncpp.com](https://www.learncpp.com):
+
+1. [Null pointers](https://www.learncpp.com/cpp-tutorial/null-pointers/)
+2. [Pointers and const](https://www.learncpp.com/cpp-tutorial/pointers-and-const/): pointers to const, and const pointers
+3. [Pass by address](https://www.learncpp.com/cpp-tutorial/pass-by-address/)
+4. [C-style arrays](https://www.learncpp.com/cpp-tutorial/introduction-to-c-style-arrays/), and how they turn into pointers
+
+**Next up, Chapter 09:** dynamic memory allocation, where pointers become essential.

@@ -1,15 +1,11 @@
 #include <iostream>
 
-void print(int x, int y=4) // 4 is the default argument
-{
-    std::cout << "x: " << x << '\n';
-    std::cout << "y: " << y << '\n';
+void print(int x, int y = 4) { // 4 is the default argument
+    std::cout << "x: " << x << ", y: " << y << '\n';
 }
 
-int main()
-{
-    print(1, 2); // y will use user-supplied argument 2
-    print(3); // y will use default argument 4, as if we had called print(3, 4)
-
+int main() {
+    print(1, 2); // y uses the argument we give: 2
+    print(3);    // y uses the default: same as print(3, 4)
     return 0;
 }

@@ -1,16 +1,12 @@
 #include <iostream>
 
-void print(int x, int y=4);     // forward declaration, with default argument
+void print(int x, int y = 4); // the default goes here...
 
-int main()
-{
+int main() {
     print(3);
-
     return 0;
 }
-// function definition, no need to make default argument here.
-void print(int x, int y)        
-{
-    std::cout << "x: " << x << '\n';
-    std::cout << "y: " << y << '\n';
+
+void print(int x, int y) { // ...and not here
+    std::cout << "x: " << x << ", y: " << y << '\n';
 }

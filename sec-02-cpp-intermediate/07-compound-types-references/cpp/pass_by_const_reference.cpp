@@ -1,17 +1,16 @@
 #include <iostream>
 
-void print_ref(const int& y) // y is a const reference
-{
+void print_value(const int& y) { // a const reference
     std::cout << y << '\n';
 }
 
-int main()
-{
-    int x { 5 };
-    print_ref(x);   // ok: x is a modifiable lvalue, y binds to x
+int main() {
+    int x{5};
+    print_value(x); // fine: a modifiable lvalue
 
-    const int z { 5 };
-    print_ref(z);   // ok: z is a non-modifiable lvalue, y binds to z
-    print_ref(5);   // ok: 5 is rvalue literal, y binds to temporary int object
+    const int z{6};
+    print_value(z); // fine: a const lvalue
+
+    print_value(7); // fine: an rvalue (bound to a temporary)
     return 0;
 }

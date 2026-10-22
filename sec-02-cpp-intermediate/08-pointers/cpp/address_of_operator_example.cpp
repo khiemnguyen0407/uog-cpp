@@ -1,11 +1,11 @@
 #include <iostream>
-int main()
-{
-    int ivalue{ 5 };
-    std::cout << ivalue << '\n';  // print the value of variable ivalue
-    std::cout << &ivalue << '\n'; // print the memory address of variable ivalue
 
-    double dvalue { 42 };
-    std::cout << &dvalue << '\n';
+int main() {
+    int x{5};
+    std::cout << x << '\n';  // the value of x
+    std::cout << &x << '\n'; // the address of x
+
+    double d{42.0};
+    std::cout << &d << '\n'; // the address of d
     return 0;
 }

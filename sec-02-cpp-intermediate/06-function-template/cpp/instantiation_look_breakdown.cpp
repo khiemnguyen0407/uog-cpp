@@ -1,21 +1,16 @@
 #include <iostream>
 
-// a declaration for our function template (we don't need the definition any more)
-
+// Only a declaration of the template is left...
 template <typename T>
 T max(T x, T y);
 
-template<>
-int max<int>(int x, int y) // the generated function max<int>(int, int)
-{
+// ...plus the function the compiler generated from it for T = int
+template <>
+int max<int>(int x, int y) {
     return (x < y) ? y : x;
 }
 
-int main()
-{
-    // instantiates and calls function max<int>(int, int)
-    std::cout << max<int>(1, 2) << '\n'; 
-
+int main() {
+    std::cout << max<int>(1, 2) << '\n';
     return 0;
 }
-

@@ -1,919 +1,507 @@
 ---
-title: "Chapter 07: References & Pointers"
-# subtitle: "Control Flow"
-author: Khiem Nguyen -- <khiem.nguyen@glasgow.ac.uk>
-    # <br>Lecturer in Multiscale Materials
-    # <br><khiem.nguyen@glasgow.ac.uk>
-author-meta: "Lecturer in Multiscale Materials"
-
-format: 
-    # other themes: 
-    #   beige, blood, dark, dracula, league, moon, 
-    #   night, serif, simple, sky, solarized
-    # highlight-style: monokai      # good for dark images
-    html:
-        output-file: "chap_07.html"
-        grid:
-            body-width: 1600px
-            margin-width: 300px
-            sidebar-width: 350px
-        embed-resources: true
-        theme: simple
-        highlight-style: github
-        css: doc.css
-        number-sections: true
-        number-depth: 3
-        mouse-wheel: true
-        title-slide-style: pandoc
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true     # <-- remove white background in code blocks
-        code-block-border-left: false
-        toc: true
-        toc-depth: 3
-        toc-title: Contents
-    pdf:
-        output-file: "chap_07.pdf"
-        embed-resources: true
-        theme: simple
-        highlight-style: github      # good for dark images
-        css: doc.css
-        number-sections: true
-        number-depth: 3
-        geometry:
-            - top=24px
-            - bottom=24px
-            - left=36px
-            - right=36px
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true # <-- remove white background in code blocks
-        code-block-border-left: false
-        toc: true
-        toc-depth: 3
-        toc-title: Contents
-    revealjs:
-        output-file: "chap_07_slide.html"
-        embed-resources: true
-        theme: simple
-        css: slide.css
-        number-sections: true
-        number-depth: 3
-        mouse-wheel: true
-        highlight-style: github
-        slide-number: true
-        title-slide-style: pandoc
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true   # <-- remove white background in code blocks
-        code-block-border-left: false # optional: remove left border
-        toc: true
-        toc-depth: 1
-        toc-title: Contents
+title: "Chapter 07: Compound Types and References"
+subtitle: "ENG3091"
+author:
+  - name: Khiem Nguyen
+    email: khiem.nguyen@glasgow.ac.uk
+    affiliations: University of Glasgow
+metadata-files: [../../theme/lecture.yml]
+format:
+  html:
+    output-file: chap_07.html
+  pdf:
+    output-file: chap_07.pdf
+  revealjs:
+    output-file: chap_07_slide.html
 ---
 
-# Introduction to compound data types
+# Compound types
 
-## Quick intro
-&#10149; Let us write a program doing maths with fractions:
+## Types built from other types
 
-::: {#lst-function-program lst-cap="A program for doing maths in fractions. Filename=`fraction_program.cpp`"}
-```{ .cpp}
-{{< include ./cpp/fraction_program.cpp >}}
-```
-:::
-&#10149; Of course, we want to have a data type representing the concept of Fraction.
+Imagine a program that keeps track of employees:
 
-## Quick intro
-
-&#10149; Now imagine that we are writing a program that needs to keep a list of employee IDs.
 ```{.cpp}
-int main()
-{
-    int id1 { 42 };
-    int id2 { 24 };
-    int id3 { 162 };
-    
-    double salary1 { 42123.3 };
-    double salary2 { 43784.5 };
-    double salary3 { 39469.2 };
+int id1{42};
+int id2{24};
+int id3{162};
 
-    // Names, roles, job titles and blah blah
-}
+double salary1{42123.3};
+double salary2{43784.5};
+double salary3{39469.2};
+// ...names, roles, job titles, and so on
 ```
-&#10149; What if we had $100$ employes? Clearly, this naive approach simply does not scale.
 
-## Quick intro: Compound data types
+With 100 employees, this simply doesn't scale. We need types that are **built from other types**: **compound types** (also called *composite types*).
 
-Fortunately, C++ supports **compound data types** (sometimes called **composite data types**).
+## The compound types of C++
 
-- **Compound data types** are types that are defined in terms of other existing data types.
-- **Compound data types** have additional properties & behaviros that make the useful for certain types of problems.
+::: {.columns}
+::: {.column width="50%"}
+**Built into the language**
 
-
-## Compound data types
-
-C++ supports the following compound types.
-
-::: {.fragment}
-### Fundamental Compound Types (built-in)
-- Functions (we already learned)
+- functions (Chapter 02)
+- references (**today**)
+- pointers (Chapter 08)
 - C-style arrays
-- Pointers
-- References
 :::
+::: {.column width="50%"}
+**Defined by you, the programmer**
+
+- enumerations (`enum`, `enum class`)
+- structs (`struct`)
+- classes (`class`): the heart of this course, from Chapter 10
+- unions (`union`)
+:::
+:::
+
+We won't cover all of them: there isn't time. You'll see that structs and classes are very similar, so studying one carefully is enough.
+
+Even a function has a compound type: the type of `void do_something(int x, double y)` is `void(int, double)`.
+
+# Value categories: lvalues and rvalues
+
+## Two properties of every expression
+
+Recall: an **expression** combines literals, variables, operators and function calls to produce a value. Every expression has:
+
+- a **type**: the type of the value it produces;
+
+  ```{.cpp}
+  auto v1{12 / 4};   // int / int gives int
+  auto v2{12.0 / 4}; // double / int gives double
+  ```
+
+- a **value category**: what *kind* of thing it produces, an object or just a value.
+
+The type tells the compiler whether an expression makes sense in a given place: `print("foo")` won't compile if `print` expects an `int`. The value category does the same job in a different way. Before references can make sense, we need value categories.
+
+## Why is `x = 5` fine, but `5 = x` isn't?
+
+```{.cpp filename="lvalue_assignment.cpp" .no-compile}
+{{< include ./cpp/lvalue_assignment.cpp >}}
+```
+
+```{.text .output .compiler}
+error: lvalue required as left operand of assignment
+```
+
+As humans, we can see that `5 = x` makes no sense. But how does the compiler know which expressions may go on the left of `=`?
 
 ::: {.fragment}
-### User-defined Compound Types
-- Structs (using keyword `struct`)
-- Classes (using keyword `class`)
-- Enumerations (using keyword `num` or `enum class`)
-- Unions (using `union`)
+The answer is in the error message: the left side must be an **lvalue**.
 :::
 
+## lvalues and rvalues
 
-## Compound data types
-We shall learn most of them (not all of them due to time constraints).
+![](figures/lvalue_rvalue.png){fig-alt="For x = 5: x is an object that lives at an address, an lvalue. 5 is just a value that disappears after use, an rvalue. The value 5 is copied into the object x." width="74%"}
 
-- I aim at cover the following topics in the live lectures 
-  - references
-  - pointers
-  - C-style arrays
-  - structs
-  - classes
-  - enumerations.
-- You will see that structs and classes are very similar, and studying one carefully is enough.
+- An **lvalue** evaluates to an **identifiable object** (or function): something with a name or an address, which outlives the expression. Example: a variable `x`.
+- An **rvalue** evaluates to a **value**: a literal, a temporary result, something returned by value. It's gone at the end of the expression.
 
-## Function is a compound data type
+Since C++11 there are also *glvalues*, *prvalues* and *xvalues*, for a feature called *move semantics*. Lvalues and rvalues are enough for us.
 
-In fact, we've been using one compound type regularly: **Functions**.
+## Spot the rvalues
 
-&#10149; Consider this function
-```{.cpp}
-void do_something(int x, double y)
-```
-The type of this function is 
-```{.cpp}
-void(int, double)
-```
-
-# Value categories (lvalues and rvalues)
-
-Before we discuss lvalue references, we take a detour to learn **lvalue**.
-
-## Expression
-- **Recall**: An **expression** is *a combination of literals, variables, operators and function calls that can be executed to produce a singular value*.
-```{.cpp}
-
-#include <iostream>
-double multiply(double x, double y) { return x * y; }
-double add(double x, double y) { return x + y; }
-int main()
-{
-    // The expression add(2 + multiply(3, 4), 3) evaluates to the value 15.
-    std::cout << add(2 + multiply(3, 4), 3) << '\n'; 
-
-    return 0;
-}
-```
-
-
-### Properties of an expression
-
-- To help determine how expressions should evaluate and where they can be used, all expressions in C++ has two properties:
-  - a [**type**]{style="color:red"} category
-  - a [**value**]{style="color:red"} gategory
-  
-## The type of an expression
-
-The type of an expression is equivalent to the type of the value, object, or function that results from the evaluated expression.
-
-```{.cpp}
-int main()
-{
-    auto v1 { 12 / 4 }; // int / int => int
-    auto v2 { 12.0 / 4 }; // double / int => double
-
-    return 0;
-}
-```
-
-## The type of an expression
-The compiler can use the type of an expression to determine whether an expression is valid in a given context.
-```{.cpp}
-#include <iostream>
-
-void print(int x)
-{
-    std::cout << x << '\n';
-}
-
-int main()
-{
-    print("foo"); // error: print() was expecting an int argument, we tried to pass in a string literal
-
-    return 0;
-}
-```
-
-## The value category of an expression
-
-&#10149; Consider the following program
-```{.cpp}
-int main()
-{
-    int x {};
-    x = 5;      // valid: we can assign 5 to x
-    5 = x;      // error: cannot assign value of x to literal value 5
-    return 0;
-}
-```
-- One of these assigments is valid (`x = 5`) and the other is not (assigning `x` to `5`, what the hell?)
-- As a human with common sense, we can clearly see `5 = x` does not make sense.
-
-**Question**&nbsp; But how does the compiler know which expression can legally appear on either side of an assignment statement?
-
-::: {.fragment}
-**Answer**&nbsp; The answer lies in the second property of expressions: [value category]{style="color:red"}
-:::
-
-## The value category of an expression
-::: {.incremental}
-- Prior to C++11, there were only two possible value categories: **lvalue** and **rvalue**
-- In C++11, three additional value categories, **glvalue**, **prvalue** and **xvalue** were added to support new feature called **move semantics**
-- We shall focus on *lvalue* and *rvalue* first.
-:::
-
-
-# Regarding lvalue and rvalue expressions
-
-## lvalue expression
-
-::: {.incremental}
-- An **lvalue** is an an expression that evaluates to an identifiable object or function (or bit-field).
-- Unfortunately, the term "identity" is used by the C++ standard, but is not well-defined.
-- An entity (such as an object or function) that has an identity can be differentiated from other similar entities (typically by comparing the addresses of the entity)
-- Entities with identities can be accessed via an identifier, reference, or pointer, and typically have a lifetime longer than a single expression or statement.
-:::
-
-::: {.fragment}
-> Loosely speaking, we can think of identifier as the name of a variable, a function because we can identify them by name.
-:::
-
-::: {.fragment}
-&#10149; Look at this example
-```{.cpp}
-int main()
-{
-    int x { 5 };
-    int y { x };        // x is an lvalue expression
-
-    return 0;
-}
-```
-:::
-
-## rvalue expression
-
-::: {.incremental}
-- An **rvalue** is an expression that is not an **lvalue**.
-- rvalue expressions evaluate to a value.
-- Commonly seen rvalues include 
-  - literals (except C-style string literals -- which are lvalues)
-  - return value of functions
-  - return value of operators that return by value
-:::
-
-::: {.fragment}
-> **rvalues** are not identifiable (meaning they have to be used immediately), and only exist within the scope of the expression in which they are used.
-:::
-
-## rvalue expression: Example
-
-::: {#lst-rvalue-example lst-cap="rvalue expression example. Filenmae=`rvalue_expression.example.cpp`"}
-```{.cpp}
+```{.cpp filename="rvalue_expression_example.cpp"}
 {{< include ./cpp/rvalue_expression_example.cpp >}}
 ```
-:::
 
-- `return5()`, `x + 1` and `static_cast<int>(d)` are rvalues because these expressions produce temporary values that are not identifiable objects.
-
-## lvalue expressions versus rvalue expressions
-
-It is hard to remember/understand lvalue expressions versus rvalue expressions. But we can summarize
-
-> **Key insight**
->
-> [**lvalue**]{style="color:red"} expressions evaluate to an [**identifiable object**]{style="color:red"}
-> [**rvalue**]{style="color:blue"} expressions evalute to a [**value**]{style="color:blue"}.
-
-## Value categories and operators
-
-Unless otherwise specified, [**operators expect their operands to be rvalues**]{style="color:red"}.
-
-::: {#lst-rvalue-example lst-cap="rvalue expression example. Filenmae=`value_categories_in_operators.cpp`"}
-```{.cpp}
-{{< include ./cpp/value_categories_in_operators.cpp >}}
-```
-:::
-
-
-## Come back to the original question: `x = 5` vs `5 = x`
-
-We can answer the question about why `x = 5` is valid but `5 = x` is not valid:
-
-&#10149; **An assignment operation requires its left operand to be a modifiable lvalue expression.**
-
-&#10149; The assignment `5 = x` fails because the left operand expression `5` is an rvalue, not a modifiable lvalue.
-
-```{.cpp}
-int main()
-{
-    int x{};
-
-    // Assignment requires the left operand to be a modifiable 
-    // lvalue expression and the right operand to be an rvalue 
-    // expression
-    x = 5;  // valid: x is a modifiable lvalue expression 
-            // and 5 is an rvalue expression
-
-    5 = x;  // error: 5 is an rvalue expression and x 
-            // is a modifiable lvalue expression
-
-    return 0;
-}
-```
-
-## You might ask: How about `y = x`
-
-You might ask now: How about `y = x`? 
-
-
-&#10149;&nbsp; It is a legitimate question. Look at this
-
-```{.cpp}
-int main()
-{
-    int x{ 1 };
-    int y{ 2 };
-
-    x = y; // y is not an rvalue, but this is legal
-
-    return 0;
-}
-```
-
-::: {.fragment}
-**Question**&nbsp; What is your opinion about this?
-:::
+- `return5()`, `x + 1` and `static_cast<int>(d)` produce temporary values, not identifiable objects: they're rvalues.
+- `static_cast<int>(d)` is an **explicit conversion**: it turns the `double` `1.2` into the `int` `1`.
+- One surprise: a string literal like `"Hello"` is an lvalue. (It's stored somewhere in memory for the whole program.)
 
 ## lvalue-to-rvalue conversion
 
+Operators expect rvalues as operands, unless stated otherwise. But this compiles:
+
 ```{.cpp}
-int main()
-{
-    int x{ 1 };
-    int y{ 2 };
-
-    x = y; // y is not an rvalue, but this is legal
-
-    return 0;
-}
+int x{1};
+int y{2};
+x = y;     // y is an lvalue, not an rvalue!
+x = x + 1; // x appears on both sides
 ```
+
 ::: {.fragment}
-&#10140; The lvalue expression `y` undergoes an lvalue-to-rvalue conversion, which evaluates `y` to produce an rvalue (value `2`).
+- Where an rvalue is expected and an lvalue is given, the lvalue goes through an **lvalue-to-rvalue conversion**: it's simply evaluated to produce its value. In `x = y`, `y` becomes the value `2`.
+- In `x = x + 1`, the left `x` is an lvalue (the object we assign to). The right `x` is converted to its value, say `42`, and `x + 1` produces the rvalue `43`.
 :::
 
 ::: {.fragment}
-- In cases where an rvalue is expected but an lvalue is provided, the lvalue will undergo an [**lvalue-to-rvalue conversion**]{style="color:red"}. 
-- This basically means the *lvalue* is evaluted to produce its value, which is an *rvalue*.
-::: 
-
-::: {.fragment}
-> **Key insight**
->
-> An lvalue will implicitly convert to an rvalue. [This means an lvalue can be used anywhere an rvalue is expected.]{style="color:magenta"}. [An rvalue, on the other hand, will not implicitly convert to an lvalue.]{style="color:blue"}
+::: {.callout-important title="Key idea"}
+An lvalue can be used wherever an rvalue is expected. An rvalue can never be used where an lvalue is required.
+:::
 :::
 
-## lvalue-to-rvalue conversion
+## A tool to tell them apart
 
-&#10149; Consider this example
-```{.cpp}
-int main()
-{ 
-    int x { 42 };
-
-    x = x + 1;
-
-    return 0;
-}
-```
-
-- The variable `x` is being used in two different contexts.
-- On the left side of assignment operator (`=`), `x` is an lvalue expression that evaluates to the variable `x`.
-- On the right side of the assignment operator (`=`), `x` undergoes an lvalue-to-rvalue conversion. 
-- Then, `x` is evaluated to value `42` so that it can be used as the left operand of `operator+`.
-- `operator+` returns the *rvalue* expression `43`.
-
-## How to differentiate lvalues and rvalues
-
-
-
-- **lvalue expressions** are those that evaluate to functions or identifiable objects (including variables) that [**persist beyond the end of the expression**]{style="color:red"}.
-- **rvalue expressions** are those that evaluate to values, including literals and temporary objects that [**do not persist beyond the end of the expression**]{style="color:blue"}.
-
-
-## A program telling what kind of expression something is
-
-::: {#lst-tell-value-categories lst-cap="Program telling value categories. Filename=`tell_value_categories.cpp`"}
-```{.cpp}
+::: {.columns}
+::: {.column width="58%"}
+```{.cpp filename="tell_value_categories.cpp"}
 {{< include ./cpp/tell_value_categories.cpp >}}
 ```
 :::
+::: {.column width="42%"}
+```{.text .output}
+5 is an rvalue
+get_int() is an rvalue
+x is an lvalue
+x + 1 is an rvalue
+std::string{"Hello"} is an rvalue
+"Hello" is an lvalue
+++x is an lvalue
+x++ is an rvalue
+```
+:::
+:::
+
+The tool lives in `value_category.h`. Don't worry about how it works.
 
 # lvalue references
 
-## References
+## A reference is another name for an object
 
-A [**reference**]{style="color:red"} is an alias for an existing object.
+A **reference** is an **alias**: a second name for an object that already exists.
 
-- Once a reference has been defined, any operation on the reference is applied to the object being referenced.
-- We can use a reference to read or modify the object being referenced.
-
-::: {.fragment}
-**Note**&nbsp; 
-
-- Although references might seem silly, useless or redundant, they are used everywhere in C++. 
-- Otherwise, people won't introduce this concept.
-:::
-
-::: {.fragment}
-> **Key point**
->
-> [A **reference** is essentially identical to the object being referenced.]{style="color:navy"}
-:::
-
-::: { .fragment}
-Two types of references:
-
-- [lvalue references]{style="color:red"}
-- [rvalue references]{style="color:red"}
-
-**Note** &#10149; We discuss **lvalue references** in this Chapter.
-:::
-
-# lvalue reference
-
-## lvalue reference: Definition
-
-::: {.fragment}
-> An [**lvalue reference**]{style="color:red"} acts as an [**alias**]{style="color:red"} for an existing lvalue (such as a variable)
-:::
-
-::: {.fragment}
-&#10149;&nbsp; **lvalue reference** is commonly just called a [**reference**]{style="color:red"} since prior to C++ there was only one type of reference.
-
-&#10149;&nbsp; Just like the type of an object determines what kind of value it can hold, [the type of a reference determines what type of object it can reference.]{style="color:navy"}
-:::
-
-::: {.fragment}
-**Some history**
-
-- By history, we just call "*reference*". 
-- When you hear an expert saying "*reference*", they mean "*lvalue reference*".
-- In fact, not all the veteran in C++ knows two types of references.
-:::
-
-## lvalue reference: Syntax
-
-&#10149;&nbsp; lvalue reference types can be identified by use of a [**single ampersand**]{style="color:red"} in the type specifier
+- Anything you do to the reference happens to the object it refers to.
+- References may seem pointless at first. They're used *everywhere* in C++, as you'll see shortly.
 
 ```{.cpp}
-// regular types
-int        // a normal int type (not an reference)
-int&       // an lvalue reference to an int object
-double&    // an lvalue reference to a double object
-const int& // an lvalue reference to a const int object
+int        // an int
+int&       // an lvalue reference to an int
+double&    // an lvalue reference to a double
+const int& // an lvalue reference to a const int
 ```
 
-::: {.fragment}
-**Remark**
+- `int&` (one ampersand) is an **lvalue reference**. There are also *rvalue references*, `int&&`, with two ampersands. They came with C++11, and many experienced programmers have never needed them.
+- Since lvalue references are by far the most common, "reference" on its own means *lvalue reference*.
 
-- Note that we use <u>only one ampersand</u> (&) for lvalue reference. 
-- We shall learn that <u>two ampersands</u> (&&) are used for rvalue reference.
-:::
+## Your first reference
 
-::: {.fragment}
-**Interpretation**
-
-- `int&` is the type of an lvalue reference to an `int` object.
-- `const int&` is the type of an lvalue reference to a `const int` object. 
-:::
-
-::: {.fragment}
-**Terminology**
-
-- A type that specifies a reference (e.g. `int&`) is called a [**reference type**]{style="color:red"}
-- The type that can be referenced (e.g. `int`) is called the [**referenced type**]{style="color:red"}
-:::
-
-# lvalue reference variables
-
-## lvalue reference variables
-
-An [**lvalue reference variable**]{style="color:red"} is a variable that acts as a reference to an lvalue (usually another variable)
-
-::: {#lst-lvalue-reference-variable lst-cap="Define lvalue reference variable. Filename=`tell_value_categories.cpp`"}
-```{.cpp}
+::: {.columns}
+::: {.column width="70%"}
+```{.cpp filename="lvalue_reference_variables.cpp"}
 {{< include ./cpp/lvalue_reference_variables.cpp >}}
 ```
 :::
-
-- The type `int&` defines `ref` as an lvalue reference to an `int`.
-- We initialize `ref` with lvalue expression `x`.
-- Thereafter, `ref` and `x` can be used synonymously.
-
-&#10149;&nbsp; Let us run this code snippet.
-
-## lvalue reference variables: Writing style
-
-
-**Writing style**
-
-::: {.fragment}
-- It does not matter whether the ampersand is "attached" to the type name (`int& ref`) or the variable's name (`int &ref`)
-- Modern C++ programmers tend to prefer attaching the ampersand to the type, i.e. `int& ref`.
-- The style `int& ref` makes it clear that the reference is part of the type information, not the identifier.
+::: {.column width="30%"}
+```{.text .output}
+5
+5
+```
+:::
 :::
 
-::: {.fragment}
-> **Best practice**
->
-> When defining a reference, place the ampersand next to the type (not the reference variable's name)
-:::
+![](figures/reference_alias.png){fig-alt="One object holding 42 with two name tags, x and ref, both pointing at it: one object, two names." width="66%"}
 
-::: {.fragment}
-**Warning for later learning**
+## Changing an object through a reference
 
-- We shall learn **pointers** and **address of objects**. 
-- The ampersand in this context does not mean "address of" (also retrieved by using ampersand). *Be careful!*
-- But don't worry too much, you will see the difference after some practice.
-:::
-
-## lvalue reference to non-const and lvalue reference to const
-
-Two kinds of lvalue references (just common sense):
-
-- [**lvalue reference to non-const**]{style="color:red"}, or a [**non-const lvalue reference**]{style="color:red"} is an lvalue reference to a non-const (non-constant lvalue). 
-- [**lvalue reference to const**]{style="color:blue"}, or a [**const lvalue reference**]{style="color:blue"} is an lvalue reference to a const.
-
-&#10149;&nbsp; We shall focus on lvalue reference to non-const first.
-
-# Modifying values through a non-const lvalue reference
-
-## Modifying values through a non-const lvalue reference
-We can also use a non-const reference to modify the value of the object being referenced.
-
-::: {#lst-modify-through-ref lst-cap="Modifying values through non-const lvalue references. Filename=`modify_value_through_nonconst_reference.cpp`"}
-```{.cpp}
+::: {.columns}
+::: {.column width="70%"}
+```{.cpp filename="modify_value_through_nonconst_reference.cpp"}
 {{< include ./cpp/modify_value_through_nonconst_reference.cpp >}}
 ```
 :::
-&#10149;&nbsp; Let us run this code snippet. **Question**: What would be the output you expect to see?
-
-##  Reference initialization
-
-Much like constants, [**all references must be initialized**]{style="color:navy"}.
-
-```{.cpp}
-int main()
-{
-    int& invalid_ref;   // error: references must be initialized
-
-    int x { 5 };
-    int& ref { x };     // okay: reference to int is bound to int variable
-
-    return 0;
-}
-```
+::: {.column width="30%"}
+What will this print? Think first!
 
 ::: {.fragment}
-**Terminologies**
-
-- References are initialized using a form of initialization called [**reference initialization**]{style="color:red"}
-- When a reference is initialized with an object (or function), we say it is [**bound**]{style="color:red"} to that object (or function).
-- The process by which a reference is bound is called [**reference binding**]{style="color:red"}
-- The object (or function) being referenced is called the [**referent**]{style="color:red"}
-:::
-
-:::{.fragment}
-> Don't worry! *I won't test your memory of these terminologies in the paper exam.*
-:::
-
-## Reference initialization: more
-
-non-const lvalue references can only be bound to a *modifiable* lvalue
-```{.cpp}
-int main()
-{
-    int x { 5 };
-    int& ref { x };         // okay: non-const lvalue reference bound to a modifiable lvalue
-
-    const int y { 5 };      // const int
-
-    // invalid: non-const lvalue reference can't bind to a non-modifiable lvalue
-    const int& invalidRef { y };  
-
-    // invalid: non-const lvalue reference can't bind to an rvalue
-    int& invalidRef2 { 0 }; 
-
-    return 0;
-}
+```{.text .output}
+42 42
+24 24
+12 12
 ```
-:::{.fragment}
-**Question**&nbsp; Why cannot we bound non-const lvalue reference to a const value?
+:::
+:::
 :::
 
-::: {.fragment}
-> **Key insight** (just common sense)
->
-> If non-const lvalue references could be bound to non-modifiable (const) lvalues or rvalues, then you would be able to change those values through the reference, which would be a violation of their const-ness.
+::: {.callout-tip title="Best practice"}
+Write the ampersand next to the type, `int& ref`, not next to the name. It's part of the type.
 :::
 
-## References cannot be reseated (changed to refer to another object)
+## A reference must be initialized
 
-&#10149;&nbsp; [**Once initialized, a reference cannot be reseated.**]{style="color:navy"} It cannot be changed to reference another object.
+```{.cpp filename="reference_must_be_initialized.cpp" .no-compile}
+{{< include ./cpp/reference_must_be_initialized.cpp >}}
+```
 
-::: {#lst-ref-cannot-be-reseated lst-cap="References cannot be reseated (changed to refer another object). Filename=`reference_cannot_be_reseated.cpp`"}
-```{.cpp}
+```{.text .output .compiler}
+error: 'invalid_ref' declared as reference but not initialized
+```
+
+- Initializing a reference **binds** it to an object; the object is called its **referent**.
+- Don't worry: I won't test your memory of these terms in the paper exam!
+
+## Which objects can a reference bind to?
+
+```{.cpp filename="nonconst_reference_binding.cpp" .no-compile}
+{{< include ./cpp/nonconst_reference_binding.cpp >}}
+```
+
+```{.text .output .compiler}
+error: binding reference of type 'int&' to 'const int' discards qualifiers
+error: cannot bind non-const lvalue reference of type 'int&' to an rvalue of type 'int'
+```
+
+Why not? A non-const reference lets you **change** its referent. Binding one to a `const` object, or to a temporary value like `0`, would let you change something that must not, or cannot, change.
+
+## A reference can't be reseated
+
+::: {.columns}
+::: {.column width="70%"}
+```{.cpp filename="reference_cannot_be_reseated.cpp"}
 {{< include ./cpp/reference_cannot_be_reseated.cpp >}}
 ```
 :::
-
-&#10149;&nbsp; Let us run this code snippet. Surprisingly, this program prints `6`.
-
+::: {.column width="30%"}
 ::: {.fragment}
-&#10140;&nbsp; **What happened**: When a reference is evaluated in an expression, it resolves to the object it’s referencing. So, `ref = y` does not change `ref` to now reference `y`. Rather, because `ref` is an alias for `x`, the expression evaluates as if it was written `x = y` -- and since `y` evaluates to value `6`, `x` is assigned the value `6`.
+```{.text .output}
+6
+```
+:::
+:::
 :::
 
-## References and refents have independent lifetimes
+::: {.fragment}
+`ref = y` does **not** make `ref` refer to `y`. `ref` *is* `x`, so this is simply `x = y`. Once bound, a reference stays bound to the same object for its whole life.
 
-[**The lifetime of a reference and the lifetime of its referent are independent**]{style="color:navy"}
+::: {.callout-note title="Coming from Python"}
+A Python name can be rebound to a different object at any time: `a = b` does exactly that. A C++ reference never can be.
+:::
+:::
 
-- A reference can be destroyed before the object it is referencing.
-- The object being referenced can be destroyed before the reference.
+## Lifetimes and dangling references
 
-*When a reference is destroyed before the referent, the referent is not impacted.*
-
-::: {#lst-lifetime-reference-referent lst-cap="References and referents have independent lifetimes. Filename=`lifetime_reference_and_referent.cpp`"}
-```{.cpp}
+::: {.columns}
+::: {.column width="70%"}
+```{.cpp filename="lifetime_reference_and_referent.cpp"}
 {{< include ./cpp/lifetime_reference_and_referent.cpp >}}
 ```
 :::
-
-## Dangling references
-
-::: {.incremental}
-- When an object being referenced is destroyed before a reference to it, the reference is left referencing an object that no longer exists. 
-- Such a reference is called a [**dangling reference**]{style="color:red"}. 
-- *Accessing a dangling reference leads to undefined behavior.*
+::: {.column width="30%"}
+```{.text .output}
+42
+42
+```
 :::
+:::
+
+- A reference and its referent have **independent lifetimes**. Destroying the reference doesn't affect the object.
+- The other way round is dangerous: if the **object** is destroyed first, the reference is left **dangling**. Using a dangling reference is undefined behaviour.
 
 ## References are not objects
 
-::: {.incremental}
-- Perhaps surprisingly, references are not objects in C++. 
-- A reference is not required to exist or occupy storage. 
-- If possible, the compiler will optimize references away by replacing all occurrences of a reference with the referent.
-- However, this isn’t always possible, and in such cases, references may require storage.
-:::
+- A reference is just a name. The compiler often replaces it with the referent and gives it no memory at all (though sometimes it does need some).
+- So "reference variable" is a slight misnomer: variables are named *objects*.
+- One consequence: you can't have a reference to a reference.
 
+So far references look like a curiosity. Their real job is coming up next.
 
-::: {.fragment}
-**Consequences**
+# Pass by reference
 
-- The term "reference variable" is a bit of a misnomer, as variables are objects with a name, and references aren’t objects.
-- Because references are not objects, they cannot be used anywhere an object is required (e.g. you cannot have a reference to a reference, since an lvalue reference must reference an identifiable object).
-:::
+## Pass by value can be expensive
 
-::: {.fragment}
-> Although references seem a bit useless at this point, they are used a lot. We will cover one of the primary reasons why shortly.
-:::
+In Chapter 02 we learned **pass by value**: the argument is **copied** into the parameter. Copying a `double` is cheap; copying a long `std::string` is not:
 
-# Pass by lvalue reference
-
-Why do we create an alias to a variable when we can just use the variable itself?
-
-## Rationale: Recalling pass by value
-
-We discussed [**pass by value**]{style="color:red"}, where an argument passed to a function is copied into the function's parameter.
-
-::: {#lst-pass-by-value lst-cap="An example of pass by value Filename=`pass_by_value.cpp`"}
-```{.cpp}
-{{< include ./cpp/pass_by_value.cpp >}}
-```
-:::
-
-## Rationale: Some objects are expensive to copy
-
-::: {.fragment}
-::: {.incremental}
-- Most of the types provided by the standard library (such as `std::string`) are class types. Class types are usually expensive to copy.
-- We want to avoid making unnecessary copies of objects that are expensive to copy, especially when these copied objects will be destroyed almost immediately.
-:::
-:::
-
-:::{.fragment}
-::: {#lst-pass-by-value-string lst-cap="Making a copy of `std::string` object is expensive. Filename=`pass_by_value_string.cpp`"}
-```{.cpp}
+```{.cpp filename="pass_by_value_string.cpp"}
 {{< include ./cpp/pass_by_value_string.cpp >}}
 ```
-:::
-&#10149;&nbsp;This program is inefficient.
-:::
+
+The copy is made, used once, and thrown away. A waste! Most standard library types, like `std::string`, are expensive to copy.
 
 ## Pass by reference
 
-::: {.fragment}
-::: {.incremental}
-- To avoid making an expensive copy, we can use [**pass by reference**]{style="color:red"} instead of _pass by value_.
-- To use [**pass by reference**]{style="color:red"}, we declare a function parameter as a _reference type_ (or _const reference type_) rather than as a normal type.
-:::
-:::
+Make the parameter a **reference**, and it is simply bound to the argument. No copy is made:
 
-::: {.fragment}
-::: {#lst-pass-by-reference lst-cap="To avoid expensive copy of arguments, use pass by reference. Filename=`pass_by_reference.cpp`"}
-```{.cpp}
+::: {.columns}
+::: {.column width="70%"}
+```{.cpp filename="pass_by_reference.cpp"}
 {{< include ./cpp/pass_by_reference.cpp >}}
 ```
 :::
-
-&#10149;&nbsp; When the function is called, each reference parameter is bound to the appropriate argument. **Note** _the ampersand in_ `std::string& y` _for the parameter declaration_.
-:::
-
-## Pass by reference: Key insight
-
-::: {.my-box}
-**Key insight**
-
-[**Pass by reference**]{style="color:red"} allows us to pass arguments to a function [without making copies]{style="color:red"} of those arguments each time the function is called.
-:::
-
-&#10149;&nbsp; You don't believe me 😑😑😑 Let us run the following program in the next slide.
-
-
-## Pass by reference: Examine the addresses
-
-::: {#lst-pass-by-reference-address lst-cap="Mix of pass by value and pass by reference. Filename=`pass_by_value_vs_pass_by_reference.cpp`"}
-```{.cpp}
-{{< include ./cpp/pass_by_value_vs_pass_by_reference.cpp >}}
+::: {.column width="30%"}
+```{.text .output}
+Hello, world!
 ```
 :::
+:::
 
-## Pass by reference allows us to change the value of an argument
+## Value versus reference, in a picture
 
-&#10149;&nbsp; Since a reference acts identically to the object being referenced, any changes made to the reference parameter will affect the argument.
+![](figures/value_vs_reference.png){fig-alt="Pass by value: x in main and v in f are two separate objects, v is a copy. Pass by reference: x in main and r in f are two names for one object, no copy." width="92%"}
 
-::: {#lst-pass-by-ref-change-value lst-cap="Pass by reference allows us to change the value of an argument. Filename=`pass_by_reference_change_value.cpp`"}
-```{.cpp}
+- **Pass by value:** the parameter is a new object, initialized with a copy of the argument.
+- **Pass by reference:** the parameter is just another name for the argument. Nothing is copied, and the function works on the caller's object itself.
+
+## Don't believe me? Check the addresses
+
+```{.cpp filename="pass_by_value_vs_pass_by_reference.cpp"}
+{{< include ./cpp/pass_by_value_vs_pass_by_reference.cpp >}}
+```
+
+```{.text .output}
+address of x:             0x7ffcc2285eb0
+address of val (a copy):  0x7ffcc2285e98
+address of ref (no copy): 0x7ffcc2285eb0
+```
+
+`ref` has the **same address** as `x`: it is `x`. `val` lives somewhere else. (`&x` gives the address of `x`, more in Chapter 08. Your addresses will differ.)
+
+## Changing the caller's variable
+
+::: {.columns}
+::: {.column width="62%"}
+```{.cpp filename="pass_by_reference_change_value.cpp"}
 {{< include ./cpp/pass_by_reference_change_value.cpp >}}
 ```
 :::
-
-&#10149;&nbsp; Let us run this code snippet.
-
-## Pass by reference allows us to change the value of an argument: Key insight
-
-::: {.my-box}
-**Key insight**
-
-Passing values by reference to non-const allows us to write functions that modify the value of arguments passed in.
+::: {.column width="38%"}
+```{.text .output}
+x = 42
+x = 66
+```
+:::
 :::
 
-## Pass by reference can only accept modifiable lvalue arguments
+Any change made through a non-const reference parameter changes the caller's argument itself. That's useful when a function's whole purpose is to modify something.
 
-Because a reference to a non-const value can only bind to a modifiable lvalue (essentially a non-const variable) &#10140; this means that [_pass by reference only works with arguments that are modifiable lvalues._]{style="color:navy"}
+## The swap that finally swaps
 
-::: {#lst-pass-by-reference-accept-modifiable-lvalue lst-cap="Pass by reference can only accept modifiable lvalue arguments  Filename=`pass_by_reference_change_value.cpp`"}
-```{.cpp}
+::: {.columns}
+::: {.column width="62%"}
+```{.cpp filename="swap_by_reference.cpp"}
+{{< include ./cpp/swap_by_reference.cpp >}}
+```
+:::
+::: {.column width="38%"}
+```{.text .output}
+x = 200, y = 100
+```
+
+Remember the swap that didn't swap in Chapter 02? With references, it finally works.
+:::
+:::
+
+## Non-const reference parameters are picky
+
+```{.cpp filename="pass_by_reference_accept_modifiable_lvalues.cpp" .no-compile}
 {{< include ./cpp/pass_by_reference_accept_modifiable_lvalues.cpp >}}
 ```
-:::
 
-&#10149;&nbsp; Open the `cpp` file to see that IntelliSense informs the error before compilation.
-
-## Pass by reference can only accept modifiable lvalue arguments
-
-Because a reference to a non-const value can only bind to a modifiable lvalue (essentially a non-const variable) &#10140; this means that [_pass by reference only works with arguments that are modifiable lvalues._]{style="color:navy"}
-
-
-<div style="height: 100px;"></div>
-
-:::{.fragment}
-&#10149;&nbsp; A problem arises here:
-
-::: {.incremental}
-- We define a const object which is pretty expensive to make copy.
-- We want to pass this const object as a function argument. 
-- We also want to avoid making copy.
-:::
-:::
-
-# Pass by const lvalue reference
-
-**Recall**
-
-Unlike a reference to non-const (which can only bind to modifiable lvalues), a reference to const can bind to modifiable lvalues, non-modifiable lvalues, and rvalues.
-
-## Pass by const lvalue reference
-
-&#10149;&nbsp; If we make a reference parameter const, then it will be able to bind to any type of argument.
-
-::: {#lst-pass-by-const-reference lst-cap="By making a reference parameter const, we can pass non-modifiable lvalues and rvalue literals. Filename=`pass_by_reference_change_value.cpp`"}
-```{.cpp}
-{{< include ./cpp/pass_by_reference_accept_modifiable_lvalues.cpp >}}
-```
-:::
-
-## Pass by const lvalue reference
-
-- Passing by const reference offers the same primary benefit as pass by non-const reference (avoiding making a copy of the argument).
-- The function can not change the value being referenced.
-
-The following is not allowed:
-```{.cpp}
-void add_value(const double& ref, double value)
-{
-    ref = ref + value;  // not allowed.
-                        // We promise the compiler that ref is const.
-}
+```{.text .output .compiler}
+error: binding reference of type 'int&' to 'const int' discards qualifiers
+error: cannot bind non-const lvalue reference of type 'int&' to an rvalue of type 'int'
 ```
 
-&#10149;&nbsp; Fortunately, in most cases we don't want our functions modifying the value of arguments. But we also don't want to make expensive copies. We are greedy😉😉!!!
+A non-const reference parameter only accepts **modifiable lvalues**: in practice, non-const variables. But often we just want to *read* an expensive argument without copying it, whatever it is.
 
-## Pass by const lvalue reference: Best Practice
+## Pass by const reference
 
-::: {.my-box}
-**Best practice**
-
-Favor passing by const reference over passing by non-const reference unless you have a specific reason to do otherwise (e.g. the function needs to change the value of an argument).
+::: {.columns}
+::: {.column width="62%"}
+```{.cpp filename="pass_by_const_reference.cpp"}
+{{< include ./cpp/pass_by_const_reference.cpp >}}
+```
+:::
+::: {.column width="38%"}
+```{.text .output}
+5
+6
+7
+```
+:::
 :::
 
-&#10149;&nbsp; Now, we can understand the motivation for allowing const lvalue references to bind to rvalues: 
+A **const reference** binds to anything: modifiable lvalues, const lvalues and rvalues. That's exactly why C++ allows const references to bind to rvalues. Without it, you couldn't pass a literal like `7` to a function taking a reference.
 
-&#10140;&nbsp; [Without that capability, there would be no way to pass literals (or other rvalues) to functions that used pass by reference!]{style="color:navy"}
+## A const reference can't change its referent
+
+```{.cpp filename="const_reference_cannot_modify.cpp" .no-compile}
+{{< include ./cpp/const_reference_cannot_modify.cpp >}}
+```
+
+```{.text .output .compiler}
+error: assignment of read-only reference 'ref'
+```
+
+No copy **and** no accidental changes: we're greedy, and with const references we get both.
+
+## Value, reference or const reference?
+
+::: {.callout-tip title="Best practice"}
+- **Fundamental types** (`int`, `double`, `char`, `bool`): pass by **value**. They're cheap to copy.
+- **Class types** (`std::string`, `std::vector`, your own classes later): pass by **const reference**, so there's no copy.
+- Pass by **non-const reference** only when the function is meant to change the argument.
+:::
+
+For read-only text, C++17 also offers `std::string_view`, a cheap view of a string. Strings are the case Chapter 04 promised we'd come back to.
 
 # Return by reference
 
-- When passing an argument by value, a copy of the argument is made into the function parameter.
-- We can avoid making an expensive copy by passing by (const) reference (or pass by address) instead.
-- A similar situation occurs when returning by value: [a copy of the return value is passed back to the caller]{style="color:blue"}
-
 ## Return by reference
 
-&#9998;&nbsp; [**Return by reference**] returns a reference that is bound to the object being returned, which avoids making a copy of the return.
+Returning by value **copies** the result back to the caller. Returning a **reference** avoids that copy:
 
-&#9998;&nbsp; To return by reference, we define the return value of the function to be a reference type
-
-```{.cpp}
-// returns a reference to an existing std::string (cheap)
-std::string& return_by_reference();
-
-// returns a const reference to an existing std::string (cheap)
-const std::string& return_by_reference();
-```
-
-## Return by reference: An academic example
-
-::: {#lst-return-by-reference lst-cap="An example of return by reference. The variable `str_program_name` is made static so that it survives throughout the entire program. Filename=`return_by_ref_academic.cpp`"}
-```{.cpp}
+```{.cpp filename="return_by_ref_academic.cpp"}
 {{< include ./cpp/return_by_ref_academic.cpp >}}
 ```
-:::
 
-## Object being returned by reference must exist after the function returns
+```{.text .output}
+This program is named Calculator
+```
 
-&#9998;&nbsp; Using return by reference has one major caveat: 
+A **static** local variable is created once and lives until the program ends, unlike an ordinary local variable. Here that's essential, as the next slide shows.
 
-- The programmer must be sure that the object being referenced outlives the function returning the reference. 
-- Otherwise, the reference being returned will be left dangling (referencing an object that has been destroyed)
+## The object must outlive the function
 
-## Object being returned by reference must exist after the function returns
-&#10149;&nbsp; Look at this example \& run it.
-
-::: {#lst-return-by-reference-lifetime lst-cap="The object being returned by reference must exist after the function returns. Filename=`return_by_ref_lifetime.cpp`"}
-```{.cpp}
+```{.cpp filename="return_by_ref_lifetime.cpp"}
 {{< include ./cpp/return_by_ref_lifetime.cpp >}}
 ```
-:::
 
-## Return by reference: A lengthy but simple example
+```{.text .terminal}
+$ g++ -std=c++20 -Wall return_by_ref_lifetime.cpp
+warning: reference to local variable 'program_name' returned
+$ ./a.out
+Segmentation fault
+```
 
-::: {#lst-return-by-reference-example lst-cap="A lengthy but simple example of return by reference Filename=`return_by_ref_example.cpp`"}
-```{.cpp}
-{{< include ./cpp/return_by_ref_example.cpp >}}
+`program_name` is destroyed when the function returns, so the caller receives a **dangling reference**: undefined behaviour. On my machine, it crashed.
+
+## A use for return by reference
+
+::: {.columns}
+::: {.column width="70%"}
+```{.cpp filename="return_by_ref_larger.cpp"}
+{{< include ./cpp/return_by_ref_larger.cpp >}}
 ```
 :::
+::: {.column width="30%"}
+```{.text .output}
+x = 5, y = 0
+```
+:::
+:::
+
+`larger()` returns a reference to the caller's own variable, so the call can even appear on the **left** of `=`: it's an lvalue! This is safe because `x` and `y` outlive the call.
+
+# Wrapping up
+
+## Summary
+
+- Every expression has a **type** and a **value category**. An **lvalue** is an identifiable object; an **rvalue** is just a value.
+- A **reference** (`int& ref{x};`) is another name for an existing object. It must be initialized and can't be reseated.
+- A non-const reference binds only to modifiable lvalues; a **const reference** binds to anything.
+- **Pass by reference** avoids copies and lets a function change its argument. **Pass by const reference** avoids copies without allowing changes.
+- Pass fundamental types by value, class types by const reference.
+- Never return (or keep) a reference to an object that is about to be destroyed: **dangling references** are undefined behaviour.
+
+## Keep learning
+
+Explore these on your own, with Google Gemini in Guided Learning mode or on [learncpp.com](https://www.learncpp.com):
+
+1. [Value categories (lvalues and rvalues)](https://www.learncpp.com/cpp-tutorial/value-categories-lvalues-and-rvalues/)
+2. [Pass by const lvalue reference](https://www.learncpp.com/cpp-tutorial/pass-by-const-lvalue-reference/), and when to pass by value instead
+3. [`std::string_view`](https://www.learncpp.com/cpp-tutorial/introduction-to-stdstring_view/)
+4. [Static local variables](https://www.learncpp.com/cpp-tutorial/static-local-variables/)
+
+**Next up, Chapter 08:** pointers, the other way to refer to an object.

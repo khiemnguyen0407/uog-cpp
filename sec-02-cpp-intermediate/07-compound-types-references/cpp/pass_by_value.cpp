@@ -1,15 +1,11 @@
 #include <iostream>
 
-void print_value(double v)
-{
+void print_value(double v) { // v is a copy of x: cheap for a double
     std::cout << v << '\n';
-}   // v is destroyed here
+}
 
-int main()
-{
-    double x { 42.0 };
-
-    print_value(x); // x is passed by value (copied) 
-                    // into parameter v (inexpensive)
+int main() {
+    double x{42.0};
+    print_value(x);
     return 0;
 }

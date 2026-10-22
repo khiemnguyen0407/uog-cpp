@@ -1,15 +1,13 @@
 #include <iostream>
 
-int main()
-{
-    int x { 42 };
+int main() {
+    int x{42};
 
-    {   // note these curly braces
-        int& ref { x };             // ref is a reference to x
-        std::cout << ref << '\n';   // prints value of ref (42)
-    }   // ref is destroyed here -- x is unaware of this
+    {                             // a nested block
+        int& ref{x};              // ref is a reference to x
+        std::cout << ref << '\n'; // prints 42
+    } // ref is destroyed here; x doesn't notice
 
-    std::cout << x << '\n'; // prints value of x (5)
-
+    std::cout << x << '\n'; // still prints 42
     return 0;
-}   // x destroyed here
+} // x is destroyed here

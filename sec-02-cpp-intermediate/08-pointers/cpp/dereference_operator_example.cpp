@@ -1,14 +1,9 @@
 #include <iostream>
 
-int main()
-{
-    double x{ 5 };
-    std::cout << x << '\n';  // print the value of variable x
-    std::cout << &x << '\n'; // print the memory address of variable x
-
-    // print the value at the memory address of variable x 
-    // (parentheses not required, but make it easier to read)
-    std::cout << *(&x) << '\n'; 
-
+int main() {
+    double x{5.0};
+    std::cout << x << '\n';     // the value of x
+    std::cout << &x << '\n';    // the address of x
+    std::cout << *(&x) << '\n'; // the value AT that address
     return 0;
 }

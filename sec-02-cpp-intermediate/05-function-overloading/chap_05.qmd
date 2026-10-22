@@ -1,468 +1,378 @@
 ---
-title: "Chapter 05: Function overloading"
-author: Khiem Nguyen -- <khiem.nguyen@glasgow.ac.uk>
-    # <br>Lecturer in Multiscale Materials
-    # <br><khiem.nguyen@glasgow.ac.uk>
-author-meta: "Lecturer in Multiscale Materials"
-
-format: 
-    # other themes: 
-    #   beige, blood, dark, dracula, league, moon, 
-    #   night, serif, simple, sky, solarized
-    # highlight-style: monokai      # good for dark images
-    html:
-        output-file: "chap_05.html"
-        grid:
-            body-width: 1600px
-            margin-width: 300px
-            sidebar-width: 350px
-        embed-resources: true
-        theme: simple
-        highlight-style: github
-        css: doc.css
-        number-sections: true
-        number-depth: 3
-        mouse-wheel: true
-        title-slide-style: pandoc
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true     # <-- remove white background in code blocks
-        code-block-border-left: false
-        toc: true
-        toc-depth: 3
-        toc-title: Contents
-    pdf:
-        output-file: "chap_05.pdf"
-        embed-resources: true
-        theme: simple
-        highlight-style: github      # good for dark images
-        css: doc.css
-        number-sections: true
-        number-depth: 3
-        geometry:
-            - top=24px
-            - bottom=24px
-            - left=36px
-            - right=36px
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true # <-- remove white background in code blocks
-        code-block-border-left: false
-        toc: true
-        toc-depth: 3
-        toc-title: Contents
-    revealjs:
-        output-file: "chap_05_slide.html"
-        embed-resources: true
-        theme: simple
-        css: slide.css
-        number-sections: true
-        number-depth: 3
-        mouse-wheel: true
-        highlight-style: github
-        slide-number: true
-        title-slide-style: pandoc
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true   # <-- remove white background in code blocks
-        code-block-border-left: false # optional: remove left border
-        toc: true
-        toc-depth: 1
-        toc-title: Contents
-   
+title: "Chapter 05: Function Overloading and Default Arguments"
+subtitle: "ENG3091"
+author:
+  - name: Khiem Nguyen
+    email: khiem.nguyen@glasgow.ac.uk
+    affiliations: University of Glasgow
+metadata-files: [../../theme/lecture.yml]
+format:
+  html:
+    output-file: chap_05.html
+  pdf:
+    output-file: chap_05.pdf
+  revealjs:
+    output-file: chap_05_slide.html
 ---
 
-# Introduction to function overloading
+# Function overloading
 
-## Intro to function overloading: Rationale
-Let us look at this example
+## One job, many types
+
+Here's a simple function that adds two integers:
+
 ```{.cpp}
-int add(int x, int y)
-{
+int add(int x, int y) {
     return x + y;
 }
 ```
-:::{.incremental}
-- This trivial function adds two integers and returns an integer result. 
-- What if we also want a function that can add two floating point numbers?
-- This `add()` function is not suitable, as any floating point parameters would be converted to integers, causing the floating point arguments to lose their fractional values.
+
+What if we also want to add two `double`s? This `add()` won't do: the arguments would be converted to `int`, and their fractional parts lost.
+
+::: {.fragment}
+A workaround is to give every version its own name:
+
+```{.cpp}
+int add_integer(int x, int y) { return x + y; }
+double add_double(double x, double y) { return x + y; }
+```
+
+Now we have to remember all the names. And what about `add(int, double)`, `add(double, int)`, or adding three numbers? The names multiply fast.
 :::
 
-## Intro to function overloading: Rationale
-We may propose a workaround
-```{.cpp}
-int add_integer(int x, int y) {
-    return x + y
-}
+## Function overloading
 
-double add_double(double x, double y) {
-    return x + y
-}
-```
+**Function overloading** lets several functions share one name, as long as their **parameter types** differ. Each one is an **overloaded function**, or *overload* for short.
 
-- Clearly, we see a lot of trouble here. 
-- What about `add(int x, double y)`, `add(doube x, int y`)?
-- What about functions with many parameters, such as adding $3$, $4$ integers instead of $2$?
-
-## Introduction to function overloading
-
-- **Function overloading** allows us to create multiple functions with the same name, so long as each identically named function has different parameter types (or the functions can be otherwise differentiated)
-
-- Each function sharing a name (in the same scope) is called an **overloaded function** (sometimes called an overload for short).
-- We now have two versions of `add()`
-
-```{.cpp}
-int add(int x, int y) {// integer version
-    return x + y;
-}
-
-double add(double x, double y) {// floating point version
-    return x + y;
-}
-```
-
-## Introduction to function overloading
-
-::: {#lst-func-overloading lst-cap="Overload the function `add` &ndash; **Filename**: `function_overloading.cpp`"}
-
-```{ .cpp}
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="function_overloading.cpp"}
 {{< include ./cpp/function_overloading.cpp >}}
 ```
 :::
+::: {.column width="28%"}
+```{.text .output}
+3
+66.75
+```
 
-## Intro to overload resolution
+::: {.callout-note title="Coming from Python"}
+Python has no overloading: a second `def add` replaces the first. In C++, both exist side by side.
+:::
+:::
+:::
 
-**Overload resolution**. 
+You write `add` every time; the compiler works out which `add` you mean from the arguments.
 
-When a function call is made to a function that has been overloaded, the compiler will try to match the function call to the appropriate overload based on the arguments used in the function call. This is called **overload reasolution**
+## Overload resolution
 
-Let us look at more complicated example.
+When you call an overloaded function, the compiler matches the call to the right overload by looking at the arguments. This is called **overload resolution**.
 
-## Intro to overload resolution
-
-::: {#lst-overload-resolution lst-cap="An example on overload resolution &ndash; **Filename**: `overload_resolution.cpp`"}
-
-```{.cpp}
+```{.cpp filename="overload_resolution.cpp"}
 {{< include ./cpp/overload_resolution.cpp >}}
 ```
-:::
+
+```{.text .output}
+3
+4.6
+4.7
+```
 
 ## Making it compile
 
-In order for a program using overloaded functions to compile, two things have to be true. Just common sense:
+A program with overloaded functions compiles only if two things are true:
 
-1. Each overloaded function has to be differentiated from the others.  
-    We discuss how functions can be differentiated next slide.
-2. Each call to an overloaded function has to resolve to an overloaded function.  
-    We discuss how the compiler matches function calls to overloaded functions.
+1. **Every overload can be told apart** from the others. *How?* Next section.
+2. **Every call can be resolved** to exactly one overload. *How does the compiler choose?* The section after.
 
-**Common sense**  
+Break either rule and you get a compile error. It's just common sense: if *you* couldn't tell which function is meant, neither can the compiler.
 
-A compile error will result
+# Telling overloads apart
 
-- if an overloaded function is not differentiated, or 
-- if a function call to an overloaded function can not be resolved to an overloaded function
+## What counts, and what doesn't
 
-# Function overload differentiation
+| Property | Tells overloads apart? |
+|:---|:---|
+| Number of parameters | Yes |
+| Types of parameters | Yes (but not type aliases, and not `const` on a value parameter) |
+| Return type | **No** |
 
-## How overloaded functions are differentiated
-
-| Function property | Use for differentiation | Notes
-|:---|:--|:-------
-| Number of parameters | Yes | 
-| Type of parameters | Yes | Excludes typedefs, type aliases, and const qualifier on value parameters. Include ellipses^[We shoould avoid ellipses. We won't cover this concept in our course.]
-| Return type | No |
-
-**RNote**  
-A function’s return type is not used to differentiate overloaded functions.
-
-## Overloading based on number of parameters
-
-An overloaded function is differentiated so long as each overloaded function has a different number of parameters.
+::: {.columns}
+::: {.column width="50%"}
+By **number** of parameters:
 
 ```{.cpp}
-int add(int x, int y)
-{
-    return x + y;
-}
-
-int add(int x, int y, int z)
-{
-    return x + y + z;
-}
-```
-
-## Overloading based on type of parameters
-
-A function can also be differentiated so long as each overloaded function’s list of parameter types is distinct.
-
-```{.cpp}
-int add(int x, int y); // integer version
-double add(double x, double y); // floating point version
-double add(int x, double y); // mixed version
-double add(double x, int y); // mixed version
-```
-
-## Overloading based on type of parameters
-
-Because type aliases (or typedefs) are not distinct types, overloaded functions using type aliases are not distinct from overloads using the aliased type.
-
-```{.cpp}
-typedef int Height; // typedef
-using Age = int; // type alias
-
-void print(int value);
-void print(Age value); // not differentiated from print(int)
-void print(Height value); // not differentiated from print(int)
-```
-
-## The return type of a function is not considered for differentiation
-
-A function’s return type is not considered when differentiating overloaded functions.
-
-Consider the following case:
-
-```{.cpp}
-int get_random_value();
-double get_random_value();
-```
-
-**Common sense**  
-
-Imagine that you were a compiler, and you saw this statement:
-
-```{.cpp}
-get_random_value()
-```
-
-which of the two "seemingly overloaded functions" would you call? It's not clear.
-
-## Type signature
-
-- A function's type signature (generally called a signature) is defined as the parts of the function header that are used for differentiation of the function.
-- In C++, this includes the function name, number of parameters, parameter type, and function-level qualifiers.
-- It notably does not include the return type.
-
-For example: The following are the signatures
-
-- `add(int, int)`
-- `add(double, double)`
-- `add(int, double, int)`
-- `sum(std::vector<double>)`
-- `sum(double*)`
-
-## Function overload resolution and ambiguous matches
-
-The compiler follows a strict "elimination" process:
-
-1. Candidate Functions: It identifies all functions with the same name that are visible in the current scope.
-
-2. Viable Functions: It filters the candidates. A function is "viable" if the number of arguments matches and there is a path to convert the arguments to the parameter types.
-
-3. The Best Viable Function: It ranks the remaining functions. If one is strictly better than all others, it’s called. If two or more are equally "good," the compiler throws an Ambiguous Match error.
-
-> **Homework** &nbsp; Use Google Gemini Guided Learning Mode and ask 
-> 
-> [Please teach me the topic "function overload resolution and ambiguous matches in C++".]{style="color:red"}
-
-
-## Deleting functions
-
-In some cases, it is possible to write functions that do not behave as desired when called with values of certain types.
-
-```{.cpp}
-#include <iostream>
-
-void print_int(int x)
-{
-    std::cout << x << '\n';
-}
-
-int main()
-{
-    print_int(5);    // okay: prints 5
-    print_int('a');  // prints 97 -- does this make sense?
-    print_int(true); // print 1 -- does this make sense?
-
-    return 0;
-}
-```
-
-Let's ssume we do not think it makes sense to call `print_int()` with a value of type `char` or `bool`. What can we do?
-
-## Deleting a function using `= delete` specifier
-
-::: {#lst-delete-function lst-cap="Delete a function using `= delete` specifier. **Filename**: `delete_function.cpp`"}
-
-```{.cpp}
-{{< include ./cpp/delete_function.cpp >}}
+int add(int x, int y);
+int add(int x, int y, int z);
 ```
 :::
+::: {.column width="50%"}
+By **types** of parameters:
+
+```{.cpp}
+int add(int x, int y);
+double add(double x, double y);
+double add(int x, double y);
+double add(double x, int y);
+```
+:::
+:::
+
+## Type aliases don't count
+
+A **type alias** gives an existing type a second name. It's the same type underneath, so it can't tell overloads apart:
+
+```{.cpp}
+using Age = int;     // Age is just another name for int
+typedef int Height;  // the older way to write the same thing
+
+void print(int value);
+void print(Age value);    // same as print(int): not a new overload
+void print(Height value); // same as print(int): not a new overload
+```
+
+## The return type doesn't count
+
+```{.cpp filename="return_type_not_enough.cpp" .no-compile}
+{{< include ./cpp/return_type_not_enough.cpp >}}
+```
+
+```{.text .output .compiler}
+error: ambiguating new declaration of 'double get_random_value()'
+```
+
+Imagine you're the compiler and you see the call `get_random_value()`. Which one would you call? You can't tell from the call, so C++ doesn't allow it.
+
+## Function signatures
+
+The parts of a function that tell overloads apart are called its **signature**: the function's **name** plus the **number and types of its parameters**. The return type is *not* part of it.
+
+| Declaration | Signature |
+|---|---|
+| `int add(int x, int y);` | `add(int, int)` |
+| `double add(double x, double y);` | `add(double, double)` |
+| `double add(int a, double b, int c);` | `add(int, double, int)` |
+
+Every overload must have a different signature. Parameter names don't matter either: `add(int x, int y)` and `add(int a, int b)` have the same signature.
+
+# How the compiler picks an overload
+
+## Overload resolution, step by step
+
+![](figures/overload_resolution.png){fig-alt="For the call add(1, 2): all three add functions are candidates. add(double, double, double) is not viable because it needs three arguments. Of the two viable functions, add(int, int) is an exact match and beats add(double, double), which needs conversions." width="82%"}
+
+1. **Candidates:** every function with that name.
+2. **Viable functions:** those with the right number of parameters, where each argument can be converted to the parameter type.
+3. **Best match:** an exact match beats a promotion, which beats a conversion. If one function is strictly better than the rest, it's called.
+
+## Ambiguous matches
+
+If two overloads are *equally* good, the compiler refuses to guess:
+
+```{.cpp filename="ambiguous_match.cpp" .no-compile}
+{{< include ./cpp/ambiguous_match.cpp >}}
+```
+
+```{.text .output .compiler}
+error: call of overloaded 'print(long int)' is ambiguous
+```
+
+`5L` is a `long`. Converting it to `int` and converting it to `double` are equally good, so neither wins. The fix: pass an argument of the type you mean, like `5` or `5.0`.
+
+## Calls that make no sense
+
+```{.cpp filename="print_int_surprise.cpp"}
+{{< include ./cpp/print_int_surprise.cpp >}}
+```
+
+```{.text .output}
+5
+97
+1
+```
+
+A `char` and a `bool` both convert to `int` silently: `'a'` is stored as the number 97. Suppose that printing a character or a Boolean as a number makes no sense for us. Can we forbid it?
+
+## Deleting a function with `= delete`
+
+```{.cpp filename="delete_function.cpp" .no-compile}
+{{< include ./cpp/delete_function.cpp >}}
+```
+
+```{.text .output .compiler}
+error: use of deleted function 'void print_int(char)'
+```
+
+- `= delete` declares an overload that **must not be called**. Overload resolution still picks it for a `char` argument, and then the compiler reports an error.
+- Careful: `print_int(5.0)` is now an error too, because a `double` converts equally well to `int`, `char` and `bool`, so the call is ambiguous.
 
 # Default arguments
 
 ## Default arguments
 
-- A **default argument** is a default value provided for a function parameter.
-- Default arguments are inserted by the compiler at site of the function call.
+A **default argument** is a value a parameter gets when the caller doesn't supply one.
 
-::: {#lst-default-argument lst-cap="An example on default argument. **Filename**: `default_argument.cpp`"}
-```{.cpp}
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="default_argument.cpp"}
 {{< include ./cpp/default_argument.cpp >}}
 ```
 :::
+::: {.column width="28%"}
+```{.text .output}
+x: 1, y: 2
+x: 3, y: 4
+```
+:::
+:::
 
-## Multiple default arguments
+![](figures/default_arguments.png){fig-alt="With the declaration void print(int x, int y = 4), a call written as print(3) is compiled as print(3, 4): the compiler fills in the default." width="62%"}
 
-::: {#lst-multiple-default-arguments lst-cap="An example on multiple default arguments. **Filename**: `multiple_default_arguments.cpp`"}
-```{.cpp}
+## Several default arguments
+
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="multiple_default_arguments.cpp"}
 {{< include ./cpp/multiple_default_arguments.cpp >}}
 ```
 :::
-
-## Multiple default arguments: More on this
-
-C++ does not (as of C++23) support a function call syntax such as
-
-```{.cpp}
-print( , , 3)
-```
-
-
-**Consequences from this** -- actually common sense if you think about these carefully:
-
-- In a function call, any explicitly provided arguments must be the leftmost arguments. That is, arguments with defaults cannot be skipped.
-  
-    ```{.cpp}
-    void print(std::string_view sv="Hello", double d=10.0);
-    int main() {
-        print();           // okay: both arguments defaulted
-        print("Macaroni"); // okay: d defaults to 10.0
-        print(20.0);   // error: does not match above function (cannot skip argument for sv)
-        return 0;
-    }
-    ```
-- If a parameter is given a default argument, all subsequent parameters (to the right) must also be given default arguments. Recall what you learned in Python.
-
-    ```{.cpp}
-    void print(int x=10, int y); // not allowed
-    ```
-- If more than one parameter has a default argument, the leftmost parameter should be the one most likely to be explicitly set by the user.
-
-## Default arguments can not be redeclared
-
-For a function with a forward declaration and a function definition, the default argument can be declared in either the forward declaration or the function definition, but not both.
-
-::: {#lst-cannot-be-redeclared lst-cap="A default argument cannot be redeclared."}
-
-```{.cpp}
-#include <iostream>
-
-void print(int x, int y=4); // forward declaration
-
-void print(int x, int y=4) // compile error: redefinition of default argument
-{
-    std::cout << "x: " << x << '\n';
-    std::cout << "y: " << y << '\n';
-}
+::: {.column width="28%"}
+```{.text .output}
+1 2 3
+1 2 30
+1 20 30
+10 20 30
 ```
 :::
-
-## Default arguments must be declared before use
-
-The default argument must also be declared in the translation unit before it can be used.
-
-::: {#lst-must-be-declared-before-use lst-cap="Default argument must be declared before it can be used."}
-
-```{.cpp}
-#include <iostream>
-
-void print(int x, int y); // forward declaration, no default argument
-
-int main()
-{
-    print(3); // compile error: default argument for y hasn't been defined yet
-
-    return 0;
-}
-
-void print(int x, int y=4)
-{
-    std::cout << "x: " << x << '\n';
-    std::cout << "y: " << y << '\n';
-}
-```
 :::
 
-## Default arguments cannot be redeclared. They must be declared before
+Arguments are matched to parameters from the **left**, and the defaults fill in the rest from the right.
 
-- Declare the default argument in the forward declaration and not in the function definition.
-- The forward declaration is more likely to be seen by other files and included before use (particularly if it's in a header file).
+## The rules (and the reasons)
 
-::: {#lst-forward-declaration-default-arguments lst-cap="Declare the default argument in the forward declaration and not in the function definition."}
+C++ has no syntax like `print_numbers( , , 3)`. Everything else follows from that:
 
-```{.cpp}
+- **You can't skip an argument.** To give `z` a value, you must also give `x` and `y`.
+- **Defaults must come last.** Once a parameter has a default, every parameter to its right needs one too:
+
+  ```{.cpp}
+  void print(int x = 10, int y); // error: y needs a default as well
+  ```
+
+- **Put the parameter callers most often change first** among the defaulted ones.
+
+::: {.callout-note title="Coming from Python"}
+Python lets you name arguments in the call: `print_numbers(z=3)`. C++ has no named arguments, so the order of parameters matters much more.
+:::
+
+## Give the default once...
+
+A function with a forward declaration can have its default in the declaration *or* in the definition, but **not both**:
+
+```{.cpp filename="default_argument_twice.cpp" .no-compile}
+{{< include ./cpp/default_argument_twice.cpp >}}
+```
+
+```{.text .output .compiler}
+error: default argument given for parameter 2 of 'void print(int, int)'
+```
+
+## ...and before it's used
+
+The compiler reads top to bottom (Chapter 02!), so it must see the default before the call:
+
+```{.cpp filename="default_argument_too_late.cpp" .no-compile}
+{{< include ./cpp/default_argument_too_late.cpp >}}
+```
+
+```{.text .output .compiler}
+error: too few arguments to function 'void print(int, int)'
+```
+
+## Where the default should go
+
+Put the default in the **forward declaration**:
+
+```{.cpp filename="forward_declaration_default_arguments.cpp"}
 {{< include ./cpp/forward_declaration_default_arguments.cpp >}}
 ```
+
+```{.text .output}
+x: 3, y: 4
+```
+
+::: {.callout-tip title="Best practice"}
+Default in the forward declaration if there is one (especially in a header); otherwise in the definition.
 :::
 
-## Default arguments cannot be redeclared. They must be declared before
+## With a header file
 
-::::{.columns}
-::: {.column width=45%}
-In the header file `print.h`:
-  
-```{.cpp}
-{{< include ./cpp/multiple-files/print.h >}}
+::: {.columns}
+::: {.column width="50%"}
+```{.cpp filename="print.h"}
+{{< include ./cpp/multiple_files/print.h >}}
 ```
 :::
-::: {.column width=54%}
-In the file `main.cpp`:
-
-```{.cpp}
-#include "print.h"
-#include <iostream>
-void print(int x, int y)
-{
-    std::cout << "x: " << x << '\n';
-    std::cout << "y: " << y << '\n';
-}
-int main()
-{
-    print(5);
-    return 0;
-}
+::: {.column width="50%"}
+```{.cpp filename="main.cpp"}
+{{< include ./cpp/multiple_files/main.cpp >}}
 ```
 :::
-::::
+:::
 
-## Default arguments cannot be redeclared: must be declared before
-**Best practice** 
+```{.cpp filename="print.cpp"}
+{{< include ./cpp/multiple_files/print.cpp >}}
+```
 
-- If the function has a forward declaration (especially one in a header file), put the default argument there. 
-- Otherwise, put the default argument in the function definition.
+```{.text .terminal}
+$ g++ -std=c++20 -Wall main.cpp print.cpp -o program
+$ ./program
+x: 5, y: 4
+```
 
+## Default arguments and overloading
 
-## Default arguments and function overloading
+Functions with default arguments can be overloaded:
 
-Functions with default arguments may be overloaded.
-
-::: {#lst-default-argument-overloaded lst-cap="Overload a function with default argument. **Filename**: `default_argument.overloaded.cpp`"}
-```{.cpp}
+```{.cpp filename="default_argument_overloaded.cpp"}
 {{< include ./cpp/default_argument_overloaded.cpp >}}
 ```
-:::
 
-## Default arguments and function overloading
-
-Consider the following overloading case:
-```{.cpp}
-void print(int x);                  // signature print(int)
-void print(int x, int y = 10);      // signature print(int, int)
-void print(int x, double y = 20.5); // signature print(int, double)
+```{.text .output}
+Hello, world
+a
+*
 ```
 
-Default values are not part of a function's signature, so these function declarations are differentiated overloads.
+## Watch out: defaults can make calls ambiguous
+
+A default value is **not** part of the signature, so these are two different overloads. But a call can still match both:
+
+```{.cpp filename="default_argument_ambiguous.cpp" .no-compile}
+{{< include ./cpp/default_argument_ambiguous.cpp >}}
+```
+
+```{.text .output .compiler}
+error: call of overloaded 'print(int)' is ambiguous
+```
+
+# Wrapping up
+
+## Summary
+
+- **Overloading:** several functions can share a name if their **signatures** (name, number and types of parameters) differ. The return type doesn't count.
+- **Overload resolution:** the compiler picks the best match; an exact match beats a conversion. If two overloads tie, the call is **ambiguous** and won't compile.
+- `= delete` forbids particular calls.
+- **Default arguments** fill in parameters the caller leaves out. Defaults must be the rightmost parameters, and can't be skipped.
+- Give a default **once**, in the forward declaration (header) if there is one, and before it's used.
+- Defaults are not part of the signature, so they can make calls ambiguous.
+
+## Keep learning
+
+Explore these on your own, with Google Gemini in Guided Learning mode or on [learncpp.com](https://www.learncpp.com):
+
+1. [Function overload resolution and ambiguous matches](https://www.learncpp.com/cpp-tutorial/function-overload-resolution-and-ambiguous-matches/). The exact ranking rules are long; try asking Gemini: *"Please teach me function overload resolution and ambiguous matches in C++."*
+2. [Implicit type conversion](https://www.learncpp.com/cpp-tutorial/implicit-type-conversion/), and the difference between promotions and conversions
+3. [Type aliases](https://www.learncpp.com/cpp-tutorial/typedefs-and-type-aliases/)
+
+**Next up, Chapter 06:** function templates. Overloading means writing every version by hand. What if the compiler could write them for us?
