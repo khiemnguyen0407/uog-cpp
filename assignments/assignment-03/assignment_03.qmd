@@ -31,18 +31,6 @@ format:
         colorlinks: true
 ---
 
-# Foreword: Story behind this Resit Assignment
-
-
-In the main semester, unfortunately several students took the easy way out: copy-pasting solutions directly from platforms like ChatGPT, Claude, or Gemini. They obtained correct outputs in less than an hour, but without actual understanding and skills of writing code on their own. When faced with manual coding assessments or follow-up questions, the lack of actual understanding became immediately apparent. The evidence was that 23/92 students failed in the main exam and scored almost zero scores on questions testing C++ theory and code writing skills. However, it must be emphasized that the exam is highly achievable because $13$ students with actual learning could obtain $A1/A2$ grades ($8$ students with $A1$ and $5$ students with $A2$.)
-
-> **Using GenAI to write your code is not learning; it is outsourcing your education.** 😏
-
-Since you are taking this resit due to a breach of the academic honor code, this assignment is explicitly designed to change how you interact with GenAI. Instead of pretending you do not use GenAI, **you are required to use it**. However, you will use it as a baseline reference. Your task is to learn from it, critique it, and if possible, improve it, and finally write your own robust C++ implementation from scratch.
-
-Remember: **You will have to write C++ code on paper in your final paper exam.** Copying without understanding will guarantee another failure. Use this assignment to actually build your skills.
-
----
 
 # Assignment Summary: The C++ `Polynomial` Class
 
