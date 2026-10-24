@@ -1,27 +1,24 @@
 #include <string>
-#include <string_view>
 
-class Lecturer  // non inheritance from UniPerson
-{
-    static int nextID;
-    double salary;
-    std::string name;
-    int age;
-    int ID;
-public:
-    
+class Lecturer { // no inheritance: everything written again
+  private:
+    static inline int next_id{100000}; // a SECOND, separate counter!
+    std::string name{};
+    int id{};
+    int age{};
+    double salary{};
 
-    Lecturer(std::string name, int age): name{name}, age {age} 
-    {
-        // Assign the current counter and 
-        // then increment it for the next object
-        ID = nextID++;
-    };
-    // we must copy + paste what we wrote for UniPerson
-    int age() { return age; }
-    const std::string& name() { return name; }
+  public:
+    Lecturer(const std::string& name, int age, double salary)
+        : name{name}, id{next_id++}, age{age}, salary{salary} {}
+
+    const std::string& get_name() const { return name; } // copied...
+    int get_age() const { return age; }                  // ...and
+    int get_id() const { return id; }                    // pasted
+    double get_salary() const { return salary; }
 };
 
-// you immediately see the problem here
-// we just count the ID from all over again.
-int Lecturer::nextID{10000};    
+int main() {
+    Lecturer khiem{"Khiem", 42, 55000};
+    return 0;
+}

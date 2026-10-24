@@ -1,47 +1,12 @@
-#include <string_view>
+#include "base_derived.h"
 #include <iostream>
 
-class Base
-{
-protected:
-    int id {};      
-
-public:
-    Base(int id)
-        : id{ id }
-    {
-    }
-
-    std::string_view get_name() const { return "Base"; }
-    int get_ID() const { return id; }
-};
-
-class Derived: public Base
-{
-private:
-    double value {};
-public:
-    Derived(double value, int id)
-        : Base{ id }, value{ value }
-    {
-    }
-
-    std::string_view get_name() const { return "Derived"; }
-    int get_value() const { return value; }
-};
-
-int main()
-{
-    Derived derived { 42.24, 42 };
-    std::cout << "Name: " << derived.get_name() 
-              << ", value: " << derived.get_value() << '\n';
-
-    Derived& derived_ref {derived};
-    std::cout << "Name: " << derived_ref.get_name() 
-              << ", value: " << derived_ref.get_value() << '\n';
-
-    Derived* derived_ptr {&derived};
-    std::cout << "Name: " << derived_ptr->get_name() 
-              << ", value: " << derived_ptr->get_value() << '\n';
+int main() {
+    Derived derived{42.24, 42};
+    Derived& ref{derived};
+    Derived* ptr{&derived};
+    std::cout << derived.get_name() << ' ' << derived.get_value() << '\n';
+    std::cout << ref.get_name() << ' ' << ref.get_value() << '\n';
+    std::cout << ptr->get_name() << ' ' << ptr->get_value() << '\n';
     return 0;
 }

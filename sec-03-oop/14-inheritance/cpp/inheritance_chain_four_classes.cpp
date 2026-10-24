@@ -1,37 +1,27 @@
 #include <iostream>
 
-class A
-{
-public:
-    A() { std::cout << "\tConstructor of A\n"; }
+class A {
+  public:
+    A() { std::cout << "  A constructed\n"; }
 };
 
-class B: public A
-{
-public:
-    B() { std::cout << "\tConstructor of B\n"; }
+class B : public A {
+  public:
+    B() { std::cout << "  B constructed\n"; }
 };
 
-class C: public B
-{
-public:
-    C() { std::cout << "\tConstructor of C\n"; }
+class C : public B {
+  public:
+    C() { std::cout << "  C constructed\n"; }
 };
 
-class D: public C
-{
-public:
-    D() { std::cout << "\tConstructor of D\n"; }
+class D : public C {
+  public:
+    D() { std::cout << "  D constructed\n"; }
 };
 
-int main()
-{
-    std::cout << "Constructing A: \n";
-    A a;
-    std::cout << "Constructing B: \n";
-    B b;
-    std::cout << "Constructing C: \n";
-    C c;
-    std::cout << "Constructing D: \n";
-    D d;
+int main() {
+    std::cout << "Creating a D:\n";
+    D d{};
+    return 0;
 }

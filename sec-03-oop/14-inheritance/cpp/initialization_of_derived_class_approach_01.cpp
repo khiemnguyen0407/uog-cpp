@@ -1,31 +1,18 @@
-class Base
-{
-public:
-    int id {};
-
-    Base(int id=0) : id{ id }  {}
-
-    int get_id() const { return id; }
+class Base {
+  public:
+    int id{};
+    Base(int id = 0) : id{id} {}
 };
 
-class Derived: public Base
-{
-public:
-    double value {};
-    // uncomment the constructor to see error
-    // Derived(double value=0.0, int id=0) : value{ value }, id {id} {}
-
-    double get_value() const { return value; }
+class Derived : public Base {
+  public:
+    double value{};
+    Derived(double value = 0.0, int id = 0)
+        : value{value}, id{id} // error: id is not Derived's own member
+    {}
 };
 
-int main()
-{   
-    // With non-derived classes, constructors only have to worry about
-    // their own members.
-    Base base { 42 };   // use Base(int) constructor
-
-    // How about the the "id" member that derived inherits from Base?
-    Derived derived { 42.24 };  // use Derived(double) constructor
-
+int main() {
+    Derived derived{4.2, 42};
     return 0;
 }

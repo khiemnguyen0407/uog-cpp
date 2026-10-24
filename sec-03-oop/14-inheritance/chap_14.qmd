@@ -1,1040 +1,676 @@
 ---
-title: "Inheritance"
-author: Khiem Nguyen -- <khiem.nguyen@glasgow.ac.uk>
-    # <br>Lecturer in Multiscale Materials
-    # <br><khiem.nguyen@glasgow.ac.uk>
-author-meta: "Lecturer in Multiscale Materials"
-
-format: 
-    # other themes: 
-    #   beige, blood, dark, dracula, league, moon, 
-    #   night, serif, simple, sky, solarized
-    # highlight-style: monokai      # good for dark images
-    html:
-        output-file: "chap_14.html"
-        grid:
-            body-width: 1600px
-            margin-width: 300px
-            sidebar-width: 350px
-        embed-resources: true
-        theme: simple
-        highlight-style: github
-        css: doc.css
-        number-sections: true
-        number-depth: 3
-        mouse-wheel: true
-        title-slide-style: pandoc
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true     # <-- remove white background in code blocks
-        code-block-border-left: false
-        toc: true
-        toc-depth: 3
-        toc-title: Contents
-    pdf:
-        output-file: "chap_14.pdf"
-        embed-resources: true
-        theme: simple
-        highlight-style: github      # good for dark images
-        css: doc.css
-        number-sections: true
-        number-depth: 3
-        geometry:
-            - top=24px
-            - bottom=24px
-            - left=36px
-            - right=36px
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true # <-- remove white background in code blocks
-        code-block-border-left: false
-        toc: true
-        toc-depth: 3
-        toc-title: Contents
-    revealjs:
-        output-file: "chap_14_slide.html"
-        embed-resources: true
-        theme: simple
-        css: slide.css
-        number-sections: true
-        number-depth: 3
-        mouse-wheel: true
-        highlight-style: github
-        slide-number: true
-        title-slide-style: pandoc
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true   # <-- remove white background in code blocks
-        code-block-border-left: false # optional: remove left border
-        toc: true
-        toc-depth: 1
-        toc-title: Contents
-
+title: "Chapter 14: Inheritance"
+subtitle: "ENG3091"
+author:
+  - name: Khiem Nguyen
+    email: khiem.nguyen@glasgow.ac.uk
+    affiliations: University of Glasgow
+metadata-files: [../../theme/lecture.yml]
+format:
+  html:
+    output-file: chap_14.html
+  pdf:
+    output-file: chap_14.pdf
+  revealjs:
+    output-file: chap_14_slide.html
 ---
 
-# Intro to inheritance
+# Introduction to inheritance
 
-## Intro to inheritance: Shapes
-You want to build a software drawing various **2D Shapes**: Rectangle, Square, Polygon, Circle, Ellipse, etc.
+## Shapes: "is a" and "has a"
 
-::: {.fragment}
-- You can decide to build each class representing each particular shape. But you recognize "Wait a minute":
+You're building software that draws 2D shapes: rectangles, squares, polygons, circles, ellipses... One class per shape? Wait a minute:
 
-  - A `Square` [is a]{style="color:red"} `Rectangle`
-  - A `Rectangle` [is a]{style="color:red"} `Polygon`
-  - A `Circle` [is a]{style="color:red"} `ELlipse`
-  - All of them is a `Shape`
-  
-- Furthore, we notice
-  - A `Polygon` [has a]{style="color:red"} list of `Point2D`
-  - A `Ellipse` [has a]{style="color:red"} center of `Point2D` and [has two]{style="color:red"} two axis sizes `a` and `b` of type `double`.
-  - A `Circle` is similiar to `Ellipse` but `a == b`.
-  - A `Rectangle` [has a]{style="color:red"} has a corner of `Point2D` and two sizes `a` and `b` of type `double`
-  - A `Square` is similar to a `Rectangle` but `a == b`.
+::: {.columns}
+::: {.column width="50%"}
+**"Is a"** relationships:
+
+- a `Square` **is a** `Rectangle`;
+- a `Rectangle` **is a** `Polygon`;
+- a `Circle` **is an** `Ellipse`;
+- all of them **are** `Shape`s.
+:::
+::: {.column width="50%"}
+**"Has a"** relationships:
+
+- a `Polygon` **has a** list of `Point2D`s;
+- an `Ellipse` **has a** centre (a `Point2D`) and two axis lengths `a` and `b`;
+- a `Circle` is an `Ellipse` with `a == b`.
+:::
 :::
 
-## Intro to inheritance: Shapes
-
-- You notice that
-
-  - Drawing a square should be a consequence of drawing a rectangle with the same size.
-  - Drawing a rectangle should be a consequence of drawing a "special" polygon of 4 sides.
-  - Drawing a circle should be a consequence of drawing an ellipse
-
-So why do we bother to build different classes separately!
+So why build all those classes separately? Drawing a square should just be drawing a rectangle with equal sides.
 
 ## Hierarchies
 
-A hierarchy is a diagram showing how various objects are related.
+A **hierarchy** is a diagram showing how things are related.
 
-![](./figures/hierarchy-shape.jpg)
+![](./figures/hierarchy-shape.jpg){fig-alt="A hierarchy of shapes." width="60%"}
 
-## Intro to inheritance: University People
-
-If the above example cannot convince you enough, look at our University hierarchy.
-
-:::{.fragment}
-**A very small description about roles in our Uni**
-
-- Every member of staffs [has a]{style="color:red"} `name`, a `birthday`, an `ID`
-- Every student [has a]{style="color:red"} `name`, a `birthday`, an `ID`
-- There are different types of staff members: `Lecturer`, `TOMember`, `Demonstrator`, `SecurityGuard`
-- There are different types of students: `UGStudent` (undergraduate), `PGTStudent` (Post-graduate Taught) and `PGRStudent` (Post-graduate Research)
-- Every person in the Uni has their role and knows their role, work on their role.
+::: {.callout-warning title="Watch out"}
+Everyday "is a" can mislead. A square *is* a rectangle, but if `Rectangle` has `set_width()`, a `Square` can't honour it without breaking its own rules. This classic trap is the *square–rectangle problem*. In code, "is a" must mean "can be used **anywhere** the base class is used".
 :::
 
-:::{.fragment}
-&#10149;&nbsp; If you are about to create all the classes `Lecturer`, `TOMember`, `Demonstrator`, `SecurityGuard`, `UGStudent`, `PGTStudent`, `PGRStudent`, you see that you must [*plug figure here*] a lot for common data members and member functions.
+## The people of a university
 
+If shapes don't convince you, look at our university:
 
-![](./figures/ctrl_c_and_ctrl_v.jpg){width=30%}
-
-:::
-
+- every **staff member** has a `name`, a `birthday` and an `ID`;
+- every **student** has a `name`, a `birthday` and an `ID`;
+- there are different kinds of staff: `Lecturer`, `TOMember`, `Demonstrator`, `SecurityGuard`;
+- and different kinds of students: `UGStudent`, `PGTStudent` (postgraduate taught), `PGRStudent` (postgraduate research).
 
 ::: {.fragment}
-This violates the principle designing rule: [**Do not repeat yourself**]{style="color:red"}
+::: {.columns}
+::: {.column width="70%"}
+Writing all seven classes separately means writing the common members seven times: copy, paste, repeat.
+
+That breaks the golden rule from Chapter 02: **Don't Repeat Yourself**.
+:::
+::: {.column width="30%"}
+![](./figures/ctrl_c_and_ctrl_v.jpg){fig-alt="A copy-and-paste meme."}
+:::
+:::
 :::
 
-## Intro to inheritance: How about the following design hierarchy
+## A better design
 
-```{mermaid}
-%%| echo: false
-classDiagram
-    direction TD
-    %% Person is an abstract base class
-    class Person {
-        <<Abstract>>
-        -name: String
-        -birthday: Date
-        -ID: Integer
-        +knowRole() String
-    }
+![](figures/uni_hierarchy.png){fig-alt="A hierarchy: UniPerson at the top. StaffMember and Student derive from it. Lecturer, TOMember, Demonstrator and SecurityGuard derive from StaffMember; UGStudent, PGTStudent and PGRStudent derive from Student. Arrows point to the base class." width="90%"}
 
-    %% StaffMember inherits from Person
-    class StaffMember {
-        <<Abstract>>
-        +workOnRole() 
-    }
-    Person <|-- StaffMember : inherits from
-
-    %% Specific Staff Roles
-    class Lecturer {
-        +teach() 
-        +mark() 
-    }
-    class TOMember {
-        +organizeTimeTable() 
-        +processGrades() 
-    }
-    class Demonstrator {
-        +assist() 
-        +provideFB() 
-    }
-    class SecurityGuard {
-        +assist() 
-        +checkSafety() 
-    }
-
-    StaffMember <|-- Lecturer : implements
-    StaffMember <|-- TOMember : implements
-    StaffMember <|-- Demonstrator : implements
-    StaffMember <|-- SecurityGuard : implements
-
-    %% Student inherits from Person
-    class Student {
-        <<Abstract>>
-        +workOnRole() 
-    }
-    Person <|-- Student : inherits from
-
-    %% Specific Student Roles
-    class UGStudent {
-        +writeBScThesis()
-    }
-    class PGTStudent {
-        +writeMScThesis()
-    }
-    class PGRStudent {
-        +writePhDTHesis()
-    }
-
-    Student <|-- UGStudent : implements
-    Student <|-- PGTStudent : implements
-    Student <|-- PGRStudent : implements
-
-    %% Styling (Optional but helpful)
-    style Person fill:#f9f,stroke:#333,stroke-width:2px
-    style StaffMember fill:#bbf,stroke:#333
-    style Student fill:#bfb,stroke:#333
-    style Lecturer fill:#ddd,stroke:#333
-    style UGStudent fill:#ddd,stroke:#333
-```
+What all people share goes in `UniPerson`; what all staff share goes in `StaffMember`; and each role adds only what's special about it.
 
 # Basic inheritance in C++
 
-## Terminilogies
+## Terminology
 
+In an inheritance ("is a") relationship:
 
-## Terminilogy
+- the class being inherited from is the **base class** (or *parent class*, or *superclass*);
+- the class doing the inheriting is the **derived class** (or *child class*, or *subclass*).
 
-&#9998;&nbsp; In an inheritance (is-a) relationship
+![](./figures/parent-class-vs-child-class.png){fig-alt="A parent class and a child class that inherits from it." width="62%"}
 
-- the class being inherited from: [**parent class**]{style="color:red"}, [**base class**]{style="color:red"}, or [**superclass**]{style="color:red"}
-- the class doing the inheriting: [**derived class**]{style="color:red"}, [**derived class**]{style="color:red"}, or [**subclass**]{style="color:red"}
+## A smaller example for our code
 
-![](./figures/parent-class-vs-child-class.png)
+![](figures/uniperson_classes.png){fig-alt="UniPerson has name, id and age, and get_name(), get_age() and get_id(). Lecturer derives from it and adds salary and get_salary(); Student derives from it and adds tuition and get_tuition()." width="78%"}
 
-## Basic inheritance in C++: Mini example
+Every `Lecturer` and every `Student` **is a** `UniPerson`, with a name, an ID and an age. What they *do* differently comes with polymorphism, in Chapter 15.
 
-&#10149;&nbsp; We will adopt a smaller design structure:
+## The class `UniPerson` {.dense-code}
 
-- Every `Lecturer` [is a]{style="color:red"} a `UniPerson`
-- Every `Student` [is a]{style="color:red"} a `UniPerson`
-- Every `Lecturer` and `Student` has `name` and `ID`.
-
-We shall discuss 
-- `work_on_role()` later when we study [**Polymorphism**]{style="color:red"} and [**Virtual Function**]{style="color:red"}.
-- other member functions in `Lecturer` and `Student` when we study [_adding more functionality_] to derived class.
-
-
-## Basic inheritance in C++: Mini-diagram for code demonstration
-```{mermaid}
-%%| echo: false
-classDiagram
-    direction LR
-    %% Person is an abstract base class
-    class UniPerson {
-        -name std::string
-        -ID int
-        -age int
-        +get_name() std::string 
-        +get_ID() int
-        +get_age() int
-    }
-    %% class UniPerson
-    %% UniPerson : -name string
-    %% UniPerson : -ID int
-    %% UniPerson : -age int
-
-  
-
-    %% Specific Staff Roles
-    class Lecturer {
-        - salary: double
-        + get_salary() double
-    }
-
-    UniPerson <|-- Lecturer : inherits from
-
-    %% Student inherits from Person
-    class Student {
-        -tuition_fee: double
-        +get_tuition() double
-    }
-    UniPerson <|-- Student : inherits from
-
-
-    %% Styling (Optional but helpful)
-    %% style Person fill:#f9f,stroke:#333,stroke-width:2px
-    %% style Student fill:#bfb,stroke:#333
-    %% style Lecturer fill:#ddd,stroke:#333
-```
-
-## Implementation of Inheritance: class `UniPerson`
-
-&#10149;&nbsp; Let us look at the class `UniPerson`
-
-::: {#lst-class-uni-person lst-cap="class `UniPerson`. Filename=`uniperson.cpp`"}
-```{.cpp}
-{{< include ./cpp/uniperson.cpp >}}
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="uniperson.h"}
+{{< include ./cpp/uniperson.h >}}
 ```
 :::
+::: {.column width="28%"}
+A **`static`** member variable belongs to the **class**, not to any one object: all `UniPerson`s share one `next_id`. Each new person takes its value, then increments it.
 
-## Implementation of Inheritance: class `Lecturer` without inheritance
+**`inline`** (C++17) lets us initialize it right here, in the header.
+:::
+:::
 
-::: {#lst-class-lecturer-without-inheritance lst-cap="class `Lecturer` without inheritance. Filename=`lecturer_noinheritance.cpp`"}
-```{.cpp}
+## `Lecturer` without inheritance {.dense-code}
+
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="lecturer_noinheritance.cpp"}
 {{< include ./cpp/lecturer_noinheritance.cpp >}}
 ```
 :::
-
-&#10149;&nbsp; **Question** Can you tell me what problem we have?
-
-## Implementation: class `Lecturer` inherited from class `UniPerson`
-
-::: {#lst-class-lecturer-with-inheritance lst-cap="class `Lecturer` inherited from class `UniPerson`. Filename=`lecturer.h`"}
-```{.cpp}
-{{< include ./cpp/lecturer.h >}}
-```
-:::
-
-## Impelemntation: Put two classes together into a `main` program
-
-
-::: {#lst-main-uniperson-lecturer lst-cap="A program using class `Lecturer` derived from the class `UniPerson` Filename=`main_uniperson_lecturer.cpp`"}
-```{.cpp}
-{{< include ./cpp/main_uniperson_lecturer.cpp >}}
-```
-:::
-
-&#10149;&nbsp; **Notice** that we can access `age`, `id` members although we did not define them explicitly in class `Lecturer`. _Let us run the code._
-
-## Implementation: class `Student`
-
-&#10149;&nbsp; It is now easy to write class `Student` derived from `UniPerson`
-
-::: {#lst-class-student lst-cap="class `Student` inherited from the class `UniPerson` Filename=`student.h`"}
-```{.cpp}
-{{< include ./cpp/student.h >}}
-```
-:::
-
-## Implementation: Put three classes together into a `main` program
-
-
-::: {#lst-main-uniperson-lecturer-student lst-cap="A program using classes `Lecturer` and `Student` derived from the class `UniPerson` Filename=`main_uniperson_lecturer_student.cpp`"}
-```{.cpp}
-{{< include ./cpp/main_uniperson_lecturer_student.cpp >}}
-```
-:::
-
-## Inheritance chains
-
-&#9998;&nbsp; We can comeback to our bigger diagram
-
-`UGStudent`, `PGTStudent` and `PGRStudent` are all derived from class `Student` and thus we have [**inherintance chain**]{style="color:red"}
-
-```{mermaid}
-%%| echo: false
-classDiagram
-    %% Person is an abstract base class
-    class UniPerson {
-    }
-    class Lecturer {
-    }
-    class Student {
-    }
-    UniPerson <|-- Student : inherits from
-    class PGTStudent {
-    }
-    class UGStudent {
-    }
-
-    UniPerson <|-- Lecturer : inherits from
-    Student <|-- UGStudent: inherits from
-    Student <|-- PGTStudent: inherits from
-    Student <|-- PGRStudent: inherits from
-    %% Styling (Optional but helpful)
-    style UniPerson fill:#f9f,stroke:#333,stroke-width:2px
-    style Student fill:#bfb,stroke:#333
-    style Lecturer fill:#ddd,stroke:#333
-```
-
-&#10149;&nbsp; We will write a class for `UGStudent`. 
-
-&#10149;&nbsp; Instead of writing everything all the classes in one single giant filet, let us do this in multiple header files, which is the next topic.
-
-# Split the program into header files and implementation files
-
-## Goals of this example
-
-:::{.fragment}
-&#9998;&nbsp; We go through the steps that need to be done to build a program that needs implementation of many classes.
-
-- Write header files (`filename.h` or `filename.hpp`) for each class
-- Write implementation files (`filename.cpp`) for the corresponding class
-- Compile the main program using the `.cpp` files.
-:::
+::: {.column width="28%"}
+It compiles. So what's the problem?
 
 ::: {.fragment}
-We build four classes and one main program. Each class is done by one header file `.h` and one implementation file `.cpp`:
-
-- class `UniPerson`
-- class `Lecturer` inherits from `UniPerson`
-- class `Student` inherits from `UniPerson`
-- class `UGStudent` inherits from `Student`
+- Everything from `UniPerson` is **copied and pasted**.
+- `Lecturer` has its **own** `next_id`, so lecturer and student IDs can clash.
+- Fix a bug in one copy, and you must remember all the others.
+:::
+:::
 :::
 
-## class `UniPerson`: Header file
+## `Lecturer` inherits from `UniPerson` {.dense-code}
 
-::: {#lst-header-file-uniperson lst-cap="Header file for class `UniPerson` Filename=`uni-program/uniperson.h`"}
-```{.cpp}
+```{.cpp filename="lecturer.h"}
+{{< include ./cpp/lecturer.h >}}
+```
+
+- `class Lecturer : public UniPerson` means "a `Lecturer` **is a** `UniPerson`". We'll see what `public` means here later today.
+- `Lecturer` only adds what's new: `salary`. The member initializer list first passes `name` and `age` to `UniPerson`'s constructor (more on this soon).
+
+## Using `Lecturer`
+
+```{.cpp filename="main_uniperson_lecturer.cpp"}
+{{< include ./cpp/main_uniperson_lecturer.cpp >}}
+```
+
+```{.text .output}
+Khiem, age 42, ID 100000
+Albus, age 115, ID 100001
+```
+
+We never wrote `get_age()` or `get_id()` in `Lecturer`, yet we can call them: `Lecturer` inherited them from `UniPerson`.
+
+## Adding `Student` is now easy
+
+```{.cpp filename="student.h"}
+{{< include ./cpp/student.h >}}
+```
+
+## `Lecturer` and `Student` together
+
+```{.cpp filename="main_uniperson_lecturer_student.cpp"}
+{{< include ./cpp/main_uniperson_lecturer_student.cpp >}}
+```
+
+```{.text .output}
+Khiem (ID 100000), salary 55000
+Peter Parker (ID 100001), tuition 9250
+```
+
+One shared counter: IDs never clash, whether you're a lecturer or a student.
+
+# Splitting the program into files
+
+## Why split, and how
+
+A real program has many classes. As in Chapter 02, each class gets:
+
+- a **header file** (`.h`), with the class definition and its member function *declarations*;
+- an **implementation file** (`.cpp`), with the member function *definitions*.
+
+We'll build four classes and a `main` program, in the folder `uni-program/`:
+
+- `UniPerson`;
+- `Lecturer` and `Student`, which inherit from `UniPerson`;
+- `UGStudent`, which inherits from `Student`: an **inheritance chain**.
+
+## `UniPerson`: the header {.dense-code}
+
+```{.cpp filename="uni-program/uniperson.h"}
 {{< include ./cpp/uni-program/uniperson.h >}}
 ```
-:::
 
-## class `UniPerson`: Implementation file
+Only declarations of the member functions. And the classic way to handle a `static` member: declare it in the class, and define it once in the `.cpp` file.
 
-::: {#lst-implementation-file-uniperson lst-cap="Implementation file for class `UniPerson` Filename=`uni-program/uniperson.cpp`"}
-```{.cpp}
+## `UniPerson`: the implementation
+
+```{.cpp filename="uni-program/uniperson.cpp"}
 {{< include ./cpp/uni-program/uniperson.cpp >}}
 ```
-:::
 
-## class `Lecturer`: Header file
+- Outside the class, every member's name gets the prefix `UniPerson::`.
+- `int UniPerson::next_id{100000};` is the **one** definition of the static member. If it were in the header, every `.cpp` file including the header would define it again: a link error.
 
-::: {#lst-header-file-lecturer lst-cap="Header file for class `Lecturer` Filename=`uni-program/lecturer.h`"}
-```{.cpp}
+## `Lecturer`: header and implementation {.dense-code}
+
+```{.cpp filename="uni-program/lecturer.h"}
 {{< include ./cpp/uni-program/lecturer.h >}}
 ```
-:::
 
-## class `Lecturer`: Implementation file
-
-::: {#lst-implementation-file-lecturer lst-cap="Implementation file for class `Lecturer` Filename=`uni-program/lecturer.cpp`"}
-```{.cpp}
+```{.cpp filename="uni-program/lecturer.cpp"}
 {{< include ./cpp/uni-program/lecturer.cpp >}}
 ```
-:::
 
-## class `Student`: Header file
+## `Student`: header and implementation {.dense-code}
 
-::: {#lst-header-file-student lst-cap="Header file for class `Student` Filename=`uni-program/student.h`"}
-```{.cpp}
+```{.cpp filename="uni-program/student.h"}
 {{< include ./cpp/uni-program/student.h >}}
 ```
-:::
 
-## class `Student`: Implementation file
-
-::: {#lst-implementation-file-student lst-cap="Implementation file for class `Student` Filename=`uni-program/student.cpp`"}
-```{.cpp}
+```{.cpp filename="uni-program/student.cpp"}
 {{< include ./cpp/uni-program/student.cpp >}}
 ```
-:::
 
-## class `UGStudent`: Header file
+## `UGStudent`: an inheritance chain {.dense-code}
 
-::: {#lst-header-file-ugstudent lst-cap="Header file for class `UGStudent` Filename=`uni-program/ugstudent.h`"}
-```{.cpp}
+```{.cpp filename="uni-program/ugstudent.h"}
 {{< include ./cpp/uni-program/ugstudent.h >}}
 ```
-:::
 
-## class `UGStudent`: Implementation file
-
-::: {#lst-implementation-file-ugstudent lst-cap="Implementation file for class `UGStudent` Filename=`uni-program/ugstudent.cpp`"}
-```{.cpp}
+```{.cpp filename="uni-program/ugstudent.cpp"}
 {{< include ./cpp/uni-program/ugstudent.cpp >}}
 ```
-:::
 
-# Order of construction of derived classes
+## The main program, and building it {.dense-code}
 
-In this lesson, we take a closer look at the order of construction that happens when a derived class is instantiated.
+```{.cpp filename="uni-program/main.cpp"}
+{{< include ./cpp/uni-program/main.cpp >}}
+```
 
-## Order of constructors
+```{.text .terminal}
+$ g++ -std=c++20 -Wall main.cpp uniperson.cpp lecturer.cpp student.cpp ugstudent.cpp -o uni
+$ ./uni
+Khiem (ID 100000), salary 55000
+Natasha (ID 100001), tuition 9250
+Natasha (ID 100001) is writing a BSc thesis
+```
 
-&#10149;&nbsp; Let us look at this simple code involving two classes
+# Order of construction
 
-::: {#lst-parent-and-derived lst-cap="Two simple classes `Base` and `Derived` which inherits from `Base`. Filename=`base_and_derived.cpp`"}
-```{.cpp}
+## A base class and a derived class
+
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="base_and_derived.cpp"}
 {{< include ./cpp/base_and_derived.cpp >}}
 ```
 :::
+::: {.column width="28%"}
+`Derived` has its own member `value`, and inherits `id` and `get_id()` from `Base`.
 
-## Order of construction of derived classes: Diagram
+What exactly happens when we create `derived`?
+:::
+:::
 
-The diagram of the above code snippet is easy:
+## A derived object has two parts
 
-```{mermaid}
-%%| echo: false
-classDiagram
-    direction TD
-    class Base {
-        -parent_value double
-        +get_parent_value() double
-    }
+![](figures/derived_object_parts.png){fig-alt="A Derived object contains a Base part, with id, and a Derived part, with value. Construction builds the Base part first, then the Derived part; destruction goes the other way." width="80%"}
 
-    class Derived {
-        -child_value double
-        +get_child_value() double
-    }
+The members of `Base` are **not copied** into `Derived`. Instead, a `Derived` object is made of two parts: a `Base` part, and a `Derived` part on top of it.
 
-    Base <|-- Derived
+## The base part is built first {.dense-code}
 
-    %% Styling (Optional but helpful)
-    style Base fill:#f9f,stroke:#333,stroke-width:2px
-    style Derived fill:#bbf,stroke:#333
-```
-
-&#9998;&nbsp; The members of `Base` are **not** copied into `Derived`.
-
-&#9998;&nbsp; Instead, we can consider `Derived` and `Base` as a two-part class: one part `Derived` + one part `Base`
-
-## Order of construction of derived classes: A closer look
-
-::: {#lst-parent-and-derived-main lst-cap="The constructor of the `Base` class is executed before the constructor of the `Derived` class. Filename=`parent_and_child_with_main.cpp`"}
-```{.cpp}
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="parent_and_child_with_main.cpp"}
 {{< include ./cpp/parent_and_child_with_main.cpp >}}
 ```
 :::
-
-&#10149;&nbsp; The constructor of `Base` class is executed before the constructor of `Derived` class is excuted when a `Derived` object is created.
-
-## Order of construction for inheritance chains
-
-&#10149;&nbsp; Let us look at this example
-
-```{mermaid}
-%%| echo: false
-classDiagram
-    direction LR
-    class A {
-    }
-
-    class B {
-    }
-
-    class C {
-    }
-
-    class D {
-    }
-
-    A <|-- B
-    B <|-- C
-    C <|-- D
-
-    %% Styling (Optional but helpful)
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style B fill:#bbf,stroke:#333
-    style C fill:#bbf,stroke:#333
-    style D fill:#bbf,stroke:#333
+::: {.column width="28%"}
+```{.text .output}
+Creating a Base:
+  Base constructed
+Creating a Derived:
+  Base constructed
+  Derived constructed
 ```
 
-**Question** If I create an object of class `D`, what would you expect to be executed?
-
-:::{.fragment}
-&#9998; The above idea/knowledge applies naturally to **inheritance chains**: 
-
-- the great grandparent `A` constructor is executed, **then** 
-- the grandparent `B` constructed is executed, **then** 
-- the parent `C` constructor is executed, and **then** 
-- the derived `D` constructor is executed.
+Creating a `Derived` runs the `Base` constructor **first**, then the `Derived` one. It makes sense: the derived part may rely on the base part being ready.
 :::
-
-## Order of construction for inheritance chains: Code demonstration
-
-::: {#lst-inheritance-chain-construction-order lst-cap="Order of construction of derived classes in an inheritance chain. Filename=`inheritance_chain_four_classes.cpp`"}
-```{.cpp}
-{{< include ./cpp/inheritance_chain_four_classes.cpp >}}
-```
 :::
-[source-code](./cpp/inheritance_chain_four_classes.cpp)
-
-
-# Constructors and initialization of derived classes
-
-&#9998;&nbsp; In Python, we can use `super()` to access the parent's data and member functions.
-
-&#9998;&nbsp; Thus, we can write `super().__init__(self,...)` to use the constructor of the parent class.
-
-```{python}
-class UniPerson:
-    
-    nextID = 10000  # class variable
-
-    def __init__(self, name="", age=18):
-        self.name, self.age = name, age
-        self.id = UniPerson.nextID
-        UniPerson.nextID += 1
-class Lecturer(UniPerson):
-    def __init__(self, name="", age=18):
-        super().__init__(name, age)
-        print(f"Lecturer {self.name} is recruited.")
-```
-
-&#10149;&nbsp; This will be the topic of this lesson.
-
-
-## Revisit Python example
-
-```{python}
-class UniPerson:
-    nextID = 10000  # class variable, functioning like static int nextID in C++
-    def __init__(self, name="", age=18):
-        self.name, self.age = name, age
-        self.id = UniPerson.nextID; UniPerson.nextID += 1   # fit into the slide
-class Lecturer(UniPerson):
-    def __init__(self, name="", age=18):
-        super().__init__(name, age)
-        print(f"Lecturer {self.name} is recruited.")
-    def __str__(self):      # print out the name of the lecturer
-        return self.name
-
-khiem = Lecturer("Khiem", 42)
-print(f"ID assigned for {khiem}: {khiem.id}")
-```
-
-## Initialization involving inheritance: A problem example
-
-&#10149;&nbsp; Look at this simple example
-
-::: {#lst-initialization-of-derived-classes lst-cap="An example illustrating the initialization process of a derived class. Filename=`initialization_of_derived_class.cpp`"}
-```{.cpp}
-{{< include ./cpp/initialization_of_derived_class.cpp >}}
-```
-:::
-
-## Initialization: Looking at `Base` class
-
-```{.cpp}
-Base parent{ 42 };
-```
-
-What happens when `Base` is instantiated:
-
-- Memory for base class (`Base`) is set aside.
-- Appropriate `Base` constructor is called.
-- Member initializer list initializes variables
-- Body of constructor executes.
-- Control is returned to the caller.
-
-## Initialization: Looking at `Derived` class
-
-```{.cpp}
-Derived derived{ 42.24 };
-```
-
-What happens when `Derived` is instantiated:
-
-- Memory for derived class (`Derived`) is set aside.
-- Appropriate `Derived` constructor is called.
-- [*`Base` object is constructed first using the pappropriate `Base` constructor*]{style="color:red"}. If no parent constructor is specified, the default constructor will be used.
-- Member initializer list initializes variables.
-- Body of the constructor executes.
-- Control is returned to the caller.
-
-**Question** 
-
-- How about the `id` member that a `Derived` object inherits from `Base`? 
-- How can we initialize it when we create an object of `Derived` class.
-
-## Initializing base class members: Approach 01
-
-
-```{.cpp}
-class Derived: public Base
-{
-public:
-    double cost {};
-
-    Derived(double value=0.0, int id=0) 
-        : value { value }, id { id }  // this won't work
-    {}
-
-    double get_cost() const { return cost; }
-};
-```
-
-&#9998;&nbsp; The value of a member variable can only be set in a member initializer list of a constructor belonging to the same class as the variable. &#10140;&nbsp; This attempt won't work. See and run `initialization_of_derived_class_approach_01.cpp`
-
-**Question** What else can we do?
-
-
-## Initializing base class members: Approach 02
-
-```{.cpp}
-class Derived: public Base
-{
-public:
-    double cost {};
-
-    Derived(double value=0.0, int id=0) 
-        : value { value }
-    {   // this work but not work for a const or a reference
-        this->id = id;  
-    }
-
-    double get_cost() const { return cost; }
-};
-```
-
-&#10149;&nbsp; This approach works. See and run `initialization_of_derived_class_approach_02.cpp`. [**But**]{style="color:brown"} 
-
-- [**would not work if `id` were a const or a reference**]{style="color:brown"}. const values and references have to be initialized in the member initializer list of the constructor.
-- [**inefficient**]{style="color:brown"}. Member `id` gets assigned a value twice: once in the member initializer list of `Base` class constructor, and then again in the body of the `Derived` class.
-
-## Initializing base class members: Call parent class constructor
-
-&#9998;&nbsp; C++ allows us to [explicitly choose which Base (Base) class constructor will be called]{style="color:red"}! Simply add a call to the Base class constructor.
-
-```{.cpp}
-class Derived: public Base
-{
-public:
-    double value {};
-
-    Derived(double value=0.0, int id=0) 
-        : Base{ id } // call Base(int) constructor with value id!!!
-        , value{ value } 
-    { } // constructor body
-
-    double get_value() const { return value; }
-};
-```
-
-&#10140;&nbsp; This resolves the troubles we have above.
-
-## Initializing base class members: Put things together
-
-&#10149;&nbsp; Let us run the code snippet
-
-::: {#lst-initialization-call-base-constructor lst-cap="Call Base constructor in the Derived class constructor. Filename=`initialization_of_derived_class_base_constructor.cpp`"}
-```{.cpp}
-{{< include ./cpp/initialization_of_derived_class_base_constructor.cpp >}}
-```
-:::
-
-## Initializing base class members: `UniPerson` and `Student`
-
-**Homework**
-
-Think about rewriting `Student` so that we can call `UniPerson`'s constructor in the member initializer list of `Student`
 
 ## Inheritance chains
 
-&#10149;&nbsp; Let us apply the concept we have learned to inheritance chain
+![](figures/construction_chain.png){fig-alt="A chain A, B, C, D, where each class derives from the one before. D d{} constructs A, then B, then C, then D; at the end of its block it destroys D, then C, then B, then A." width="84%"}
 
-::: {#lst-initializing-call-base-constructor-inheritance-chain lst-cap="Calling base constructor in member initializer list of derived classes can be done in inheritance chain. Filename=`initializing_base_members_inheritance_chain.cpp`"}
-```{.cpp}
-{{< include ./cpp/initializing_base_members_inheritance_chain.cpp >}}
+Question: if I create an object of class `D`, which constructors run, and in which order?
+
+## Construction order in a chain {.dense-code}
+
+::: {.columns}
+::: {.column width="60%"}
+```{.cpp filename="inheritance_chain_four_classes.cpp"}
+{{< include ./cpp/inheritance_chain_four_classes.cpp >}}
 ```
 :::
+::: {.column width="40%"}
+```{.text .output}
+Creating a D:
+  A constructed
+  B constructed
+  C constructed
+  D constructed
+```
 
-**Question** What's the output on the console?
+From the most basic class to the most derived: the great-grandparent `A`, then the grandparent `B`, then the parent `C`, and finally `D` itself.
+:::
+:::
 
-## Destructors
+# Constructing derived classes
 
-&#9998;&nbsp; When a derived class is destroyed, each destructor is called in the reverse order of construction. 
+## Coming from Python: `super()`
 
+```{.python filename="uniperson_super.py"}
+{{< include ./py/uniperson_super.py >}}
+```
 
-&#10140;&nbsp; In the above example, when `c` is destroyed, the `C` destructor is called first, then the `B` destructor, then the `A` destructor.
+```{.text .output}
+Lecturer Khiem is recruited.
+ID assigned to Khiem: 100000
+```
+
+In Python, `super().__init__(...)` runs the parent's constructor. How do we do that in C++?
+
+## The problem {.dense-code}
+
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="initialization_of_derived_class.cpp"}
+{{< include ./cpp/initialization_of_derived_class.cpp >}}
+```
+:::
+::: {.column width="28%"}
+`Derived(double)` sets `value`. But how can it set the `id` that every `Derived` inherits from `Base`?
+:::
+:::
+
+## What happens when a `Derived` is created
+
+When `Base base{42};` runs:
+
+1. memory for a `Base` is set aside;
+2. the right `Base` constructor is called: its member initializer list initializes the members, then its body runs.
+
+When `Derived derived{4.2};` runs:
+
+1. memory for a whole `Derived` (both parts) is set aside;
+2. the right `Derived` constructor is called, **but first, the `Base` part is constructed** with a `Base` constructor. If we don't say which one, its **default constructor** is used;
+3. then `Derived`'s member initializer list and body run.
+
+## Attempt 1: initialize `id` in `Derived`'s list {.dense-code}
+
+```{.cpp filename="initialization_of_derived_class_approach_01.cpp" .no-compile}
+{{< include ./cpp/initialization_of_derived_class_approach_01.cpp >}}
+```
+
+```{.text .output .compiler}
+error: class 'Derived' does not have any field named 'id'
+```
+
+A member can only be initialized in the member initializer list of **its own** class's constructor. And by then, the `Base` part (with `id`) has already been constructed.
+
+## Attempt 2: assign `id` in the body {.dense-code}
+
+```{.cpp filename="initialization_of_derived_class_approach_02.cpp" .no-compile}
+{{< include ./cpp/initialization_of_derived_class_approach_02.cpp >}}
+```
+
+```{.text .output .compiler}
+error: assignment of read-only member 'Base::id'
+```
+
+Remove the `const` and it compiles. But it doesn't work for `const` or reference members, and it's wasteful: `id` is initialized once by `Base`, then assigned again.
+
+## The solution: call the base constructor {.dense-code}
+
+```{.cpp filename="initialization_of_derived_class_base_constructor.cpp"}
+{{< include ./cpp/initialization_of_derived_class_base_constructor.cpp >}}
+```
+
+::: {.columns}
+::: {.column width="35%"}
+```{.text .output}
+id: 42, value: 4.2
+```
+:::
+::: {.column width="65%"}
+Call the `Base` constructor **first** in the member initializer list. It's C++'s `super().__init__()`.
+:::
+:::
+
+## Passing values up a chain {.dense-code}
+
+```{.cpp filename="initializing_base_members_inheritance_chain.cpp"}
+{{< include ./cpp/initializing_base_members_inheritance_chain.cpp >}}
+```
+
+::: {.columns}
+::: {.column width="35%"}
+```{.text .output}
+A: 5
+B: 4.3
+C: R
+```
+:::
+::: {.column width="65%"}
+Each class calls only its **direct** parent's constructor, passing along what that parent needs.
+:::
+:::
+
+## Destruction: the reverse order {.dense-code}
+
+::: {.columns}
+::: {.column width="58%"}
+```{.cpp filename="destructor_inheritance_chain.cpp"}
+{{< include ./cpp/destructor_inheritance_chain.cpp >}}
+```
+:::
+::: {.column width="42%"}
+```{.text .output}
+A constructed
+B constructed
+C constructed
+C destroyed
+B destroyed
+A destroyed
+```
+
+When a derived object is destroyed, the destructors run in **reverse** order of construction: the most derived part is taken down first.
+:::
+:::
 
 # Inheritance and access specifiers
 
-We have learned two access specifiers:
-
-- private
-- public
-
-We have also seen the access specifier `protected`.  
-
-&#101449;&nbsp; We will learn more about how access specifiers interact with inheritance in this lesson.
-
 ## The `protected` access specifier
 
-&#9998;&nbsp; The access specifier `protected` is only useful in an inheritance context.
+We've used `public` and `private`. The third access specifier, `protected`, only matters with inheritance:
 
-:::{.my-box}
-- The `protected` access specifier allows the class the member belongs to, friends, and derived classes to access the member.
-- `protected` members are not accessible from outside the class.
-:::
+- a **`protected`** member can be used by the class itself, its friends, **and its derived classes**;
+- like a `private` member, it can't be used by the public.
 
-## Access specifiers in inheritance: Code illustration
+Remember the table from Chapter 11? This is its middle column.
 
-::: {#lst-access-specifier lst-cap="Calling base constructor in member initializer list of derived classes can be done in inheritance chain. Filename=`initializing_base_members_inheritance_chain.cpp`"}
-```{.cpp}
-{{< include ./cpp/initializing_base_members_inheritance_chain.cpp >}}
+## Access specifiers and derived classes {.dense-code}
+
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="access_specifiers_in_inheritance.cpp" .no-compile}
+{{< include ./cpp/access_specifiers_in_inheritance.cpp >}}
 ```
 :::
-
-## When should we use the `protected` access specifier
-
-[**Discuss briefly in the lecture.**]{style="color:crimson"} &#10140;&nbsp; _Students need to read these points carefully again._
-
-- With a `protected` attribute in a base class, derived classes can access that member directly. &#10140;&nbsp; If we later change anything about the `protected` attribute (type, value meaning, etc.), we'll probably **need to change both the base class and all of the derived classes**.
-- Using the `protected` access specifier is most useful when 
-    - we (and our team) are going to be the ones deriving from our own classes
-    - number of derived classes is reasonable
-- Making members private is good for insulating the public or derived classes from implementation changes, and for ensuring invariants (fractions must have non-zero denominators) are maintained properly.
-
-    - Think about the open-source code and you made member protected. Other developers can access the members and spoil them.
-
-    - This implies our class need a larger public (or protected) interface to support all of the functions that public or derived classes need for operation (high cost to build and maintain)
-- It's better to make your members private if we can, and [**only use `protected` when derived classes are planned**]{style="color:navy"} and the cost to build and maintain an interface to those private members is too high.
-
-## When should we use the `protected` access specifier
-
-:::{.callout-important}
-**Best practice**
-
-Favor private members over protected members.
-:::
-
-## Different kinds of inheritance, and their impact on access
-
-&#9998;&nbsp; There are three different ways for classes to inherit from other classes: `public`, `protected`, `private`
-
-&#9998;&nbsp; We have $9$ combinations: $3$ member access specifiers and 3 inheritance types.
-```{.cpp}
-// Inherit from Base publicly
-class Pub: public Base {
-};
-
-// Inherit from Base protectedly
-class Pro: protected Base {
-};
-
-// Inherit from Base privately
-class Pri: private Base {
-};
-
-class Def: Base {// Defaults to private inheritance
-};
+::: {.column width="28%"}
+```{.text .output .compiler}
+error: 'int Base::private_member' is private within this context
+error: 'int Base::protected_member' is protected within this context
 ```
 
-## Different kinds of inheritance, and their impact on access
-
-&#10149;&nbsp; **Some remarks** 
-
-- It is not that I cannot teach this component carefully in the live lecture.
-- I think we will get confused and forget most of the explained cases right after leaving the classroom.
-- The point is to make you aware of these concepts and give you an opportunity to learn them deeper.
-
-&#10149;&nbsp; Therefore, I write down some keypoints and skip the slides. _Students should read the materials later._
-
-:::{.callout-tip}
-**Key rules to interpret different combinations**
-
-- A class can always access its own (non-inherited) members.
-- The public accesses the members of a class based on the access specifiers of the class it is accessing.
-- A derived class accesses inherited members based on the access specifier inherited from the parent class. This varies depending on the access specifier and type of inheritance used.
+`Derived` can use `protected_member`, but not `private_member`. `main()` can use neither.
+:::
 :::
 
-## `public` inheritance
+## When should we use `protected`?
 
-- `public` inheritance is by far the most commonly used type of inheritance. 
-- Very rarely will we see or use the other types of inheritance.
+With a `protected` member, every derived class can use it directly. So if we later change it (its type, its meaning, its name), we may have to change **every** derived class too.
 
-| Access specifier in base class | Access specifier when inherited publicly |
-| :--- | :--- |
-| Public | Public |
-| Protected | Protected |
-| Private | Inaccessible |
+`protected` makes sense when:
 
-## `protected` inheritance
+- we (or our team) are the ones writing the derived classes;
+- there are only a few of them.
 
-- `protected` inheritance is the least common method of inheritance. 
-- It is almost never used, except in very particular cases.
-- With `protected` inheritance, the `public` and `protected` members become `protected`, and `private` members stay inaccessible.
+In open-source code, anyone can derive from your class and misuse its `protected` members.
 
-| Access specifier in base class | Access specifier when inherited protectedly |
-| :--- | :--- |
-| Public | Protected |
-| Protected | Protected |
-| Private | Inaccessible |
-
-## `private` inheritance
-
-- With `private` inheritance, all members from the base class are inherited as `private`.
-- `private` members are inaccessible, and `protected` and `public` members become `private`.
-
-| Access specifier in base class | Access specifier when inherited privately |
-| :--- | :--- |
-| Public | Private |
-| Protected | Private |
-| Private | Inaccessible |
-
-## Access specifier in inheritance: Summary
-
-| Base Class Member | Public Inheritance | Protected Inheritance | Private Inheritance |
-| :--- | :--- | :--- | :--- |
-| **Public** | Public | Protected | Private |
-| **Protected** | Protected | Protected | Private |
-| **Private** | Inaccessible | Inaccessible | Inaccessible |
-
-# Adding new functionality to a derived class
-
-&#9998;&nbsp; One of the biggest benefits of inheritance is the [**ability to reuse written code**]{style="color:navy"}.
-
-&#9998;&nbsp; We can [**add new functionality, modifying existing functionality, or hide functionality**]{style="color:navy"} if we don't want.
-
-:::{.callout}
-We have learned these concepts from **Introductory Programming 2** and also in several last examples. &#10140;&nbsp; No need to go into too much details.
+::: {.callout-tip title="Best practice"}
+Favour `private` members over `protected` ones. Use `protected` only when derived classes are planned, and a `private` member plus public functions would cost too much.
 :::
 
-## Adding new functionality to a derived class: Code illustration
+## Kinds of inheritance (read at home)
 
-::: {#lst-adding-functionality lst-cap="Besides inheriting members from the base class, the derived class can add more functionalities. Filename=`add_functionality_example.cpp`"}
+There are three ways to inherit: `public`, `protected` and `private`. Only `public` is common; the others are rare.
+
 ```{.cpp}
+class Pub : public Base {};    // what we've used all along
+class Pro : protected Base {};
+class Pri : private Base {};
+class Def : Base {};           // defaults to private for a class!
+```
+
+The type of inheritance can make inherited members *less* accessible:
+
+| Member in `Base` | `public` inheritance | `protected` inheritance | `private` inheritance |
+|:---|:---|:---|:---|
+| `public` | public | protected | private |
+| `protected` | protected | protected | private |
+| `private` | inaccessible | inaccessible | inaccessible |
+
+# Adding, redefining and extending behaviour
+
+## Adding new functionality {.dense-code}
+
+```{.cpp filename="base_derived.h"}
+{{< include ./cpp/base_derived.h >}}
+```
+
+## Using the new functionality
+
+::: {.columns}
+::: {.column width="65%"}
+```{.cpp filename="add_functionality_example.cpp"}
 {{< include ./cpp/add_functionality_example.cpp >}}
 ```
 :::
+::: {.column width="35%"}
+```{.text .output}
+I am a Base, ID 42
+ID 42, value 24
+```
+:::
+:::
 
-&#10149;&nbsp; Let us run it and go through it slowly.
+One of the biggest benefits of inheritance: **reuse** what's written, and **add** what's new. A `Derived` object can use both what it inherited (`identify()`) and what it added (`print()`).
 
-## Adding new functionality: An example using `std::vector`
+## A vector of derived objects
 
-::: {#lst-adding-functionality-vector lst-cap="Same as before but a slightly more complex. Filename=`add_functionality_example_vector.cpp`"}
-```{.cpp}
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="add_functionality_example_vector.cpp"}
 {{< include ./cpp/add_functionality_example_vector.cpp >}}
 ```
 :::
-
-&#10149;&nbsp; Let us run it and go through it slowly.
-
-# Calling inherited functions and overriding behavior
-
-&#9998;&nbsp; By default, derived classes inherit all of the behaviors defined in a base class.
-
-&#9998;&nbsp; We now examine in more detail how member functions are selected, as well as how we can leverage this to change behaviors in a derived class.
-
-:::{.callout-note}
-- Most of us have learned all these concepts in **Introductory Programming 2** and **Mechanical Engineering Skills 3**. 
-- It does not harm to quickly go through them again. Well, people can forget 😃 😃.
+::: {.column width="28%"}
+```{.text .output}
+ID 24, value 42
+ID 42, value 24
+ID 0, value 0
+```
 :::
+:::
+
+`for (const auto& element : list)` is a **range-based for loop**: it visits every element of `list`, like Python's `for element in list:`. The `const auto&` avoids copying each element (Chapter 07).
 
 ## Calling a base class function
 
-&#9998;&nbsp; Since the derived class inherits members of its base class, it can use them (need access specifier `public` or `protected` in base class).
-
-:::{#lst-call-base-class-function lst-cap="Derived classes can call their base class functions. Filename=`call_base_class_function.cpp`"}
-```{.cpp}
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="call_base_class_function.cpp"}
 {{< include ./cpp/call_base_class_function.cpp >}}
 ```
 :::
+::: {.column width="28%"}
+```{.text .output}
+Base::identify()
+Base::identify()
+```
 
-&#10149;&nbsp; Let us run this code snippet.
+`Derived` inherits `identify()` from `Base`, so `derived.identify()` calls `Base::identify()`.
+:::
+:::
 
-## Redefining behaviors
+## Redefining behaviour
 
-&#9998;&nbsp; However, if we had defined `Derived::identify()` in the Derived class, it would have been used instead.
-
-:::{#lst-redefine-behaviors lst-cap="The derived class can override the member function of the base class. It can redefine behaviors of the base class. Filename=`call_base_class_function.cpp`"}
-```{.cpp}
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="redefine_behaviors.cpp"}
 {{< include ./cpp/redefine_behaviors.cpp >}}
 ```
 :::
+::: {.column width="28%"}
+```{.text .output}
+Base::identify()
+Derived::identify()
+```
 
-## Adding to existing functionality
+If `Derived` defines its own `identify()`, a `Derived` object uses that one instead: it **hides** the base version.
+:::
+:::
 
-&#9998;&nbsp; Sometimes we do not want to completely replace a base class function, but instead want to add additional functionality to it when called with a derived object.
+## Adding to existing behaviour
 
-:::{#lst-redefine-behaviors lst-cap="We can call the base class's member function and add more to it. Filename=`add_to_existing_functionality.cpp`"}
-```{.cpp}
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="add_to_existing_functionality.cpp"}
 {{< include ./cpp/add_to_existing_functionality.cpp >}}
 ```
 :::
+::: {.column width="28%"}
+```{.text .output}
+Derived::identify()
+Base::identify()
+```
 
-# Change an inherited member's access level and hide inherited functionality
+To *extend* the base behaviour rather than replace it, call the base version explicitly: `Base::identify()`.
+:::
+:::
 
-&#9998;&nbsp; **Change an inherited member's access**
+## Changing access with `using` (read at home) {.dense-code}
 
-C++ gives us the ability to change an inherited member’s access specifier in the derived class.
-
-&#9998;&nbsp; **Hide functionality**
-
-In a derived class, it is possible to hide functionality that exists in the base class, so that it can not be accessed through the derived class.
-
-We can do both with `using` declaration.
-
-[We skip this component.]{style="color:crimson"} _The students can learn it at home._
-
-## Change an inherited member's access level: make `public`
-
-&#9998;&nbsp; C++ gives us the ability to change an inherited member’s access specifier in the derived class, by a [`using` declaration]{style="color:red"} -- Let us run this code snippet:
-
-:::{#lst-change-access-level-derived lst-cap="With `using` declaration we can change the access level of derived class' members. Filename=`change_inherited_member_access_level.cpp`"}
-```{.cpp}
+::: {.columns}
+::: {.column width="62%"}
+```{.cpp filename="change_inherited_member_access_level.cpp"}
 {{< include ./cpp/change_inherited_member_access_level.cpp >}}
 ```
 :::
-
-## Change an inherited member's access level: hide functionality (make `private`)
-
-&#9998;&nbsp; In a derived class, it is [**possible to hide functionality that exists in the base class**]{style="color:navy"}, so that it can not be accessed through the derived class -- Let us play around this code snippet:
-
-:::{#lst-hide-functionality lst-cap="With `using` declaration we can also high functionality that exists in the base class. Filename=`hide_functionality.cpp`"}
-```{.cpp}
-{{< include ./cpp/hide_functionality.cpp >}}
+::: {.column width="38%"}
+```{.text .output}
+ID 42
 ```
+
+A **`using` declaration** in the derived class changes an inherited member's access level. Under `public:`, `using Base::print_id;` makes a `protected` function public.
+
+Under `private:`, the same trick **hides** a public member (`hide_functionality.cpp`). And `= delete` forbids calling it at all (`delete_functions_in_derived.cpp`).
 :::
-
-## Change an inherited member's access level: Summary
-
-&#9998;&nbsp; With `using` declaration, we can change an inherited member's access level
-
-- make the `member` in `Derived` class `public` by declaring `using Base::member;` below access specifier `public:`
-- hide the `member` in `Based` class by declaring `using Base::membe;` below access specifier `private:`
-
-## Deleting functions in derived class
-
-&#9998;&nbsp; We can mark member functions as deleted in the derived class, ensuring they cannot be called at all though a derived object.
-
-:::{#lst-hide-functionality lst-cap="We can `delete` a function inherited from the base class in the derived class. This function cannot be called at all through a derived object. Filename=`delete_functions_in_derived.cpp`"}
-```{.cpp}
-{{< include ./cpp/delete_functions_in_derived.cpp >}}
-```
 :::
 
 # Multiple inheritance
 
-&#9998;&nbsp; [**Multiple inheritance**]{style="color:red"} enables a derived class to inherit members from more than one parent.
+## Multiple inheritance
 
-:::{.callout-note}
-- Again, I expect that most of us (students) have learned all these concepts in **Introductory Programming 2** and **Mechanical Engineering Skills 3**. 
-- However, I can acknowledge that maybe many of you have not heard about this.
-:::
+**Multiple inheritance** lets a class inherit from more than one base class.
 
-## Multiple inheritance: Smartphone -- A Concept hierarchy
+![](figures/smartphone.png){fig-alt="SmartPhone, with use_app(), derives from both Camera, with take_photo(), and Phone, with make_call()." width="72%"}
 
-&#10149;&nbsp; Let us think of this example
+A `Camera` can `take_photo()`; a `Phone` can `make_call()`; a `SmartPhone` is both, and adds apps on top.
 
-- `Camera`: provides the ability to `take_photo()`
-- `Phone`: provides the ability to `make_call()`
-- `Smartphone`: inherits from both, allowing it to perform both actions.
+## A smartphone in code {.dense-code}
 
-## Multiple inherintance: Smartphone -- Code
-
-
-:::{#lst-multiple-inheritance-smartphone lst-cap="`SmartPhone` inherits both members from `Camera` and `Phone`. Filename=`multiple_inheritance_smartphone.cpp`"}
-```{.cpp}
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="multiple_inheritance_smartphone.cpp"}
 {{< include ./cpp/multiple_inheritance_smartphone.cpp >}}
 ```
 :::
+::: {.column width="28%"}
+```{.text .output}
+Taking a photo!
+Making a phone call!
+Using Moodle!
+```
+
+::: {.callout-warning title="Watch out"}
+Multiple inheritance gets complicated fast: what if both bases have a member with the same name? Use it only when the alternatives are worse.
+:::
+:::
+:::
+
+# Wrapping up
+
+## Summary
+
+- **Inheritance** models "is a": `class Lecturer : public UniPerson`. The derived class reuses the base class's members and adds its own.
+- A derived object has a **base part** and a **derived part**. The base part is constructed first and destroyed last; in a chain, from the most basic class to the most derived.
+- Initialize the base part by calling the **base constructor** first in the member initializer list: C++'s `super().__init__()`.
+- **`protected`** members are visible to derived classes, but not to the public. Prefer `private`.
+- A derived class can **add** functions, **redefine** (hide) inherited ones, or **extend** them by calling `Base::function()`.
+- A class can inherit from **several** bases, but use that sparingly.
+
+## Keep learning
+
+Explore these on your own, with Google Gemini in Guided Learning mode or on [learncpp.com](https://www.learncpp.com):
+
+1. [Constructors and initialization of derived classes](https://www.learncpp.com/cpp-tutorial/constructors-and-initialization-of-derived-classes/)
+2. [Inheritance and access specifiers](https://www.learncpp.com/cpp-tutorial/inheritance-and-access-specifiers/)
+3. [Hiding inherited functionality](https://www.learncpp.com/cpp-tutorial/hiding-inherited-functionality/)
+4. [Multiple inheritance](https://www.learncpp.com/cpp-tutorial/multiple-inheritance/)
+
+**Next up, Chapter 15:** virtual functions and polymorphism.

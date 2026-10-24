@@ -1,31 +1,24 @@
 #include <iostream>
-class A
-{
-public:
-    A(int a) { std::cout << "A: " << a << '\n'; }
-    ~A() { std::cout << "A-type object is destroyed!\n"; }
+
+class A {
+  public:
+    A() { std::cout << "A constructed\n"; }
+    ~A() { std::cout << "A destroyed\n"; }
 };
 
-class B: public A
-{
-public:
-    B(int a, double b) : A{ a } {
-        std::cout << "B: " << b << '\n';
-    }
-    ~B() { std::cout << "B-type object is destroyed!\n"; }
+class B : public A {
+  public:
+    B() { std::cout << "B constructed\n"; }
+    ~B() { std::cout << "B destroyed\n"; }
 };
 
-class C: public B
-{
-public:
-    C(int a, double b, char c) : B{ a, b } {
-        std::cout << "C: " << c << '\n';
-    }
-    ~C() { std::cout << "C-type object is destroyed!\n"; }
+class C : public B {
+  public:
+    C() { std::cout << "C constructed\n"; }
+    ~C() { std::cout << "C destroyed\n"; }
 };
 
-int main()
-{
-    C c{ 5, 4.3, 'R' };
+int main() {
+    C c{};
     return 0;
-}
+} // c is destroyed here

@@ -1,598 +1,541 @@
 ---
-title: "Chapter 15: Virtual function and Polymorphism"
-author: Khiem Nguyen -- <khiem.nguyen@glasgow.ac.uk>
-    # <br>Lecturer in Multiscale Materials
-    # <br><khiem.nguyen@glasgow.ac.uk>
-author-meta: "Lecturer in Multiscale Materials"
-
-format: 
-    # other themes: 
-    #   beige, blood, dark, dracula, league, moon, 
-    #   night, serif, simple, sky, solarized
-    # highlight-style: monokai      # good for dark images
-    html:
-        output-file: "chap_15.html"
-        grid:
-            body-width: 1600px
-            margin-width: 300px
-            sidebar-width: 350px
-        embed-resources: true
-        theme: simple
-        highlight-style: github
-        css: doc.css
-        number-sections: true
-        number-depth: 3
-        mouse-wheel: true
-        title-slide-style: pandoc
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true     # <-- remove white background in code blocks
-        code-block-border-left: false
-        toc: true
-        toc-depth: 3
-        toc-title: Contents
-    pdf:
-        output-file: "chap_15.pdf"
-        embed-resources: true
-        theme: simple
-        highlight-style: github      # good for dark images
-        css: doc.css
-        number-sections: true
-        number-depth: 3
-        geometry:
-            - top=24px
-            - bottom=24px
-            - left=36px
-            - right=36px
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true # <-- remove white background in code blocks
-        code-block-border-left: false
-        toc: true
-        toc-depth: 3
-        toc-title: Contents
-    revealjs:
-        output-file: "chap_15_slide.html"
-        embed-resources: true
-        theme: simple
-        css: slide.css
-        number-sections: true
-        number-depth: 3
-        mouse-wheel: true
-        highlight-style: github
-        slide-number: true
-        title-slide-style: pandoc
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true   # <-- remove white background in code blocks
-        code-block-border-left: false # optional: remove left border
-        toc: true
-        toc-depth: 1
-        toc-title: Contents
-
+title: "Chapter 15: Virtual Functions and Polymorphism"
+subtitle: "ENG3091"
+author:
+  - name: Khiem Nguyen
+    email: khiem.nguyen@glasgow.ac.uk
+    affiliations: University of Glasgow
+metadata-files: [../../theme/lecture.yml]
+format:
+  html:
+    output-file: chap_15.html
+  pdf:
+    output-file: chap_15.pdf
+  revealjs:
+    output-file: chap_15_slide.html
 ---
 
-# Pointers and references to the base class of derived objects
+# Base class pointers and references
 
-&#9998;&nbsp; In the last few lessons, we have seen that a derived class inherits members of its base class. This means that a derived class object can be treated as an object of the base class. 
+## Our `Base` and `Derived` {.dense-code}
 
-&#9998;&nbsp; This is a fundamental property of inheritance, and it allows us to write code that can work with objects of different derived classes through pointers or references to the base class.
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="base_derived.h"}
+{{< include ./cpp/base_derived.h >}}
+```
+:::
+::: {.column width="28%"}
+Nothing new here: `Derived` inherits from `Base`, and has its own `get_name()` that hides `Base::get_name()` (Chapter 14).
+:::
+:::
 
-## Pointers, references and derived classes: Quick intro
+## Pointers and references to derived objects
 
-&#10149;&nbsp; Let us look at this code: This example is not difficult to understand.
-
-::: {#lst-pointers-references-to-derived lst-cap="Pointers and references to `Derived` objects"}
-```{.cpp}
+::: {.columns}
+::: {.column width="78%"}
+```{.cpp filename="pointers_references_to_derived.cpp"}
 {{< include ./cpp/pointers_references_to_derived.cpp >}}
 ```
 :::
-
-## Pointers, references and derived classes: Quick intro
-
-:::{.fragment}
-&#9998;&nbsp; Since `Derived` has a `Base` part, conceptually we can think of:
-
-- How about a `Base` pointer to an `Derived` object
-- How about a `Base` reference refering to a `Derived` object
-
-The question is legitimate and makes sense.
+::: {.column width="22%"}
+```{.text .output}
+Derived 42.24
+Derived 42.24
+Derived 42.24
+```
+:::
 :::
 
-:::{.fragment}
-&#10140;&nbsp; Indeed, it works in C++.
-:::
+Still nothing new: a `Derived` reference or pointer behaves just like the `Derived` object itself.
 
-## Pointers, references and derived classes: Quick intro
+## A *base* reference to a derived object
 
-::: {#lst-pointers-references-to-derived lst-cap="Pointers and references to `Base` objects can point to/refer to `Derived` objects"}
-```{.cpp}
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="base_pointers_references_to_derived.cpp"}
 {{< include ./cpp/base_pointers_references_to_derived.cpp >}}
 ```
 :::
+::: {.column width="28%"}
+```{.text .output}
+Derived
+Base
+Base
+```
+:::
+:::
 
-&#10149;&nbsp; Let us run this code snippet and analyse it.
+A `Derived` object **has a** `Base` part, so a `Base` reference or pointer can refer to it. But look at what it calls!
 
-## Pointers, references and derived classes: Quick intro
+## A base reference sees only the base part
 
-&#10149;&nbsp; Some explanation on the output of the above code snippet:
+![](figures/base_view.png){fig-alt="base_ref refers to a Derived object, but only knows about its Base part, so it calls Base::get_name(), unless get_name() is virtual." width="84%"}
 
-- Even though `Derived::get_name()` shadows (hides) `Base::get_name()` for `Derived` objects, the `Base` pointer and `Base` reference cannot see `Derived::get_name()`.
+`Derived::get_name()` hides `Base::get_name()` for `Derived` objects. But through a `Base` reference or pointer, the compiler only knows about the `Base` part, so it calls `Base::get_name()`.
 
-- The compiler calls `Base::get_name()`
+## Why would we want that?
 
-## Use for pointers and references to base classes: Why!!!
-
-&#10149;&nbsp; Why do we need pointers and references to base classes? 
-
-&#10149;&nbsp; Why wouldn't we just use pointers and references to derived object?
-
-:::{.fragment}
-&#10149;&nbsp; Consider the following example:
+Suppose we have cats, dogs and tigers, and want to report what each one says:
 
 ```{.cpp}
 void report(const Cat& cat) {
     std::cout << cat.get_name() << " says " << cat.speak() << '\n';
 }
-
 void report(const Dog& dog) {
     std::cout << dog.get_name() << " says " << dog.speak() << '\n';
 }
-
 void report(const Tiger& tiger) {
-    std::cout << tiger.get_name() << " says " << tiger.speak() << '\n'
+    std::cout << tiger.get_name() << " says " << tiger.speak() << '\n';
 }
 ```
 
-&#10140;&nbsp; How about a Zoo with at least $100-120$ animals, each animal has $5-10$ families.
-:::
-
-
-## Use for pointers and references to base classes: Why!!!
-
-&#10149;&nbsp; Instead of
-```{.cpp}
-void report(const Cat& cat) {
-    std::cout << cat.get_name() << " says " << cat.speak() << '\n';
-}
-
-void report(const Dog& dog) {
-    std::cout << dog.get_name() << " says " << dog.speak() << '\n';
-}
-
-void report(const Tiger& tiger) {
-    std::cout << tiger.get_name() << " says " << tiger.speak() << '\n'
-}
-```
-
-we would prefer the following code snippet works for all kinds of animals
+A zoo with 100 kinds of animal means 100 copies of the same function. We'd much rather write one:
 
 ```{.cpp}
-void report(const Animal& animal_ref)
-{
-    std::cout << animal_ref.get_nam() << " says " << animal_ref.speak() << '\n';
+void report(const Animal& animal) {
+    std::cout << animal.get_name() << " says " << animal.speak() << '\n';
 }
 ```
 
-**Question**&nbsp; According to all of what we have learned, what would be the best option to implement this idea? 
-
-## Use for pointers and references to base classes
-We can use template
+## Couldn't a template do it?
 
 ```{.cpp}
 template <typename T>
-void report(const T& animal_ref) {
-    std::cout << animal_ref.get_name() << " says " 
-              << animal_ref.speak() << '\n';
+void report(const T& animal) {
+    std::cout << animal.get_name() << " says " << animal.speak() << '\n';
 }
 ```
 
-**Question**&nbsp; Wait a minute, what is the problem here?
+::: {.fragment}
+It works, but:
 
-:::{.fragment}
-[**Answer**]{style="color:red"}&nbsp; we have to use animal-type objects but it is not clear from the definition 
-
-```{.cpp}
-template <typename T>
-```
-itself. We can use a `double` and the function body will throw error.
+- nothing says `T` must be an animal: `report(42)` gives a long, confusing template error;
+- each type gets its own instance, decided at **compile time**. A template can't handle a collection of *mixed* animals whose types are only known when the program runs.
 :::
 
-## Use for pointers and references to base classes: Arrays of animals
+## Our animals {.dense-code}
 
-&#10149;&nbsp; Imagine that we have $3$ cats, $3$ dogs and $3$ tigers and want to keep them in an array for managment.
-
-&#10149;&nbsp; Because arrays can only hold objects of one type, without a pointer or reference to a base class, we must create a different array for each derived type
-
-- $1$ array for cats
-- $1$ array for dogs
-- $1$ array for tigers
-- so on
-
-## Use for pointers and references to base classes: Arrays of animals
-
-&#10149;&nbsp; The code may look like this:
-
-```{.cpp}
-int main()
-{
-    // std::to_array is only after C++20
-    // const auto& cats{ std::to_array<Cat>({{ "Fred" }, { "Misty" }, { "Zeke" }}) };
-    // const auto& dogs{ std::to_array<Dog>({{ "Garbo" }, { "Pooky" }, { "Truffle" }}) };
-
-    // Before C++20
-    const std::array<Cat, 3> cats{ { { "Fred" }, { "Misty" }, { "Zeke" } } };
-    const std::array<Dog, 3> dogs{ { { "Garbo" }, { "Pooky" }, { "Truffle" } } };
-
-    for (const auto& cat : cats) {
-        std::cout << cat.get_name() << " says " << cat.speak() << '\n';
-    }
-
-    for (const auto& dog : dogs) {
-        std::cout << dog.get_name() << " says " << dog.speak() << '\n';
-    }
-
-    return 0;
-}
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="animals_nonvirtual.h"}
+{{< include ./cpp/animals_nonvirtual.h >}}
 ```
+:::
+::: {.column width="28%"}
+The constructor of `Animal` is `protected`, so nobody can create a plain `Animal`: only cats and dogs.
 
-&#10149;&nbsp; Full code is given in `different_animal_arrays.cpp`. [Run it to see the output.]{style="color:crimson"}
+`std::string_view` is a cheap, read-only view of some text (Chapter 04).
+:::
+:::
 
-## Use for pointers and references to base classes: Arrays of animals
+## One array per kind of animal
 
-&#10149;&nbsp; It makes more sense to write something like this:
-
-```{.cpp}
-int main()
-{
-    const Cat fred{ "Fred" };
-    const Cat misty{ "Misty" };
-    const Cat zeke{ "Zeke" };
-
-    const Dog garbo{ "Garbo" };
-    const Dog pooky{ "Pooky" };
-    const Dog truffle{ "Truffle" };
-
-    // Set up an array of pointers to animals, and set those pointers to our Cat and Dog objects
-    const auto animals{ std::array<const Animal*, 6>({&fred, &garbo, &misty, 
-                                                      &pooky, &truffle, &zeke }) };
-
-    // Before C++20, with the array size being explicitly specified
-    // const std::array<const Animal*, 6> animals{ &fred, &garbo, &misty, &pooky, &truffle, &zeke };
-
-    for (const auto animal : animals) {
-        std::cout << animal->get_name() << " says " << animal->speak() << '\n';
-    }
-
-    return 0;
-}
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="different_animal_arrays.cpp"}
+{{< include ./cpp/different_animal_arrays.cpp >}}
 ```
+:::
+::: {.column width="28%"}
+```{.text .output}
+Fred says Meow
+Misty says Meow
+Zeke says Meow
+Garbo says Woof
+Pooky says Woof
+Truffle says Woof
+```
+:::
+:::
 
-&#10149;&nbsp; Full code is given in `animal_array.cpp`. [Run it to see the output.]{style="color:crimson"}
+An array holds objects of **one** type, so each kind of animal needs its own array and its own loop. With 100 kinds, that's 100 arrays.
 
-# Virtual functions and polymorphism
+## One vector of `Animal` pointers?
 
-In this lesson, we learn how to address the issue presented above using [**virtual functions]{style="color:crimson"}
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="animal_array.cpp"}
+{{< include ./cpp/animal_array.cpp >}}
+```
+:::
+::: {.column width="28%"}
+```{.text .output}
+Fred says ???
+Garbo says ???
+Misty says ???
+Pooky says ???
+```
+:::
+:::
+
+Base pointers let one vector hold every kind of animal. But they all say `???`: each call goes to `Animal::speak()`. We need **virtual functions**.
+
+# Virtual functions
 
 ## Virtual functions
 
-&#9998;&nbsp; [**virtual function**]{style="color:red"} is a special type of member function that resolves to the most-derived version of the function for the actual type of the object being referenced or pointed to.
+A **virtual function** is a member function that, when called through a base pointer or reference, resolves to the **most-derived** version for the actual object.
 
-&#9998;&nbsp; A [**derived function**] is considered a match if it has the same signature and return type as the base version of the function. Such functions are called **overrides**.
+- Put `virtual` in front of the function in the **base class**.
+- A function in a derived class with the same signature and return type **overrides** it, and is called an **override**. Mark it `override`.
 
-&#9998;&nbsp; To make a function virtual, place the `virtual` keyword before the function declaration.
+## A first virtual function
 
-```{.cpp}
-class Base
-{
-public:
-    // note addition of virtual keyword
-    virtual std::string_view get_name() const { return "Base"; } 
-};
-
-class Derived: public Base
-{
-public:
-    virtual std::string_view get_name() const { return "Derived"; }
-};
-```
-
-## Virtual function: Full example
-
-&#10149;&nbsp; Let us run this code snippet
-
-::: {#lst-virtual-function lst-cap="A simple example of virtual function. Filename=`virtual_function_example.cpp"}
-```{.cpp}
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="virtual_function_example.cpp"}
 {{< include ./cpp/virtual_function_example.cpp >}}
 ```
 :::
+::: {.column width="28%"}
+```{.text .output}
+base_ref is a Derived
+```
 
-## Virtual function: Inheritance chain
+One word, `virtual`, and the call through `base_ref` now reaches `Derived::get_name()`.
+:::
+:::
 
-&#10149;&nbsp; Let us run this code snippet
+## Virtual functions in a chain {.dense-code}
 
-::: {#lst-virtual-function lst-cap="Virtual function in inheritance chain. Filename=`virtual_function_inheritance_chain.cpp"}
-```{.cpp}
+::: {.columns}
+::: {.column width="65%"}
+```{.cpp filename="virtual_function_inheritance_chain.cpp"}
 {{< include ./cpp/virtual_function_inheritance_chain.cpp >}}
 ```
 :::
-
-## Polymorphism
-
-In programming, [**polymorphism**]{style="color:red"} refers to the ability of an entity to have multiple forms -- The term "[**polymorphism**]{style="color:red"}"
-
-For example:
-
-```{.cpp}
-int add(int, int)
-double add(double, double)
+::: {.column width="35%"}
+```{.text .output}
+base_ref is a C
 ```
 
-The identifier `add` has two forms: `add(int, int)` and `add(double, double)`
-
-## Polymorphism: compile-time polymorphism vs runtime polymorphism
-
-&#9998;&nbsp; **compile-time polymorphism** refers to forms polymorphism that are resolved by the compiler. These includes
-
-- function overload resolution
-- template resolution
-
-&#9998;&nbsp; **runtime polymorphism** refers to forms of polymorphism that are resolved at runtime. This includes
-
-- virtual function resolution
-
-## Polymorphism: A complex example
-
-&#10149;&nbsp; Let us revisit the last `Animal` example -- But only `Cat` & `Tiger`
-
-::: {#lst-animals_without_virtual lst-cap="Animal classes without using `virtual` functions. Filename=`animals_without_virtual.cpp"}
-```{.cpp}
-{{< include ./cpp/animals_without_virtual.cpp >}}
-```
+`base_ref` refers to a `C`, so `C::get_name()` is called: the most-derived version **for the actual object**. `D` doesn't come into it, because the object isn't a `D`.
+:::
 :::
 
-## Polymorphism: A complex example
+## The animals, with a virtual `speak()` {.dense-code}
 
-&#10149;&nbsp; Let us make `speak()` `virtual` function. Run the code to see.
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="animals.h"}
+{{< include ./cpp/animals.h >}}
+```
+:::
+::: {.column width="28%"}
+Two changes from before:
 
-::: {#lst-animals-with-virtual lst-cap="Animal classes using `virtual` functions. Filename=`animal_with_virtual.cpp"}
-```{.cpp}
+- `virtual` in front of `Animal::speak()`;
+- `override` after each derived `speak()`.
+
+(And a virtual destructor, explained later today.)
+:::
+:::
+
+## Now every animal speaks for itself
+
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="animals_with_virtual.cpp"}
 {{< include ./cpp/animals_with_virtual.cpp >}}
 ```
 :::
+::: {.column width="28%"}
+```{.text .output}
+Felix says Meow
+Rex says Woof
+Fred says Meow
+Garbo says Woof
+```
 
-## Virtual function and polymorphism: Word of warning
+The same `report()` function as before (`animals_without_virtual.cpp`, where everyone said `???`). Only the header changed.
+:::
+:::
 
-&#9998;&nbsp; The signature of derived class function must _exactly_ match the signature of the base class virtual function in order for the derived class function to be used.
+## Behind the scenes (read at home)
 
-&#9998;&nbsp; If a function is virtual, all matching overrides in derived classes are implicitly virtual.
+![](figures/virtual_dispatch.png){fig-alt="animal.speak(): follow the object's hidden pointer to its class's table, which says speak means Cat::speak, which prints Meow. The choice happens while the program runs." width="88%"}
 
-## Return types of virtual functions
+Every object of a class with virtual functions carries a hidden pointer to its class's **virtual table**, which lists the right function for each virtual call. Following it costs a tiny bit of time, which is why C++ functions aren't virtual unless you ask.
 
-&#9998;&nbsp; Under normal circumstances, the return type of a virtual function and its override must match.
+## Polymorphism
 
-```{.cpp}
-class Base
-{
-public:
-    virtual int get_value() const { return 5; }
-};
-class Derived : public Base
-{
-public:
-    virtual double get_value() const { return 6.78; }
-};
+**Polymorphism** means one name with many forms, chosen according to the types involved:
+
+- **Compile-time polymorphism** is resolved by the compiler: function overloading (Chapter 05) and templates (Chapter 06).
+- **Run-time polymorphism** is resolved while the program runs: **virtual functions**.
+
+::: {.callout-important title="Key idea"}
+With virtual functions, code written for the **base class** (like `report(const Animal&)`) automatically does the right thing for **every** derived class, even ones written years later.
+:::
+
+## The rules of overriding
+
+- An override needs **exactly** the same signature as the base function (parameter types and `const`), and is itself virtual.
+- The return types must match too:
+
+```{.cpp filename="virtual_return_type_mismatch.cpp" .no-compile}
+{{< include ./cpp/virtual_return_type_mismatch.cpp >}}
+```
+
+```{.text .output .compiler}
+error: conflicting return type specified for 'virtual double Derived::get_value() const'
 ```
 
 # The `override` and `final` specifiers
 
-## The `override` specifier
+## Overrides that don't override {.dense-code}
 
-&#10149;&nbsp; Let us run the following code snippet
-
-::: {#lst-not-use-override lst-cap="`B::get_name_A(short)` does not override `A::get_name_A(int)`. Filename=`not_use_override_specifier.cpp"}
-```{.cpp}
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="not_use_override_specifier.cpp"}
 {{< include ./cpp/not_use_override_specifier.cpp >}}
 ```
 :::
+::: {.column width="28%"}
+```{.text .output}
+A
+A
+```
 
-&#10140;&nbsp; The `override` specifier can be applied to any virtual function to tell the compiler to enforce that the function is an override.
+Both calls go to `A`. `B::get_name_1(short)` takes a `short`, not an `int`, and `B::get_name_2` isn't `const`: neither is an override. Only `-Wall` hints at it: *"... was hidden"*.
+:::
+:::
 
-## The `override` specifier
+## `override` turns the bug into an error {.dense-code}
 
-::: {#lst-use-override-specifier lst-cap="`By using `override` specifier on a virtual function, we enforce that the function is an override`. Filename=`not_use_override_specifier.cpp"}
-```{.cpp}
+```{.cpp filename="use_override_specifier.cpp" .no-compile}
 {{< include ./cpp/use_override_specifier.cpp >}}
 ```
-:::
 
-## The `final` specifier
-
-&#9998;&nbsp; There may be cases where we don't want someone to be able to override a virtual function, or inherit from a class. The `final` specifier can be used to tell the compiler to enforce this.
-
-::: {#lst-use-override-specifier lst-cap="An example of using `final` specifier. Filename=`final_specifier_example.cpp"}
-```{.cpp}
-#include <string_view>
-
-class A
-{
-public:
-	virtual std::string_view get_name() const { return "A"; }
-};
-
-class B : public A
-{
-public:
-	// note use of final specifier on following line -- that makes this function not able to be overridden in derived classes
-	std::string_view get_name() const override final { return "B"; } // okay, overrides A::getName()
-};
-
-class C : public B
-{
-public:
-    // compile error: overrides B::getName(), which is final
-	std::string_view get_name() const override { return "C"; }
-};
+::: {.columns}
+::: {.column width="55%"}
+```{.text .output .compiler}
+error: 'B::get_name_1(short int) const' marked 'override', but does not override
+error: 'B::get_name_2(int)' marked 'override', but does not override
 ```
 :::
-
-
-# Pure virtual functions, abstract base classes and interface classes
-
-&#9998;&nbsp; C++ allows a special kind of virtual function called a [**pure virtual function**]{style="color:crimson"}
-
-# Pure virtual functions
-
-```{.cpp}
-#include <string_view>
-
-class Base
-{
-public:
-    std::string_view say_hello() const { return "hello"; } // a normal non-virtual function
-
-    virtual std::string_view get_name() const { return "Base"; } // a normal virtual function
-
-    virtual int get_value() const = 0; // a pure virtual function
-
-    int do_something() = 0; // Compile error: can not set non-virtual functions to 0
-};
-```
-
-&#9998;&nbsp; Using a pure virtual function has two main consequences: 
-
-:::{.incremental}
-- Any class with one or more pure virtual functions becomes an [**abstract base class**]{style="color:crimson"}, which means that [it can not be instantiated!]{style="color:royalblue"}
-- Any derived class must define a body for this function, or that derived class will be considered an abstract base class as well.
+::: {.column width="45%"}
+::: {.callout-tip title="Best practice"}
+Write `virtual` only in the base class, and `override` on **every** override.
+:::
+:::
 :::
 
-## Pure virtual function: An example
+## The `final` specifier {.dense-code}
 
-&#10149;&nbsp; Let us look at this example -- We don't want people create an object of `Animal` as it does not make sense
+**`final`** stops a function from being overridden any further:
 
-::: {#lst-pure-virtual-function-intro lst-cap="Quick intro to why we need pure virtual function."}
-```{.cpp}
-class Animal
-{
-protected:
-    std::string name;
+```{.cpp filename="final_specifier_example.cpp" .no-compile}
+{{< include ./cpp/final_specifier_example.cpp >}}
+```
 
-    Animal(std::string_view name) : name{ name } { }
+```{.text .output .compiler}
+error: virtual function 'virtual std::string_view C::get_name() const' overriding final function
+```
 
-    // To prevent slicing (covered later)
-    Animal(const Animal&) = delete;
-    Animal& operator=(const Animal&) = delete;
+And `class B final : public A` would stop anyone deriving from `B` at all.
 
-public:
-    std::string_view get_name() const { return name; }
-    virtual std::string_view speak() const { return "WHAT?!?!"; }
-};
+# Slicing and virtual destructors
 
-class Cat: public Animal
-{
-public:
-    Cat(std::string_view name) : Animal{ name } {}
-    virtual std::string_view speak() const { return "Meooow"; }
-};
+## Object slicing {.dense-code}
 
-class Tiger: public Animal
-{
-public:
-    Tiger(std::string_view name) : Animal{ name } {}
-    virtual std::string_view speak() const { return "Roarrr"; }
-};
+::: {.columns}
+::: {.column width="76%"}
+```{.cpp filename="object_slicing.cpp"}
+{{< include ./cpp/object_slicing.cpp >}}
 ```
 :::
+::: {.column width="24%"}
+```{.text .output}
+ref is a Derived
+copy is a Base
+```
 
-## Pure virtual function: An example
+A **reference** refers to the whole `Derived`. A **copy** into a `Base` keeps only the `Base` part: the rest is **sliced off**.
+:::
+:::
 
-&#10149;&nbsp; It is still possible to create derived classes that do not redefine function speak
+## What slicing means in practice
 
-::: {#lst-virtual-function-forget-redefine lst-cap="We forgot to redefine the virtual function `speak()` in `Cow`. Filename=`virtual_function_forget_redefine.cpp"}
-```{.cpp}
+![](figures/object_slicing.png){fig-alt="Base copy{derived}: only the Base part of derived is copied, so copy is a whole Base and nothing more; the Derived part is sliced off." width="78%"}
+
+- A `std::vector<Animal>` would slice every cat and dog into a plain `Animal`. That's why we used `std::vector<const Animal*>`.
+- Pass polymorphic objects **by reference or pointer**, never by value.
+
+## Deleting through a base pointer {.dense-code}
+
+::: {.columns}
+::: {.column width="65%"}
+```{.cpp filename="virtual_destructor.cpp"}
+{{< include ./cpp/virtual_destructor.cpp >}}
+```
+:::
+::: {.column width="35%"}
+```{.text .terminal}
+$ g++ -Wall virtual_destructor.cpp
+warning: deleting object of polymorphic class type 'Base' which has non-virtual destructor might cause undefined behavior
+$ ./a.out
+~Base()
+```
+
+`~Derived()` never ran! If `Derived` owned memory, it would leak.
+:::
+:::
+
+## Virtual destructors {.dense-code}
+
+::: {.columns}
+::: {.column width="65%"}
+```{.cpp filename="virtual_destructor_fixed.cpp"}
+{{< include ./cpp/virtual_destructor_fixed.cpp >}}
+```
+:::
+::: {.column width="35%"}
+```{.text .output}
+~Derived()
+~Base()
+```
+
+With a **virtual destructor**, `delete ptr` calls the destructor of the actual object, then the base destructors in turn (Chapter 14).
+:::
+:::
+
+::: {.callout-tip title="Best practice"}
+A class meant to be a base class, especially one with virtual functions, should have a **virtual destructor**: `virtual ~Base() = default;`
+:::
+
+# Pure virtual functions and abstract classes
+
+## Forgetting to override {.dense-code}
+
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="virtual_function_forget_redefine.cpp"}
 {{< include ./cpp/virtual_function_forget_redefine.cpp >}}
 ```
 :::
-
-## Pure virtual function: An example
-
-&#10149;&nbsp; A better solution is to make `speak()` pure virtual function. Now, `Animal` is an **abstract base class**. Let us run this code.
-
-
-::: {#lst-pure-virtual-function-forget-redefine lst-cap="Now, we make `speak()` in `Animal` pure virtual function. Filename=`pure_virtual_function_forget_redefine.cpp"}
-```{.cpp}
-#include <iostream>
-#include <string>
-#include <string_view>
-
-class Animal
-{
-protected:
-    std::string name {};
-    // We don't want people creating Animal objects directly,
-    // but we still want derived classes to be able to use it.
-    Animal(std::string_view name) : name{ name } { }
-
-public:
-    const std::string& get_name() const { return name; }
-    virtual std::string_view speak() const = 0;
-    virtual ~Animal() = default;
-};
-
-class Cow : public Animal
-{
-public:
-    Cow(std::string_view name) : Animal{ name } { }
-
-    // We forgot to redefine speak
-};
-
-int main()
-{
-    Cow cow{"Bestie"};      // error -- we cannot instantiate an object of abstract class
-    std::cout << cow.get_name() << " says " << cow.speak() << '\n';
-    return 0;
-}
+::: {.column width="28%"}
+```{.text .output}
+Betsy says ???
 ```
+
+We forgot `Cow::speak()`, so `Animal::speak()` quietly took over. No error, no warning: just a wrong answer.
+:::
 :::
 
-## Pure virtual function: An example
+## Pure virtual functions
 
-&#10149;&nbsp; A better solution is to make `speak()` pure virtual function. Now, we redefine `speak()` in `Cow`
+A **pure virtual function** has no body in the base class; it's marked `= 0`:
 
-
-::: {#lst-pure-virtual-function-forget-redefine lst-cap="Now, we make `speak()` in `Animal` pure virtual function. Filename=`pure_virtual_function_forget_redefine.cpp"}
 ```{.cpp}
+virtual std::string_view speak() const = 0; // "every animal MUST say something"
+```
+
+- A class with at least one pure virtual function is an **abstract base class**: you **can't create objects** of it.
+- A derived class must override every pure virtual function, or it's abstract too.
+- Only virtual functions can be pure: `int do_something() = 0;` is a compile error.
+
+So: what does an `Animal` say? There's no sensible default, and now we don't have to invent one.
+
+## Forgetting now fails to compile {.dense-code}
+
+```{.cpp filename="pure_virtual_function_forget_redefine.cpp" .no-compile}
+{{< include ./cpp/pure_virtual_function_forget_redefine.cpp >}}
+```
+
+```{.text .output .compiler}
+error: cannot declare variable 'cow' to be of abstract type 'Cow'
+```
+
+A silent wrong answer is now a compile error: much better!
+
+## ...and remembering works {.dense-code}
+
+::: {.columns}
+::: {.column width="72%"}
+```{.cpp filename="pure_virtual_function_remember_redefine.cpp"}
 {{< include ./cpp/pure_virtual_function_remember_redefine.cpp >}}
 ```
 :::
-
-# Interface classes
-
-&#9998;&nbsp; [**Interfaces**]{style="color:crimson"} are useful when we want to define the functionality that derived classes must implement, but leave the details of how the derived class implements that functionality entirely up to the derived class.
+::: {.column width="28%"}
+```{.text .output}
+Betsy says Moo
+```
+:::
+:::
 
 ## Interface classes
 
-&#9998;&nbsp; An [**interface class**]{style="color:crimson"} is a class that has no member variables, and where all of the functions are pure virtual!
-
-&#9998;&nbsp; Interfaces are useful when you want to define the functionality that derived classes must implement, but leave the details of how the derived class implements that functionality entirely up to the derived class.
-
-&#9998;&nbsp; Interface classes are often named beginning with an `I`.
+An **interface class** has no member variables, and only pure virtual functions. It defines **what** derived classes must be able to do, and leaves **how** entirely to them. Interface names often start with `I`:
 
 ```{.cpp}
-#include <string_view>
-
-class IErrorLog
-{
-public:
+class IErrorLog {
+  public:
+    virtual ~IErrorLog() = default; // so deleting through IErrorLog* is safe
     virtual bool open_log(std::string_view filename) = 0;
+    virtual bool write_error(std::string_view message) = 0;
     virtual bool close_log() = 0;
-
-    virtual bool write_error(std::string_view error_message) = 0;
-
-    virtual ~IErrorLog() {} // make a virtual destructor in case we delete an IErrorLog pointer, so the proper derived destructor is called
 };
 ```
+
+Code that writes errors only needs an `IErrorLog&`. Whether errors go to a file, the screen or a database is decided by whichever class implements the interface.
+
+## Putting it all together: shapes
+
+The `Shape` promised in Chapter 10, one class per header (Chapter 14):
+
+```{.cpp filename="shape.h"}
+{{< include ./cpp/shape.h >}}
+```
+
+An abstract base class with a virtual destructor: it only says what every shape must be able to do.
+
+## A circle (and a rectangle) {.dense-code}
+
+```{.cpp filename="circle.h"}
+{{< include ./cpp/circle.h >}}
+```
+
+`rectangle.h` is the same idea, with a `width` and a `height`.
+
+## Every shape, in one loop {.dense-code}
+
+::: {.columns}
+::: {.column width="76%"}
+```{.cpp filename="shapes.cpp"}
+{{< include ./cpp/shapes.cpp >}}
+```
+:::
+::: {.column width="24%"}
+```{.text .output}
+circle: area 3.14159
+rectangle: area 6
+```
+:::
+:::
+
+Abstract base class, overrides, a virtual destructor, and `std::unique_ptr` (Chapter 09) doing the `delete`: everything from today, working together.
+
+# Wrapping up
+
+## Summary
+
+- A **base pointer or reference** can refer to a derived object, but only sees the base part.
+- A **virtual function** call goes to the most-derived override for the **actual** object: run-time polymorphism.
+- Write `virtual` in the base class and **`override`** on every override; **`final`** stops further overriding.
+- Copying a derived object into a base object **slices** it: pass polymorphic objects by reference or pointer.
+- Give base classes a **virtual destructor**.
+- A **pure virtual function** (`= 0`) makes a class **abstract**; derived classes must override it. An **interface** is a class of pure virtual functions only.
+
+## Keep learning
+
+Explore these on your own, with Google Gemini in Guided Learning mode or on [learncpp.com](https://www.learncpp.com):
+
+1. [Virtual functions and polymorphism](https://www.learncpp.com/cpp-tutorial/virtual-functions-and-polymorphism/)
+2. [The `override` and `final` specifiers](https://www.learncpp.com/cpp-tutorial/the-override-and-final-specifiers-and-covariant-return-types/), and covariant return types
+3. [Virtual destructors](https://www.learncpp.com/cpp-tutorial/virtual-destructors-virtual-assignment-and-overriding-virtualization/)
+4. [Object slicing](https://www.learncpp.com/cpp-tutorial/object-slicing/)
+5. [Pure virtual functions, abstract base classes and interface classes](https://www.learncpp.com/cpp-tutorial/pure-virtual-functions-abstract-base-classes-and-interface-classes/)
+
+**Next up, Section 4:** describing object-oriented designs with UML.

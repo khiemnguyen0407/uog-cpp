@@ -1,32 +1,24 @@
-class Base
-{
-public:
-    int public_mem {}; // can be accessed by anybody
-protected:
-    int protected_mem {}; // can be accessed by Base members, friends, and derived classes
-private:
-    int private_mem {}; // can only be accessed by Base members and friends (but not derived classes)
+class Base {
+  public:
+    int public_member{}; // anyone
+  protected:
+    int protected_member{}; // Base, its friends, derived classes
+  private:
+    int private_member{}; // Base and its friends only
 };
 
-class Derived: public Base
-{
-public:
-    Derived()
-    {
-        public_mem = 1; // allowed: can access public base members from derived class
-        protected_mem = 2; // allowed: can access protected base members from derived class
-        
-        // private_mem = 3; // not allowed: can not access private base members from derived class
+class Derived : public Base {
+  public:
+    Derived() {
+        public_member = 1;    // fine
+        protected_member = 2; // fine: Derived is a derived class
+        private_member = 3;   // error: private to Base
     }
 };
 
-int main()
-{
-    Base base;
-    base.public_mem = 1; // allowed: can access public members from outside class
-
-    // base.protected_mem = 2; // not allowed: can not access protected members from outside class
-    // base.private_mem = 3; // not allowed: can not access private members from outside class
-
+int main() {
+    Base base{};
+    base.public_member = 1;    // fine
+    base.protected_member = 2; // error: main() is "the public"
     return 0;
 }

@@ -1,46 +1,13 @@
-#include <string_view>
+#include "base_derived.h"
 #include <iostream>
 
-class Base
-{
-protected:
-    int id {};      
-
-public:
-    Base(int id)
-        : id{ id }
-    {
-    }
-
-    std::string_view get_name() const { return "Base"; }
-    int get_ID() const { return id; }
-};
-
-class Derived: public Base
-{
-private:
-    double value {};
-public:
-    Derived(double value, int id)
-        : Base{ id }, value{ value }
-    {
-    }
-
-    std::string_view get_name() const { return "Derived"; }
-    double get_value() const { return value; }
-};
-
-int main()
-{
-    Derived derived { 42.24, 42 };
-    Base& base_ref { derived };
-    Base* base_ptr { &derived };
-    std::cout << "Name: " << derived.get_name() 
-              << ", value: " << derived.get_value() << '\n';
-    std::cout << "Name: " << base_ref.get_name() << '\n';
-              // << ", value: " << base_ref.get_value() << '\n';
-    std::cout << "Name: " << base_ptr->get_name() << '\n';
-              // << ", value: " << base_ptr->get_value() << '\n';
-    
+int main() {
+    Derived derived{42.24, 42};
+    Base& base_ref{derived};  // a Base reference to a Derived object
+    Base* base_ptr{&derived}; // a Base pointer to a Derived object
+    std::cout << derived.get_name() << '\n';
+    std::cout << base_ref.get_name() << '\n';  // which get_name()?
+    std::cout << base_ptr->get_name() << '\n'; // which get_name()?
+    // base_ref.get_value(); // error: a Base has no get_value()
     return 0;
 }

@@ -3,12 +3,10 @@
 
 #include "student.h"
 
-class UGStudent : public Student {
-public:
-    // Call the base Student constructor
-    UGStudent(std::string_view name = "", int age = 0, double tuition = 0.0);
-    
-    void write_BSc_thesis() const;
+class UGStudent : public Student { // a chain: UniPerson <- Student <- UGStudent
+  public:
+    UGStudent(const std::string& name = "", int age = 0, double tuition = 9250);
+    void write_bsc_thesis() const;
 };
 
 #endif

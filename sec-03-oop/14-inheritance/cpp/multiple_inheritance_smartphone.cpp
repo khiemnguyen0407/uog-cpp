@@ -1,34 +1,27 @@
 #include <iostream>
+#include <string>
 
 class Camera {
-public:
-    void take_photo() {
-        std::cout << "Taking a photo!" << std::endl;
-    }
+  public:
+    void take_photo() const { std::cout << "Taking a photo!\n"; }
 };
 
 class Phone {
-public:
-    void make_call() {
-        std::cout << "Making a phone call!" << std::endl;
-    }
+  public:
+    void make_call() const { std::cout << "Making a phone call!\n"; }
 };
 
-// Multiple Inheritance
-class SmartPhone : public Camera, public Phone {
-    // Inherits members from both Camera and Phone
-
-    // add more functionality to phone
-    void use_app(std::string app_name) {
-        std::cout << app_name << "is being used.\n"; 
+class SmartPhone : public Camera, public Phone { // two base classes
+  public:
+    void use_app(const std::string& app) const {
+        std::cout << "Using " << app << "!\n";
     }
 };
 
 int main() {
-    SmartPhone my_phone;
-    
-    my_phone.take_photo();
-    my_phone.make_call();
-    
+    SmartPhone my_phone{};
+    my_phone.take_photo(); // from Camera
+    my_phone.make_call();  // from Phone
+    my_phone.use_app("Moodle");
     return 0;
 }
