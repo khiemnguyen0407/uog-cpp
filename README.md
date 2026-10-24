@@ -6,6 +6,8 @@
 
 This repo is developed by heavily using [www.learncpp.com](www.learncpp.com). However, the repo does not try to compile the website into a single book.
 
+Unfortunately, this repo is not really about Software Engineering. Please refer to [Software Engineering at Google](https://raw.githubusercontent.com/abseil/abseil.github.io/cd13b21daa6ec74155548241241693198c1b1264/resources/swe_at_google.2.pdf) for a proper learning in Software Engineering.
+
 # Contents
 The repo is divided into the following sections: 
 
