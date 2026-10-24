@@ -1,192 +1,153 @@
 ---
-title: "Chapter 17: UML Class Diagram"
-author: Khiem Nguyen -- <khiem.nguyen@glasgow.ac.uk>
-    # <br>Lecturer in Multiscale Materials
-    # <br><khiem.nguyen@glasgow.ac.uk>
-author-meta: "Lecturer in Multiscale Materials"
-
-format: 
-    # other themes: 
-    #   beige, blood, dark, dracula, league, moon, 
-    #   night, serif, simple, sky, solarized
-    # highlight-style: monokai      # good for dark images
-    html:
-        output-file: "chap_17.html"
-        grid:
-            body-width: 1600px
-            margin-width: 300px
-            sidebar-width: 350px
-        embed-resources: true
-        theme: simple
-        highlight-style: github
-        css: doc.css
-        number-sections: true
-        number-depth: 3
-        mouse-wheel: true
-        title-slide-style: pandoc
-        echo: true
-        code-overflow: wrap
-        code-line-numbers: true
-        code-block-bg: true     # <-- remove white background in code blocks
-        code-block-border-left: false
-        toc: true
-        toc-depth: 3
-        toc-title: Contents
-    # pdf:
-    #     output-file: "chap_17.pdf"
-    #     embed-resources: true
-    #     theme: simple
-    #     highlight-style: github      # good for dark images
-    #     css: doc.css
-    #     number-sections: true
-    #     number-depth: 3
-    #     geometry:
-    #         - top=24px
-    #         - bottom=24px
-    #         - left=36px
-    #         - right=36px
-    #     echo: true
-    #     code-overflow: wrap
-    #     code-line-numbers: true
-    #     code-block-bg: true # <-- remove white background in code blocks
-    #     code-block-border-left: false
-    #     toc: true
-    #     toc-depth: 3
-    #     toc-title: Contents
-
+title: "Chapter 17: UML Class Diagrams"
+subtitle: "ENG3091: lecture notes"
+author:
+  - name: Khiem Nguyen
+    email: khiem.nguyen@glasgow.ac.uk
+    affiliations: University of Glasgow
+metadata-files: [../../theme/notes.yml]
+format:
+  html:
+    output-file: chap_17.html
+    toc: true
+    toc-depth: 2
+  pdf:
+    output-file: chap_17.pdf
+    toc: true
+    toc-depth: 2
 ---
 
-<!-- 
-Blues/Greys: steelblue, royalblue, dodgerblue, slategray, darkslateblue.
-Greens:      seagreen, forestgreen, olive, darkolivegreen.
-Reds/Pinks:  crimson, indianred, firebrick, salmon.
-Earth Tones: sienna, peru, chocolate, goldenrod. 
--->
+::: {.callout-note title="How we use these notes"}
+A UML class diagram rarely fits on a single slide, so this chapter has no slides: we work through these notes directly in the lecture. They come as an HTML page and a PDF.
+:::
 
-:::{.callout}
-It is difficult to create slide presentation for UML class diagram. For this reason, the live lecture will use this HTML file as a presentation mean.
-::: 
-# UML Class Notation
+# What is a UML class diagram?
 
-A class represents a concept which encapsulates **state** (attributes) and **behavior** (operations). Each attribute has a type. Each operation has a **signature**. The class name is the *only mandatory information*.
+The **Unified Modeling Language (UML)** is a standard way of drawing software designs. A **class diagram** shows a program's classes, what each class contains, and how the classes are related: exactly the relationships from Chapters 14 and 16.
 
+A good class diagram lets someone write the code without asking you what you meant. That's the point of having rules.
 
-## Class Structure
+# A note on conventions {#sec-conventions}
 
-A standard UML class is divided into three distinct partitions:
+You'll find UML class diagrams on many websites, in textbooks and in drawing tools. The figures in these notes come from three places:
 
-1. **Class Name:** The name of the class appears in the first partition.
-2. **Attributes:** Shown in the second partition.
-3. **Operations (Methods):** Shown in the third partition.
+- [Visual Paradigm's UML class diagram tutorial](https://www.visual-paradigm.com/guide/uml-unified-modeling-language/uml-class-diagram-tutorial/);
+- [GeeksforGeeks' article on UML class diagrams](https://www.geeksforgeeks.org/system-design/unified-modeling-language-uml-class-diagrams/);
+- diagrams drawn with **Mermaid**, a text-based diagram tool built into Quarto (see the source file `chap_17.qmd`).
+
+These sources don't all draw things the same way. For example:
+
+- GeeksforGeeks distinguishes a **directed association** (solid line, open arrow) from a plain association, and labels a dependency «use»; Visual Paradigm doesn't.
+- Some figures put the class with the diamond on the left, others on the right. Either way, the diamond sits at the **whole**.
+- Types may come after the name (`length : int`, the UML standard) or before it (`int length`, as in C++). Mermaid accepts both.
+- Visual Paradigm writes C++-style types such as `Class6*` for a pointer; others write only the class name.
+- Abstract classes and methods may be shown in *italics*, with the stereotype «abstract», or (in Mermaid) with an asterisk: `draw()*`.
+- Tools colour their boxes and arrowheads differently. Colours carry no meaning.
+
+::: {.callout-important title="The rule in this course"}
+**Any convention is acceptable, in your coursework and in the exam, as long as it follows the same principles and creates no unnecessary confusion.** In practice:
+
+1. Each class is a box: its name, then its attributes, then its operations.
+2. Visibility uses `+` (public), `-` (private) and `#` (protected).
+3. Relationships follow the usual line styles: solid or dashed lines; a diamond at the *whole*, filled for composition and hollow for aggregation; a hollow triangle pointing at the *parent* (or interface).
+4. Multiplicities are written at the ends of a relationship.
+5. **Be consistent** within one diagram, and if you use anything unusual, label it.
+:::
+
+If someone else could build the right C++ classes from your diagram without asking you a question, your diagram is good.
+
+# Class notation
+
+A class represents a concept that encapsulates **state** (attributes) and **behaviour** (operations). Each attribute has a type, and each operation has a **signature**. Only the class **name** is mandatory.
+
+## Class structure
+
+A UML class box has three compartments:
+
+1. **the class name**, at the top;
+2. **the attributes**, in the middle: these become **data members** in C++;
+3. **the operations**, at the bottom: these become **member functions**.
 
 ::: {#fig-class-comparison layout-ncol=2}
 ```{mermaid}
-%%| fig-cap: "Class without signature"
+%%| fig-cap: "Without types or signatures"
 classDiagram
     class Shape{
         -length
         +get_length()
-        +get_length()
+        +set_length()
     }
 ```
 ```{mermaid}
-%%| fig-cap: "Class with signature"
+%%| fig-cap: "With types and signatures"
 classDiagram
     class Shape{
         -length: int
-        +get_length(): int
+        +get_length() int
         +set_length(n: int) void
     }
 ```
+
+The same class, drawn with less and with more detail.
 :::
 
+- **Attribute types** follow a colon: `-length : int`.
+- **Return types** follow a colon at the end of the operation: `+get_length() : int`.
+- **Parameter types** follow a colon after each parameter's name: `+set_length(n : int) : void`.
 
-&#9998;&nbsp; [**Class Name**]{style="color:royalblue"}
+![A class with typed attributes and operations. Source: [Visual Paradigm](https://www.visual-paradigm.com/guide/uml-unified-modeling-language/uml-class-diagram-tutorial/).](./figures/03-class-notation-with-examples.png){width="70%"}
 
-- The name of the class appears in the first partition.
+| | Without signatures | With full signatures |
+|:---|:---|:---|
+| Attribute | `-length` | `-length : int` |
+| Getter | `+get_length()` | `+get_length() : int` |
+| Setter | `+set_length()` | `+set_length(n : int) : void` |
 
-&#9998;&nbsp; [**Class Attributes**]{style="color:royalblue"}
+## Visibility
 
-- **Partitioning:** Attributes are listed in the second partition of the class box.
-- **Typing:** The attribute type is shown after a colon (e.g., `-length : int`).
-- **Implementation:** Attributes map directly onto **member variables** (data members) in source code.
+The symbol in front of an attribute or operation gives its **visibility**, which is its access level (Chapter 11):
 
+- `+` means **public**;
+- `-` means **private**;
+- `#` means **protected** (Chapter 14).
 
-&#9998;&nbsp; [**Class Operations (Methods)**]{style="color:royalblue"}
+![Attributes with different visibility. Source: [Visual Paradigm](https://www.visual-paradigm.com/guide/uml-unified-modeling-language/uml-class-diagram-tutorial/).](./figures/04-class-attributes-with-different-visibility.png){width="50%"}
 
-- **Partitioning:** Operations are shown in the third partition. They represent the services or behaviors the class provides.
-- **Return Types:** The return type of a method is shown after a colon at the end of the method signature (e.g., `+get_length() : int`).
-- **Parameters:** The return type of method parameters are shown after the colon following the parameter name (e.g., `+set_length(n : int) : void`).
-* **Implementation:** Operations map onto **class methods** in source code.
+## Parameter direction
 
+UML can mark each parameter as `in`, `out` or `inout`, written before the parameter's name. C++ has no such keywords; the parameter type says it instead:
 
-![Class Representation](./figures/03-class-notation-with-examples.png)
+| UML | Direction | Meaning | In C++ (Chapter 07) |
+|:---|:---|:---|:---|
+| `in` (the default) | caller to operation | the operation only reads the value | pass by value, or by `const` reference: `void f(const Fraction& x)` |
+| `out` | operation to caller | the operation fills in a value for the caller | pass by non-`const` reference: `void f(int& result)` |
+| `inout` | both ways | the operation reads the value, then changes it | pass by non-`const` reference: `void f(int& x)` |
 
-**Summary Table: Notation Comparison**
+![Parameter directions in a class. Source: [Visual Paradigm](https://www.visual-paradigm.com/guide/uml-unified-modeling-language/uml-class-diagram-tutorial/).](./figures/05-parameter-directionality.png){width="60%"}
 
-| Feature | Without Signature | With Full Signature |
-|:--- |:--- |:--- |
-| **Attribute** | `-length` | `-length : int` |
-| **Operation** | `+get_length()` | `+get_length() : int` |
-| **Setter** | `+get_length()` | `+get_length(n : int) : void` |
+## Perspectives
 
-## Class Visibility
+The same diagram can be read at different levels of detail:
 
-The `+`, `-` and `#` symbols before an attribute and operation name in a class denote the visibility of the attribute and operation. 
+- **conceptual**: the concepts in the problem domain;
+- **specification**: the interfaces of the classes (what they offer);
+- **implementation**: how the classes implement those interfaces.
 
-![](./figures/04-class-attributes-with-different-visibility.png)
-
-- `+` denotes **public** attributes or operations
-- `-` denotes **private** attributes or operations
-- `#` denotes **protected** attributes or operations
-
-## Parameter directionality
-
-Each parameter in an operation (method) may be denoted as in, out or inout which specifies its direction with respect to the caller. This directionality is shown before the parameter name.
-
-![](./figures/05-parameter-directionality.png)
-
-| Notation | Direction | Description | Equivalent Code|
-|:----|:-----|:----------------------------------------|:-------------|
-| `in` | input | The value is passed from the caller to the operation. The operation cannot modify the original value. This is the default if nothing is specified. | `void func(const int x)`
-| `out` | output | The value is passed back from the operation to the caller. The initial value from the caller is ignored; the operation "fills" this variable. | `void function(int &x)` (used for returning multiple values)
-| `inout` | Both | The value is passed to the operation, modified by it, and the new value is passed back to the caller. | `void func(int &x)` (where `x` has an initial value)
-
-
-# Perspectives of Class Diagram
-
-A diagram can be interpreted from various perspectives:
-
-- [**Conceptual**]{style="color:brown"}: represents the concepts in the domain
-- [**Specification**]{style="color:brown"}: focus is on the interfaces of Abstract Data Type (ADTs) in the software
-- [**Implementation**]{style="color:brown"}: describes how classes will implement their interfaces
-
-![](./figures/06-perspective-of-class-diagram.png)
+![Perspectives of a class diagram. Source: [Visual Paradigm](https://www.visual-paradigm.com/guide/uml-unified-modeling-language/uml-class-diagram-tutorial/).](./figures/06-perspective-of-class-diagram.png)
 
 # Relationships between classes
 
-UML is not just about pretty pictures. If used correctly, UML precisely conveys how code should be implemented from diagrams. If precisely interpreted, the implemented code will correctly reflect the intent of the designer.
+UML isn't just pretty pictures. Used correctly, a diagram says precisely how the code should be written, and code written from it reflects the designer's intent.
 
+We've met all of these relationships already: inheritance (Chapter 14), realization of an interface (Chapter 15), and composition, aggregation, association and dependency (Chapter 16). Here's how two websites draw them. Notice the small differences, as discussed in @sec-conventions:
 
-[**What we have learned so far**]{style="color:royalblue"}
+::: {layout-ncol=2}
+![Source: [Visual Paradigm](https://www.visual-paradigm.com/guide/uml-unified-modeling-language/uml-class-diagram-tutorial/).](./figures/07-relationships-between-classes.png)
 
-We have learned the following concepts:
+![Source: [GeeksforGeeks](https://www.geeksforgeeks.org/system-design/unified-modeling-language-uml-class-diagrams/).](./figures/class-diagram-relationship.png)
+:::
 
-- Inheritance
-- Composition
-- Aggregation
-- Association
-- Realization
-- Dependiencies
-
-These are the diagrams that you can find online:
-
-<!-- ![A UML Class Diagram Online](./figures/07-relationships-between-classes.png){width="30%"}
-![](./figures/class-diagram-relationship.png){width="69%"} -->
-![A UML Class Diagram Online](./figures/07-relationships-between-classes.png)
-![](./figures/class-diagram-relationship.png)
-
-Diagram using `mermaid` in Quarto. [Please see the code in the source file `chap_17.qmd`]{style="color:navy"}
+And here they are in Mermaid:
 
 ```{mermaid}
 classDiagram
@@ -195,188 +156,188 @@ classA --|> classB : Inheritance
 classC --* classD : Composition
 classE --o classF : Aggregation
 classG -- classH : Association
-%% classI -- classJ : Link(Solid)
 classK ..> classL : Dependency
 classM ..|> classN : Realization
-%% classO .. classP : Link(Dashed)
 ```
 
-Below, we shall revisit these concepts but we go from weak to strong connections.
+We'll go through them from the weakest to the strongest, using the classes from Chapter 16.
 
-## Association
+## Dependency ("uses a")
 
-[**Association**]{style="color:royalblue"} is the most general relationship. It signifies a structural link between two peer classes. It can be uni-directional (one class knows about the other) or bi-directional (both know about each other).
+A **dependency** is the weakest relationship: one class *uses* another for a moment, as a parameter or a local variable, without keeping it. If the class it uses changes, it may have to change too.
 
-- **Logic**: "Class A is associated with class B"
-- **Visual**: A solid line. An arrow indicates the direction of the relationship. No arrow means bi-directional.
-- **Example**: A `Teacher` and a `Student`. They are related, but one does not "own" the other.
+- **Logic:** "class A uses class B to do a task."
+- **Notation:** a **dashed** line with an open arrow, pointing at the class being used.
+- **Example (Chapter 16):** `Point` uses `std::ostream` in its `operator<<`. Likewise, a `Printer` uses a `Document` to print, but doesn't own it.
 
 ```{mermaid}
 classDiagram
     direction LR
+    class Point
+    class ostream
+    Point ..> ostream : uses
+```
+
+## Association ("knows a")
+
+An **association** is a structural link between two otherwise unrelated classes. It can be **unidirectional** (one class knows about the other) or **bidirectional** (both know about each other).
+
+- **Logic:** "class A is associated with class B."
+- **Notation:** a **solid** line. With an open arrowhead, it's a *directed* association: only the class at the tail knows about the other. With no arrowhead, it's bidirectional.
+- **Example (Chapter 16):** a `Doctor` and a `Patient`. They know about each other, but neither owns the other.
+
+```{mermaid}
+classDiagram
+    direction LR
+    class Doctor
+    class Patient
+    Doctor "0..*" -- "0..*" Patient : treats
+```
+
+## Aggregation ("has a")
+
+An **aggregation** is a whole–part relationship in which the parts can exist independently of the whole.
+
+- **Logic:** "class A has a class B, but B can live without A."
+- **Notation:** a solid line with a **hollow diamond** at the **whole**.
+- **Example (Chapter 16):** a `Department` and its `Teacher`s. Closing the department doesn't destroy the teachers. Likewise a `Library` and its `Book`s.
+
+```{mermaid}
+classDiagram
+    direction LR
+    class Department
     class Teacher
+    Department o-- Teacher
+```
+
+## Composition ("part of")
+
+A **composition** is a strong whole–part relationship: the whole manages the part's lifetime. Destroy the whole, and the parts go with it.
+
+- **Logic:** "class B is an integral part of class A."
+- **Notation:** a solid line with a **filled diamond** at the **whole**.
+- **Example (Chapter 16):** a `Creature` and its `Point2D` location. Likewise a `House` and its `Room`s: demolish the house, and the rooms are gone.
+
+```{mermaid}
+classDiagram
+    direction LR
+    class Creature
+    class Point2D
+    Creature *-- Point2D : location
+```
+
+## Inheritance, or generalization ("is a")
+
+**Inheritance** means a derived (child) class inherits the attributes and operations of its base (parent) class: it's a specialized version of a more general concept.
+
+- **Logic:** "class B is a kind of class A."
+- **Notation:** a solid line with a **hollow triangle** pointing at the **parent**.
+- **Example (Chapter 14):** a `Lecturer` is a `UniPerson`, and so is a `Student`.
+
+```{mermaid}
+classDiagram
+    direction BT
+    class UniPerson
+    class Lecturer
     class Student
-    Teacher -- Student
+    UniPerson <|-- Lecturer
+    UniPerson <|-- Student
 ```
 
-## Aggregation ("Has-a")
+## Realization ("implements")
 
-[**Aggregation**]{style="color:royalblue"} is a specialized form of association that represents a "whole-part" relationship. However, it is "weak" — the parts can exist independently of the whole.
+**Realization** connects an **interface** to a class that implements it. The class *realizes* the contract that the interface defines. In C++, an interface is an abstract class with only pure virtual functions (Chapter 15).
 
-- **Logic**: "Class A has a Class B (but Class B can live without A)."
-- **Visual**: A solid line with an empty diamond at the "whole" (parent) end.
-- **Example**: A Library and a Book. If the library closes down, the books still exist.
+- **Logic:** "class A implements everything interface B promises."
+- **Notation:** a **dashed** line with a **hollow triangle** pointing at the interface.
+- **Example (Chapter 15):** `Circle` and `Rectangle` implement the `Shape` interface.
 
 ```{mermaid}
 classDiagram
-    direction LR
-    class Library
-    class Book
-    Library o-- Book
-```
-
-## Composition ("Part-of")
-
-[**Composition**]{style="royalblue"} is a "strong" whole-part relationship. The part's lifecycle is strictly managed by the whole. If the whole is destroyed, the parts are destroyed too.
-
-- **Logic**: "Class B is an integral part of Class A."
-- **Visual**: A solid line with a filled diamond at the "whole" end.
-- **Example**: A `House` and a `Room`. You cannot have a room that exists independently of a house; if the house is demolished, the room is gone.
-
-```{mermaid}
-classDiagram
-    direction LR
-    class House
-    class Room
-    House *-- Room
-```
-
-## Dependency ("Uses-a")
-
-[**Dependency**]{style="royalblue"} is a weaker, often temporary relationship. It exists when one class uses another as a parameter in a method or a local variable. If the definition of the supplier class changes, the client class might need to change as well.
-
-- **Logic**: "Class A uses Class B to perform a task."
-- **Visual**: A dashed line with an open arrow.
-- **Example**: A `Printer` class depends on a `Document` class to print. The printer doesn't "own" the document; it just needs it for a specific operation.
-
-```{mermaid}
-classDiagram
-    direction LR
-    class Printer
-    class Document
-    Printer --> Document: uses
-```
-
-## Inheritance (Generalization - "Is-a")
-
-Inheritance is used when one class (the subclass or child) derives its attributes and methods from another class (the superclass or parent). It represents a specialized version of a more general concept.
-
-- **Logic**: "Class B is a type of Class A."
-- **Visual**: A solid line with a large hollow triangle pointing toward the parent class.
-- **Example**: An `Ellipse` is a `Circle
-
-```{mermaid}
-classDiagram
-    direction LR
-    class Ellipse
+    direction BT
+    class Shape {
+        <<interface>>
+        +area() double
+        +name() string_view
+    }
     class Circle
-    Ellipse <|-- Circle
+    class Rectangle
+    Shape <|.. Circle
+    Shape <|.. Rectangle
 ```
 
-## Realization (Implementation)
+::: {.callout-note title="Realization or inheritance?"}
+Strictly, realization is for **interfaces**. A class derived from an abstract class that *also* has data or implemented functions (like Chapter 15's `Animal`) is drawn with ordinary inheritance: a solid line. Many websites and tools blur this distinction. Following @sec-conventions, either is accepted, as long as you're consistent.
+:::
 
-[**Realization**] is the relationship between an abstract class (or an interface) and the class that implements its behavior. The implementing class "realizes" the contract defined by the abstract class or the interface.
+## Abstract classes
 
-- **Logic**: "Class A implements the functionality defined by Interface B."
-- **Visual**: A dashed line with a hollow triangle arrow pointing to the interface.
-- **Example**: A `Tiger` class realizing a the abstract class `Animal` .
+An abstract class can't be instantiated (Chapter 15), and the diagram should make that visible. There are two common ways:
+
+- **italics**: the class name in *italics*, and each abstract (pure virtual) operation in *italics* too;
+- **a stereotype**: the word «abstract» above the class name. It's clearer in hand-drawn diagrams, where italics are hard to see.
 
 ```{mermaid}
 classDiagram
-    direction LR
-    class Tiger
+    direction BT
     class Animal {
         <<abstract>>
+        #name: string
+        +get_name() string_view
+        +speak()* string_view
     }
-    Animal <|.. Tiger
+    class Cow {
+        +speak() string_view
+    }
+    Animal <|-- Cow
 ```
 
-## Regarding abstract class 
+In Mermaid, `speak()*` marks an abstract operation.
 
-In UML, there are two primary ways to signify that a class is Abstract. Since abstract classes are designed to be inherited rather than instantiated, the visual notation needs to distinguish them from "concrete" classes.
+::: {.callout-tip title="Abstract classes in the paper exam"}
+Handwriting has no italics, so use either of these:
 
-- **The Standard Notation: Italics**
-
-    The most common way to represent an abstract class is to write the class name in italics. If the class has abstract methods (methods with no implementation), those method names should also be italicized.
-
-    **Visual**: _ClassName_
-
-- **The Explicit Notation: Stereotype**
-
-    If italics aren't clear enough (especially in hand-drawn diagrams), you can use a stereotype. You place the word "abstract" inside guillemets (« ») above the class name.
-
-    **Visual**: «abstract»
-
-    ```{mermaid}
-    classDiagram
-        direction LR
-        class Car
-        class Vehicle {
-            <<abstract>>
-        }
-        Vehicle <|.. Car
-    ```
-
-:::{.callout-tip}
-# How to note abstract class in paper exam
-There are two ways to signify abstract class or interface in paper exam:
-
-- We can write `*ClassName*` with the double asterisks surrouding the `ClassName`.
-- We can write `<<abstract>>` above or below the `ClassName`.
+- write «abstract» (or `<<abstract>>`) above the class name;
+- surround the name with asterisks, `*ClassName*`, as if it were italic (Markdown style).
 :::
 
-## Summary of relationship between classes
+## Summary of relationships
 
-| Relationship | Human Logic | Programming Logic | Lifecycle Link | Visual Notation |
-| :--- | :--- | :--- | :--- | :--------------- |
-| **Association** | "Knows-a" | General | Independent | Solid Line (──) |
-| **Aggregation** | "Has-a" | Whole-Part | Independent | Hollow Diamond (◇─) |
-| **Composition** | "Part-of" | Whole-Part | Dependent | Filled Diamond (◆─) |
-| **Dependency** | "Uses-a" | Temporary Use | Temporary | Dashed Arrow (- ->) |
-| **Inheritance** | "Is-a" | Parent-Child | Parent-Child | Hollow Triangle (Solid Line) (─▷) |
-| **Realization** | "Implements" | AbstractParent-Child | Contractual | Hollow Triangle (Dashed Line) (- -▷)|
-    
+| Relationship | In words | Lifetime | Notation |
+|:---|:---|:---|:---|
+| Dependency | "uses a" (for a moment) | independent | dashed line, open arrow (- - >) |
+| Association | "knows a" | independent | solid line (──), with an open arrow if directed |
+| Aggregation | "has a" | independent | solid line, hollow diamond at the whole (◇──) |
+| Composition | "part of" | the whole manages the part | solid line, filled diamond at the whole (◆──) |
+| Inheritance | "is a" | the derived object contains the base part | solid line, hollow triangle at the parent (──▷) |
+| Realization | "implements" | (a contract) | dashed line, hollow triangle at the interface (- - ▷) |
 
-# Cardinality
+# Multiplicity
 
-In UML, [**Cardinality**]{style="color:red"} (more formally known as [**Multiplicity**]{style="color:red./"}) defines the numerical relationship between two classes. It answers the question: "How many instances of Class A can be associated with one instance of Class B?"
+**Multiplicity** (often called **cardinality**) says how many objects of one class can be linked to one object of the other. It's written at the ends of a relationship.
 
-## Common Cardinality Notations
+| Notation | Meaning | Example |
+|:---|:---|:---|
+| `0..1` | zero or one | an `Employee` may have a `Desk` |
+| `1` | exactly one | a `Car` has exactly one `Engine` |
+| `0..*` | zero or more | a `Folder` contains any number of `File`s |
+| `1..*` | one or more | a `Team` has at least one `Player` |
+| `*` | many | short for `0..*` |
+| `n` | exactly n | a `Tricycle` has exactly `3` `Wheel`s |
+| `m..n` | between m and n | a `Jury` has between `6` and `12` members |
 
-| Notation | Meaning | Logical Description |
-| :----- | :---------- | :--------------------------------- |
-| **0..1** | Zero or one | Optional relationship (e.g., an Employee may have a Desk). |
-| **1** | Exactly one | Mandatory relationship (e.g., a Car has exactly one Motor). |
-| **0..*** | Zero or more | Optional collection (e.g., a Folder can contain zero or many Files). |
-| **1..*** | One or more | Mandatory collection (e.g., a Team must have at least one Player). |
-| ***** | Many | Short-hand for 0..* (e.g., a Member can join many Groups). |
-| **n** | Specific number | Fixed quantity (e.g., a Tricycle has exactly 3 Wheels). |
-| **m..n** | Numerical range | Bound quantity (e.g., a Jury has between 6 and 12 Members). |
+## Multiplicity examples
 
-## Cardinality: Examples
+As discussed in @sec-conventions, it's fine to write an attribute's type before its name, as below, or after it.
 
-:::{.callout-note}
-It is fine if you want to write data type in front of attributes (data members).
-:::
-
-&#10149;&nbsp; [**Example 1**]{style="color:crimson"}: A `Car` has $4$ `Tire`s and $1$ `Engine`:
+**Example 1.** A `Car` has four `Tire`s and one `Engine`: compositions with fixed multiplicities.
 
 ```{mermaid}
 classDiagram
     direction LR
     class Car {
         +String model
-        +start_enginer()
+        +start_engine()
     }
     class Tire {
         +int pressure
@@ -384,20 +345,17 @@ classDiagram
     class Engine {
         +int horse_power
     }
-
-    %% The filled diamond represents Composition (strong ownership)
-    %% The numbers represent the Multiplicity/Cardinality
     Car "1" *-- "4" Tire : has
     Car "1" *-- "1" Engine : has
 ```
 
-&#10149;&nbsp; [**Example 2**]{style="color:crimson"}: A `Library` can have many `Book`s and many `CD`s
+**Example 2.** A `Library` holds any number of `Book`s and `CD`s: aggregations with "many".
 
 ```{mermaid}
 classDiagram
     direction BT
     class Library {
-        +String branchName
+        +String branch_name
         +open()
     }
     class Book {
@@ -408,14 +366,11 @@ classDiagram
         +String artist
         +int track_count
     }
-
-    %% 'o--' represents Aggregation (hollow diamond)
-    %% '*' or '0..*' represents "many"
     Library "1" o-- "0..*" Book : contains
     Library "1" o-- "0..*" CD : contains
 ```
 
-&#10149;&nbsp; [**Example 3**]{style="color:crimson"}: One `Doctor` can have/examine many `Patient`s and one `Patient` can visit many `Doctor`s
+**Example 3.** A `Doctor` treats many `Patient`s, and a `Patient` may see many `Doctor`s: a many-to-many association.
 
 ```{mermaid}
 classDiagram
@@ -427,106 +382,105 @@ classDiagram
     }
     class Patient {
         +String name
-        +Date dateOfBirth
+        +Date date_of_birth
         +view_medical_history()
     }
-
-    %% The "*" on both ends signifies a Many-to-Many relationship
     Doctor "0..*" -- "0..*" Patient : treats
 ```
 
-# Relationship between classes and Cardinality: Complex Examples
+# Larger examples
 
-&#10149;&nbsp; [**Example 1**]{style="color:royalblue"} `Flight`, `Airport` and `Pilot` have the association relationships. 
+## Flights, pilots and airports
 
-- A `Pilot` "works" a `Flight`. It is a [relationship of service/interaction, not a structural "part-of" hierarchy.]{style="color:magenta"}
-- An `Airport` can host multiple `Flight`s. One `Flight` can arrive at and depart from an `Airport`.
+`Flight`, `Pilot` and `Airport` are linked by **associations**:
+
+- a `Pilot` *works* a `Flight`: a relationship of service, not a structural "part of";
+- an `Airport` hosts many `Flight`s, and each `Flight` departs from one `Airport` and arrives at another.
 
 ```{mermaid}
 classDiagram
     class Flight {
         -String flight_number
-        -DateTime depart_time
+        -DateTime departure_time
         +delay_flight(int minutes)
     }
-
     class Pilot {
-        -String licenseNumber
+        -String license_number
         +String name
         +get_flight_hours() double
     }
-
     class Airport {
-        -String iataCode
+        -String iata_code
         +String city
         +get_weather() String
     }
-
-    %% Association Relationships
-    %% A flight has 2 pilots (Captain and Co-Pilot)
-    Flight "0..*" -- "2" Pilot : assigned to
-    
-    %% A flight has exactly one departure and one arrival airport
+    Flight "0..*" -- "2" Pilot : flown by
     Flight "0..*" -- "1" Airport : departs from
     Flight "0..*" -- "1" Airport : arrives at
 ```
 
-&#10149;&nbsp; [**Example 2**] Relationships between `Department`, `Lecturer`, `Student` and `Course`
+## Departments, lecturers, students and courses
 
-1. A `Department` has many `Lecturer`s
-2. A `Department` has many `Student`s
-3. A `Department` offers many `Course`s
-4. Multiple `Lecturer`s can teach one `Course`.
-5. One `Lecturer` can teach multiple `Course`s.
+1. A `Department` has many `Lecturer`s.
+2. A `Department` has many `Student`s.
+3. A `Department` offers many `Course`s.
+4. Several `Lecturer`s can teach one `Course`.
+5. One `Lecturer` can teach several `Course`s.
 6. One `Student` can take many `Course`s.
-7. One `Course` can be enrolled by many `Student`s.
+7. One `Course` can have many `Student`s.
 
-As you can see:
-- The bullet points (1), (2) and (3) carry the idea of "part-of".
-- The bullet points (4) and (5) carry the idea of "providing/using service".
-- The bullet points (6) and (7) carry the idea of "offering/using the service".
+Statements 1 to 3 describe "part of the department": aggregations, since lecturers, students and courses don't disappear if the department is reorganized. Statements 4 to 7 describe *providing* and *using* a service: associations.
 
-:::{.callout-note}
-Of course, we can use "has" for every sentence above in daily life. But since one `Student` rarely belongs to multiple `Department`s, the idea of "interaction between `Student` and `Department`" is not high. Students don't change from one department to another department frequenly (perhaps not at all during their entire study program). However, lecturers change courses during theit career quite frequently. For that reason, the frequency of interaction between them is quite high.
+::: {.callout-note}
+In everyday English we could say "has" for every one of these sentences. But a student rarely moves between departments during their studies, while lecturers change courses quite often. The lecturer–course and student–course links are interactions that come and go, which is what associations describe.
 :::
 
 ```{mermaid}
 classDiagram
     class Department {
-        -String deptName
-        +addLecturer(Lecturer l)
-        +assignCourse(Course c)
+        -String name
+        +add_lecturer(Lecturer l)
+        +add_course(Course c)
     }
-
     class Lecturer {
-        -String staffId
+        -String staff_id
         +String name
-        +getSpecialization() String
+        +get_specialization() String
     }
-
     class Student {
-        -String studentId
-        +String gpa
+        -String student_id
+        +double gpa
     }
-
     class Course {
-        -String courseId
+        -String course_id
         -int credits
     }
-
-    %% Aggregation: Department is the "Whole"
     Department "1" o-- "1..*" Lecturer : employs
     Department "1" o-- "1..*" Student : manages
     Department "1" o-- "1..*" Course : offers
-
-    %% Association: Functional relationships
     Lecturer "1..*" -- "1..*" Course : teaches
     Student "1..*" -- "1..*" Course : enrolled in
 ```
 
-# Past paper exam
+# From the diagram to C++
 
-## Shapes
+This is what the exam asks of you: read a diagram, and write the classes, or the other way round. The usual translations:
+
+| In the diagram | In C++ |
+|:---|:---|
+| class box | `class Name { ... };` |
+| attribute `-x : double` | private data member `double x{};` |
+| operation `+f(n : int) : void` | public member function `void f(int n);` |
+| composition, multiplicity `1` | an ordinary data member: `Point2D location{};` |
+| composition, multiplicity `*` | a `std::vector` of members, or `std::unique_ptr`s the class owns |
+| aggregation | a reference or pointer to an outside object; for many, `std::vector<std::reference_wrapper<T>>` |
+| association | pointer members (for many, `std::vector<const T*>`), on one or both sides |
+| dependency | a function parameter or a local variable, not a member |
+| inheritance | `class Derived : public Base` |
+| realization | inherit from an interface and override every pure virtual function |
+| abstract operation | a pure virtual function: `virtual double area() const = 0;` |
+
+# Past paper exam: shapes
 
 ```{mermaid}
 classDiagram
@@ -534,53 +488,46 @@ classDiagram
         <<abstract>>
         +draw()* void
     }
-
     class Point {
         +float x
         +float y
     }
-
     class Polygon {
-        %% -List~Point~ points
         +draw() void
     }
-
     class Rectangle {
-        %% -Point bottom_left
         -float width
         -float height
         -float theta
         +draw() void
     }
-
-    class Square {
-
-    }
-
+    class Square
     class Ellipse {
-        %% -Point center
         -float width
         -float height
         -float theta
         +draw() void
     }
+    class Circle
 
-    class Circle {
-        
-    }
-
-    %% Inheritance (Generalization)
     Shape <|.. Polygon
     Shape <|.. Ellipse
     Polygon <|-- Rectangle
     Rectangle <|-- Square
     Ellipse <|-- Circle
 
-    %% Composition and Multiplicity
-    Polygon "1" *-- "3..*" Point : contains
-    Rectangle "1" *-- "1" Point : bottom-left
-    Ellipse "1" *-- "1" Point : center
+    Polygon "1" *-- "3..*" Point : vertices
+    Rectangle "1" *-- "1" Point : bottom-left corner
+    Ellipse "1" *-- "1" Point : centre
 ```
 
-- If you want, you can put `+draw(): void` again in `Square` and `Circle` but it is unnecessary. 
-- However, you must put `+draw(): void` in `Polygon` and `Ellipse` because they implements the `+draw(): void` in the abstract base class.
+- `Polygon` and `Ellipse` must list `+draw() : void`: they implement the abstract operation of `Shape`.
+- Repeating `+draw() : void` in `Square` and `Circle` is allowed, but unnecessary: they inherit it.
+- `Shape` is abstract, with an abstract `draw()`. The dashed realization arrows from `Polygon` and `Ellipse` follow the "implements" reading of @sec-conventions. Solid inheritance arrows would be accepted too.
+
+# Keep learning
+
+1. learncpp.com, Chapter 23: [object relationships](https://www.learncpp.com/cpp-tutorial/object-relationships/), the C++ side of every relationship drawn here.
+2. Visual Paradigm's [UML class diagram tutorial](https://www.visual-paradigm.com/guide/uml-unified-modeling-language/uml-class-diagram-tutorial/).
+3. GeeksforGeeks on [UML class diagrams](https://www.geeksforgeeks.org/system-design/unified-modeling-language-uml-class-diagrams/).
+4. The [Mermaid class diagram syntax](https://mermaid.js.org/syntax/classDiagram.html), to draw your own diagrams from text.

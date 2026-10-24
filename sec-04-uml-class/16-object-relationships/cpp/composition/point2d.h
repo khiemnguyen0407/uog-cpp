@@ -3,39 +3,22 @@
 
 #include <iostream>
 
-class Point2D
-{
-private:
-    double x;
-    double y;
+class Point2D {
+  private:
+    int x{};
+    int y{};
 
-public:
-    // A default constructor
-    Point2D()
-        : x{ 0 }, y{ 0 }
-    {
+  public:
+    Point2D(int x = 0, int y = 0) : x{x}, y{y} {}
+
+    void set(int new_x, int new_y) {
+        x = new_x;
+        y = new_y;
     }
 
-    // A specific constructor
-    Point2D(double x, double y)
-        : x{ x }, y{ y }
-    {
+    friend std::ostream& operator<<(std::ostream& out, const Point2D& p) {
+        return out << '(' << p.x << ", " << p.y << ')';
     }
-
-    // An overloaded output operator
-    friend std::ostream& operator<<(std::ostream& out, const Point2D& point)
-    {
-        out << '(' << point.x << ", " << point.y << ')';
-        return out;
-    }
-
-    // Access functions
-    void set_point(double x, double y)
-    {
-        this->x = x;
-        this->y = y;
-    }
-
 };
 
 #endif

@@ -1,33 +1,20 @@
 #include <iostream>
 
-class Point
-{
-private:
-    double x{};
-    double y{};
-    double z{};
+class Point {
+  private:
+    double x{}, y{}, z{};
 
-public:
-    Point(double x=0.0, double y=0.0, double z=0.0): x{x}, y{y}, z{z}
-    {
+  public:
+    Point(double x = 0.0, double y = 0.0, double z = 0.0) : x{x}, y{y}, z{z} {}
+
+    // Point depends on std::ostream: it USES one, but doesn't keep one
+    friend std::ostream& operator<<(std::ostream& out, const Point& p) {
+        return out << "Point(" << p.x << ", " << p.y << ", " << p.z << ')';
     }
-
-    friend std::ostream& operator<< (std::ostream& out, const Point& point); // Point has a dependency on std::ostream here
 };
 
-std::ostream& operator<< (std::ostream& out, const Point& point)
-{
-    // Since operator<< is a friend of the Point class, we can access Point's members directly.
-    out << "Point(" << point.x << ", " << point.y << ", " << point.z << ')';
-
-    return out;
-}
-
-int main()
-{
-    Point p { 42.0, 24.0, 42.24 };
-
-    std::cout << p; // the program has a dependency on std::cout here
-
+int main() {
+    Point p{42.0, 24.0, 42.24};
+    std::cout << p << '\n';
     return 0;
 }

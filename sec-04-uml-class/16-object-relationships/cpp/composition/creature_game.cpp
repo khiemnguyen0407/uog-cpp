@@ -1,34 +1,24 @@
-#include <string>
-#include <iostream>
 #include "creature.h"
-#include "point2d.h"
+#include <iostream>
+#include <string>
 
-int main()
-{
+int main() {
     std::cout << "Enter a name for your creature: ";
-    std::string name;
+    std::string name{};
     std::cin >> name;
-    Creature creature{ name, { 4, 7 } };
+    Creature creature{name, Point2D{4, 7}};
 
-    while (true)
-    {
-        // print the creature's name and location
+    while (true) {
         std::cout << creature << '\n';
 
-        std::cout << "Enter new X location for creature (-1 to quit): ";
-        int x{ 0 };
-        std::cin >> x;
-        if (x == -1)
+        std::cout << "New x and y (or -1 -1 to quit): ";
+        int x{};
+        int y{};
+        std::cin >> x >> y;
+        if (x == -1) {
             break;
-
-        std::cout << "Enter new Y location for creature (-1 to quit): ";
-        int y{ 0 };
-        std::cin >> y;
-        if (y == -1)
-            break;
-
+        }
         creature.move_to(x, y);
     }
-
     return 0;
-}
+} // creature is destroyed, and its Point2D with it
