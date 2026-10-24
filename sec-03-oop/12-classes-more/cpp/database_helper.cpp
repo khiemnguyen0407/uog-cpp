@@ -2,38 +2,25 @@
 #include <string>
 
 class DatabaseHelper {
-private:
-    std::string* connection_string;
+  private:
+    std::string* connection{};
 
-public:
-    // Constructor: Allocates memory and "opens" the connection
-    DatabaseHelper(std::string path) {
-        connection_string = new std::string(path);
-        std::cout << "CONNECTED to: " << *connection_string << std::endl;
+  public:
+    DatabaseHelper(const std::string& path)
+        : connection{new std::string{path}} {
+        std::cout << "Connected to " << *connection << '\n';
     }
 
-    // Destructor: Deallocates memory and "closes" the connection
-    // Identified by the tilde (~) prefix
-    ~DatabaseHelper() {
-        std::cout << "DISCONNECTING from: " << *connection_string << std::endl;
-        delete connection_string; 
-        std::cout << "Memory cleaned up successfully." << std::endl;
-    }
-
-    void query(std::string sql) {
-        std::cout << "Executing: " << sql << " on " << *connection_string << std::endl;
+    ~DatabaseHelper() { // called automatically: nothing to remember
+        std::cout << "Disconnecting from " << *connection << '\n';
+        delete connection;
     }
 };
 
 int main() {
     {
-        // Object created inside a block (scope starts)
-        DatabaseHelper db("127.0.0.1:5432/my_database");
-        db.query("SELECT * FROM users;");
-        
-    } // <--- SCOPE ENDS HERE. 
-      // The destructor is called automatically right now.
-
-    std::cout << "The object is gone, and the connection is closed." << std::endl;
+        DatabaseHelper db{"127.0.0.1:5432/my_database"};
+    } // the destructor runs right here
+    std::cout << "db is gone, and so is its memory\n";
     return 0;
 }

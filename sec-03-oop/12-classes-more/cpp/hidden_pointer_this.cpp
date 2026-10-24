@@ -1,32 +1,21 @@
 #include <iostream>
 
-class Simple
-{
-private:
+class Simple {
+  private:
     double value{};
 
-public:
-    Simple(double value)
-        : value{ value }
-    {
-    }
+  public:
+    Simple(double value) : value{value} {}
 
-    double get_value() const { 
-        return this->value;     // equivallently, we can write "return value;"
-    }
-    void set_value(int value) { 
-        this->value = value;
-    } 
-
-    void print() const { std::cout << this->value; } // use `this` pointer to access the implicit object and operator-> to select member m_id
+    double get_value() const { return value; } // same as this->value
+    void set_value(double value) { this->value = value; }
+    void print() const { std::cout << this->value << '\n'; }
 };
 
-int main()
-{
-    Simple simple { 0 };
+int main() {
+    Simple simple{0.0};
     std::cout << simple.get_value() << '\n';
-    simple.set_value(42.0);
+    simple.set_value(42.5);
     simple.print();
-    std::cout << '\n';
     return 0;
 }

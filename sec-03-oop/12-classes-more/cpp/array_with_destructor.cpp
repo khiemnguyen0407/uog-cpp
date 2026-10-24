@@ -1,50 +1,24 @@
 #include <iostream>
-#include <stdexcept>
 
-// Both type parameter template and non-type parameter template
-template <typename T, int N>    // This is a good opportunity to teach this
-class Vector
-{
-    T* data;    // pointer to the data type T
+template <typename T, int N> // a type AND a value (Chapter 06)
+class FixedArray {
+    T* data{}; // private by default
 
-public:
-    Vector() {
-        data = new T[N];
-    }
-
-    ~Vector() {
-        delete data;
-        std::cout << "Array pointed by pointer " << data << " is cleaned and returned to OS\n";
-    }
-
-    void fill_fourty_two() {
-        for (int i {0}; i <= N; ++i) {
-            data[i] = static_cast<T>(42);
+  public:
+    FixedArray(const T& value) : data{new T[N]} { // acquire...
+        for (int i{0}; i < N; ++i) {              // i < N, not i <= N!
+            data[i] = value;
         }
     }
-
-    // fill the array with 42 for the first m positon: 0 --> m - 1
-    void fill_fourty_two(int m) {
-        if (m > N) {
-            throw std::out_of_range("Requested size m exceeds the template capacity N!");
-        }
-        for (int i {0}; i <= m; ++i) {
-            data[i] = 42.0;
-        }
+    ~FixedArray() {    // ...and release
+        delete[] data; // new[] needs delete[] (Chapter 09)
+        std::cout << "Memory returned\n";
     }
-
-    void print() const {
-        for (int i {0}; i <= N; ++i) {
-            if (i % 10 == 0) std::cout << '\n';
-            std::cout << data[i] << '\t';
-        }
-    }
+    T get(int i) const { return data[i]; }
 };
 
-int main()
-{
-    Vector<double, 42> vector {};
-    vector.fill_fourty_two(24);
-    vector.print(); std::cout << '\n';
+int main() {
+    FixedArray<double, 5> numbers{4.2};
+    std::cout << numbers.get(0) << ' ' << numbers.get(4) << '\n';
     return 0;
-}
+} // no cleanup() call needed

@@ -1,32 +1,23 @@
 #include <iostream>
 
-class Accumulator
-{
-private:
-    double value { 0 };
+class Accumulator {
+  private:
+    double value{};
 
-public:
-    void add(double value) { this->value += value; }
-    // Here is the friend declaration that makes non-member function 
-    // void print(const Accumulator& accumulator) a friend of Accumulator
-    // friend void print(const Accumulator& accumulator);
-    double get_value() const 
-    { return value;     }
+  public:
+    void add(double x) { value += x; }
+
+    // print() is not a member, but it may use our private members
+    friend void print(const Accumulator& accumulator);
 };
 
-void print(const Accumulator& accumulator)
-{
-    // Because print() is a friend of Accumulator
-    // it can access the private members of Accumulator
-    // std::cout << accumulator.value;
-    std::cout << accumulator.get_value();
+void print(const Accumulator& accumulator) { // not a member!
+    std::cout << accumulator.value << '\n';  // allowed: it's a friend
 }
 
-int main()
-{
+int main() {
     Accumulator acc{};
-    acc.add(42);    // add 42 to the accumulator
-    print(acc);     // call the print() non-member function
-    std::cout << '\n';
+    acc.add(42);
+    print(acc); // called like any non-member function
     return 0;
 }

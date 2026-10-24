@@ -1,33 +1,23 @@
 #include <iostream>
 
-class Point
-{
-private:
-    double x{};
-    double y{};
-    double z{};
+class Point {
+  private:
+    double x{}, y{}, z{};
 
-public:
-    Point(double x=0.0, double y=0.0, double z=0.0)
-      : x{x}, y{y}, z{z} { }
+  public:
+    Point(double x = 0.0, double y = 0.0, double z = 0.0) : x{x}, y{y}, z{z} {}
 
-    friend std::ostream& operator<< (std::ostream& out, const Point& point);
+    friend std::ostream& operator<<(std::ostream& out, const Point& p);
 };
 
-std::ostream& operator<< (std::ostream& out, const Point& point)
-{
-    // Since operator<< is a friend of the Point class, 
-    // we can access Point's members directly.
-    out << "Point(" << point.x << ", " 
-        << point.y << ", " << point.z << ')'; // actual output done here
-
-    return out; // return std::ostream so we can chain calls to operator<<
+std::ostream& operator<<(std::ostream& out, const Point& p) {
+    out << "Point(" << p.x << ", " << p.y << ", " << p.z << ')';
+    return out; // return the stream, so that << can be chained
 }
 
-int main()
-{
-    const Point point1 { 42.0, 24.0, 12.0 };
-    std::cout << point1 << '\n';
-    
-    
+int main() {
+    const Point p1{42.0, 24.0, 12.0};
+    const Point p2{1.0, 2.0, 3.0};
+    std::cout << "My points are " << p1 << " and " << p2 << '\n';
+    return 0;
 }

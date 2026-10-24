@@ -1,28 +1,24 @@
 #include <iostream>
 
-class Pennies
-{
-private:
-	int pennies {};
+class Pennies {
+  private:
+    int pennies{};
 
-public:
-	Pennies(int cents) : pennies{ cents } { }
+  public:
+    explicit Pennies(int pennies) : pennies{pennies} {}
+    int get_pennies() const { return pennies; }
 
-	friend Pennies operator+(const Pennies& c1, const Pennies& c2);
-
-	int get_cents() const { return pennies; }
+    friend Pennies operator+(const Pennies& a, const Pennies& b);
 };
 
-Pennies operator+(const Pennies& c1, const Pennies& c2)
-{
-	return c1.pennies + c2.pennies;
+Pennies operator+(const Pennies& a, const Pennies& b) { // a friend
+    return Pennies{a.pennies + b.pennies};
 }
 
-int main()
-{
-	Pennies cents1{ 42 };
-	Pennies cents2{ 12 };
-	Pennies cents_sum{ cents1 + cents2 };
-	std::cout << "I have " << cents_sum.get_cents() << " cents.\n";
-	return 0;
+int main() {
+    Pennies mine{42};
+    Pennies yours{12};
+    Pennies sum{mine + yours}; // operator+(mine, yours)
+    std::cout << "I have " << sum.get_pennies() << " pennies.\n";
+    return 0;
 }

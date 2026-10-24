@@ -1,27 +1,19 @@
 #include <iostream>
 
-class Accumulator
-{
-private:
-    int value { 0 }; // if we rename this data member
+class Accumulator {
+  private:
+    int value{};
 
-public:
-    void add(int value) { this->value += value; } // we need to modify this
-
-    friend void print(const Accumulator& accumulator);
+  public:
+    void add(int x) { value += x; }
+    friend void print(const Accumulator& acc);
 };
 
-void print(const Accumulator& accumulator)
-{
-    std::cout << accumulator.value; // and we need to modify this
-}
+void print(const Accumulator& acc) { std::cout << acc.value << '\n'; }
 
-int main()
-{
+int main() {
     Accumulator acc{};
-    acc.add(5); // add 5 to the accumulator
-
-    print(acc); // call the print() non-member function
-
+    acc.add(5);
+    print(acc);
     return 0;
 }

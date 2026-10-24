@@ -44,6 +44,9 @@ The chapter no longer needs its own `doc.css` or `slide.css`.
 | `::: {.callout-warning title="Watch out"}` | Amber box |
 | `::: {.fragment}` ... `:::` | Appears on the next click (ignored in HTML/PDF notes) |
 
+Add `{.dense-code}` to a slide title (`## Title {.dense-code}`) to shrink its code a
+little, for long listings.
+
 Use `::: {.fragment}` rather than `. . .` for pauses: `. . .` shows up as
 literal dots in the HTML and PDF notes.
 

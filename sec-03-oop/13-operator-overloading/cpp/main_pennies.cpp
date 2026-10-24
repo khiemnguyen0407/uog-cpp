@@ -1,15 +1,10 @@
-#include "pennies/pennies.h"
+#include "pennies/pennies.h" // the header is in the folder pennies/
 #include <iostream>
 
-int main()
-{
-    Pennies p1 { 42 };
-    Pennies p2 { 24 };
-
-    // without the prototype in Pennies.h, this would fail to compile
-    Pennies pennies_sum { p1 + p2 };
-
-    std::cout << "I have " << pennies_sum.get_pennies() << " pennies.\n";
-
+int main() {
+    Pennies mine{42};
+    Pennies yours{24};
+    Pennies sum{mine + yours};
+    std::cout << "I have " << sum.get_pennies() << " pennies.\n";
     return 0;
 }

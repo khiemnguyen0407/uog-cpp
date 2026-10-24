@@ -1,31 +1,19 @@
 #include <iostream>
 
-class Simple
-{
-private:
-    int id {};
+class Simple {
+  private:
+    int id{};
 
-public:
-    Simple(int id) : id { id }
-    {
-        std::cout << "Constructing Simple " << id << '\n';
-    }
-
-    ~Simple() // here's our destructor
-    {
-        std::cout << "Destructing Simple " << id << '\n';
-    }
-
-    int get_ID() const { return id; }
+  public:
+    Simple(int id) : id{id} { std::cout << "Constructing " << id << '\n'; }
+    ~Simple() { std::cout << "Destructing " << id << '\n'; } // destructor
 };
 
-int main()
-{
-    // Allocate a Simple
-    Simple simple1{ 42 };
+int main() {
+    Simple simple1{1};
     {
-        Simple simple2{ 24 };
-    } // simple2 dies here
-
+        Simple simple2{2};
+    } // simple2 is destroyed here
+    Simple simple3{3};
     return 0;
-} // simple1 dies here
+} // simple3, then simple1, are destroyed here

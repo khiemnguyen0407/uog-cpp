@@ -1,49 +1,25 @@
 #include <iostream>
 
-class Display; // forward declaration for class Display
+class Display; // only a forward declaration
 
-class Storage
-{
-private:
-	int int_value {};
-	double double_value {};
-public:
-	Storage(int int_value, double double_value)
-		: int_value { int_value }, double_value { double_value }
-	{
-	}
+class Storage {
+  private:
+    int int_value{};
+    double double_value{};
 
-	// Make the Display::display_storage member function a friend of the Storage class
-	friend void Display::display_storage(const Storage& storage); // error: Storage hasn't seen the full definition of class Display
+  public:
+    Storage(int i, double d) : int_value{i}, double_value{d} {}
+    friend void Display::show(const Storage& s) const; // error!
 };
 
-class Display
-{
-private:
-	bool display_int_first {};
-
-public:
-	Display(bool display_int_first)
-		: display_int_first { display_int_first }
-	{
-	}
-
-	void display_storage(const Storage& storage)
-	{
-		/*
-		if (display_int_first)
-			std::cout << storage.int_value << ' ' << storage.double_value << '\n';
-		else // display double first
-			std::cout << storage.double_value << ' ' << storage.int_value << '\n';
-		*/
-	}
+class Display {
+  public:
+    void show(const Storage& s) const {
+        std::cout << s.int_value << ' ' << s.double_value << '\n';
+    }
 };
 
-int main()
-{
-    Storage storage { 5, 6.7 };
-    Display display { false };
-    display.display_storage(storage);
-
+int main() {
+    Display{}.show(Storage{5, 6.7});
     return 0;
 }

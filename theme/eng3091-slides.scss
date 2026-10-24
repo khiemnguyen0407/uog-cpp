@@ -350,6 +350,21 @@ $code-bg: #e9eef5;
 }
 
 // ---------------------------------------------------------------------------
+// Dense slides: ## Title {.dense-code} shrinks code a little, for the long
+// listings of the object-oriented chapters.
+// ---------------------------------------------------------------------------
+
+.reveal .slides section.dense-code div.sourceCode pre,
+.reveal .slides section.dense-code pre.output,
+.reveal .slides section.dense-code pre.terminal {
+  font-size: 0.6em;
+}
+
+.reveal .slides section.dense-code .code-with-filename .code-with-filename-file pre strong {
+  font-size: 0.95em;
+}
+
+// ---------------------------------------------------------------------------
 // Line highlighting (code-line-numbers="|3|5-7")
 // ---------------------------------------------------------------------------
 

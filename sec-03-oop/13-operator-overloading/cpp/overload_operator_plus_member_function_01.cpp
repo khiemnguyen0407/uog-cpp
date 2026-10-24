@@ -1,30 +1,25 @@
 #include <iostream>
 
-class Pennies
-{
-private:
-	int pennies {};
+class Pennies {
+  private:
+    int pennies{};
 
-public:
-	Pennies(int pennies) : pennies{ pennies } { }
+  public:
+    explicit Pennies(int pennies) : pennies{pennies} {}
+    int get_pennies() const { return pennies; }
 
-	// Overload Pennies + Pennies
-    Pennies operator+(const Pennies& other) const;
-	int get_cents() const { return pennies; }
+    Pennies operator+(const Pennies& other) const; // a member now
 };
 
-// We can implement member function outside the class
-// by using scope resolution operator ::
-Pennies Pennies::operator+(const Pennies& other) const
-{
-    return Pennies {pennies + other.pennies};
+// Defined outside the class: note the Pennies:: in front of the name
+Pennies Pennies::operator+(const Pennies& other) const {
+    return Pennies{pennies + other.pennies}; // pennies is this->pennies
 }
 
-int main()
-{
-	Pennies pennies_01{ 42 };
-	Pennies pennies_02{ 12 };
-	Pennies pennies_sum{ pennies_01 + pennies_02 };   // pennies_01.operator+(pennies_02)
-	std::cout << "I have " << pennies_sum.get_cents() << " pennies.\n";
-	return 0;
+int main() {
+    Pennies mine{42};
+    Pennies yours{12};
+    Pennies sum{mine + yours}; // mine.operator+(yours)
+    std::cout << "I have " << sum.get_pennies() << " pennies.\n";
+    return 0;
 }

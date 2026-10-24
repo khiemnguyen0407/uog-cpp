@@ -1,39 +1,27 @@
 #include <iostream>
 
-class Humidity; // forward declaration of Humidity. Otherwise, it give compile error.
+class Humidity;     // forward declaration: used before it's defined
+class Temperature { // members are private by default
+    int temp{};
 
-class Temperature
-{
-private:
-    int temp { 0 };
-public:
-    explicit Temperature(int temp) : temp { temp } { }
-
-    friend void print_weather(const Temperature& temperature, const Humidity& humidity); // forward declaration needed for this line
+  public:
+    Temperature(int temp) : temp{temp} {}
+    friend void print_weather(const Temperature& t, const Humidity& h);
 };
 
-class Humidity
-{
-private:
-    int humidity { 0 };
-public:
-    explicit Humidity(int humidity) : humidity { humidity } {  }
+class Humidity {
+    int humidity{};
 
-    friend void print_weather(const Temperature& temperature, const Humidity& humidity);
+  public:
+    Humidity(int humidity) : humidity{humidity} {}
+    friend void print_weather(const Temperature& t, const Humidity& h);
 };
 
-void print_weather(const Temperature& temperature, const Humidity& humidity)
-{
-    std::cout << "The temperature is " << temperature.temp <<
-       " and the humidity is " << humidity.humidity << '\n';
+void print_weather(const Temperature& t, const Humidity& h) {
+    std::cout << t.temp << " degrees, " << h.humidity << "% humidity\n";
 }
 
-int main()
-{
-    Humidity hum { 10 };
-    Temperature temp { 12 };
-
-    print_weather(temp, hum);
-
+int main() {
+    print_weather(Temperature{12}, Humidity{10});
     return 0;
 }

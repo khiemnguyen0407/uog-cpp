@@ -1,52 +1,41 @@
 #include <iostream>
 
-class Pennies
-{
-private:
-	int pennies {};
+class Pennies {
+  private:
+    int pennies{};
 
-public:
-	explicit Pennies(int cents) : pennies{ cents } { }
+  public:
+    explicit Pennies(int pennies) : pennies{pennies} {}
+    int get_pennies() const { return pennies; }
 
-	friend Pennies operator+(const Pennies& c1, const Pennies& c2);
-	friend Pennies operator-(const Pennies& c1, const Pennies& c2);
-    friend int operator+(const int x, const Pennies& c);
-    friend int operator+(const Pennies&, const int x);
-    friend int operator*(const int x, const Pennies& c);
-    friend int operator*(const Pennies& c, const int x);
-	int get_cents() const { return pennies; }
+    friend Pennies operator+(const Pennies& a, const Pennies& b);
+    friend Pennies operator+(int value, const Pennies& p);
+    friend Pennies operator*(int factor, const Pennies& p);
 };
-// this function is not a member function!
-Pennies operator+(const Pennies& c1, const Pennies& c2) { 
-	return Pennies { c1.pennies + c2.pennies };
+
+Pennies operator+(const Pennies& a, const Pennies& b) {
+    return Pennies{a.pennies + b.pennies};
 }
 
-// this function is not a member function!
-Pennies operator-(const Pennies& c1, const Pennies& c2) {
-	return Pennies { c1.pennies - c2.pennies };
+Pennies operator+(int value, const Pennies& p) {
+    return Pennies{value + p.pennies};
 }
 
-int operator+(const int x, const Pennies& c) {
-    return (x + c.pennies);
+Pennies operator+(const Pennies& p, int value) { // no friendship needed:
+    return value + p;                            // it reuses the one above
 }
 
-int operator+(const Pennies& c, const int x) {
-    return operator+(x, c);
+Pennies operator*(int factor, const Pennies& p) {
+    return Pennies{factor * p.pennies};
 }
 
-int operator*(const int x, const Pennies& c) {
-    return (x * c.pennies);
-}
-int operator*(const Pennies& c, const int x) {
-    return (c.pennies * x);
-}
+Pennies operator*(const Pennies& p, int factor) { return factor * p; }
 
-int main()
-{
-	Pennies my_pennies{ 42 };
-    std::cout << 42 + my_pennies << '\n';
-    std::cout << my_pennies + 42 << '\n';
-    std::cout << 42 * my_pennies << '\n';
-    std::cout << my_pennies * 42 << '\n';
-	return 0;
+int main() {
+    Pennies mine{42};
+    std::cout << (42 + mine).get_pennies() << '\n';
+    std::cout << (mine + 42).get_pennies() << '\n';
+    std::cout << (3 * mine).get_pennies() << '\n';
+    std::cout << (mine * 3).get_pennies() << '\n';
+    return 0;
 }

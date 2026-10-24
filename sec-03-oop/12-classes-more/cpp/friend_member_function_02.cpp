@@ -1,47 +1,23 @@
 #include <iostream>
 
-class Display
-{
-private:
-	bool display_int_first {};
-
-public:
-	Display(bool displayIntFirst)
-		: display_int_first { displayIntFirst }
-	{
-	}
-
-	void display_storage(const Storage& storage) // compile error: compiler doesn't know what a Storage is
-	{
-        /* This just does not work either.
-		if (display_int_first)
-			std::cout << storage.int_value << ' ' << storage.double_value << '\n';
-		else // display double first
-			std::cout << storage.double_value << ' ' << storage.int_value << '\n';
-        */
-	}
+class Display {
+  public:
+    void show(const Storage& s) const { // error: what is a Storage?
+        std::cout << s.int_value << ' ' << s.double_value << '\n';
+    }
 };
 
-class Storage
-{
-private:
-	int int_value {};
-	double double_value {};
-public:
-	Storage(int int_value, double double_value)
-		: int_value { int_value }, double_value { double_value }
-	{
-	}
+class Storage {
+  private:
+    int int_value{};
+    double double_value{};
 
-	// Make the Display::display_storage member function a friend of the Storage class
-	friend void Display::display_storage(const Storage& storage); // okay now
+  public:
+    Storage(int i, double d) : int_value{i}, double_value{d} {}
+    friend void Display::show(const Storage& s) const;
 };
 
-int main()
-{
-    Storage storage { 5, 6.7 };
-    Display display { false };
-    display.display_storage(storage);
-
+int main() {
+    Display{}.show(Storage{5, 6.7});
     return 0;
 }
