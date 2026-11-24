@@ -1,0 +1,37 @@
+---
+title: "Section 03: Object-Oriented Programming"
+subtitle: "ENG3091 lecture notes, Chapters 10–15"
+author:
+  - name: Khiem Nguyen
+    email: khiem.nguyen@glasgow.ac.uk
+    affiliations: University of Glasgow
+metadata-files: [../../theme/notes.yml, ../../theme/section-notes.yml]
+format:
+  html:
+    output-file: lecture_notes_03.html
+    number-offset: [9]   # number the chapters 10-15, like the slides
+  pdf:
+    output-file: lecture_notes_03.pdf
+---
+
+```{=latex}
+% Number the chapters 10-15, like the slides
+\setcounter{chapter}{9}
+% Long inline code (file names, signatures) can't be hyphenated: let TeX
+% loosen a line rather than run it into the margin
+\sloppy
+```
+
+{{< include _about.qmd >}}
+
+{{< include _10-intro-to-oop.qmd >}}
+
+{{< include _11-classes.qmd >}}
+
+{{< include _12-classes-more.qmd >}}
+
+{{< include _13-operator-overloading.qmd >}}
+
+{{< include _14-inheritance.qmd >}}
+
+{{< include _15-virtual-functions.qmd >}}

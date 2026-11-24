@@ -1,0 +1,36 @@
+---
+title: "Section 04: UML Class Diagrams"
+subtitle: "ENG3091 lecture notes, Chapters 16–17"
+author:
+  - name: Khiem Nguyen
+    email: khiem.nguyen@glasgow.ac.uk
+    affiliations: University of Glasgow
+metadata-files: [../../theme/notes.yml, ../../theme/section-notes.yml]
+format:
+  html:
+    output-file: lecture_notes_04.html
+    number-offset: [15]   # number the chapters 16-17, like the slides
+  pdf:
+    output-file: lecture_notes_04.pdf
+---
+
+```{=latex}
+% Number the chapters 16-17, like the slides
+\setcounter{chapter}{15}
+% Long inline code (file names, signatures) can't be hyphenated: let TeX
+% loosen a line rather than run it into the margin
+\sloppy
+% Latin Modern has no glyphs for the line and arrowhead symbols in
+% Chapter 17's summary table (─ ◇ ◆ ▷): take them from DejaVu Sans
+\newfontfamily\umlsymbols{DejaVu Sans}
+\catcode"2500=\active \protected\def─{{\umlsymbols\symbol{"2500}}}
+\catcode"25B7=\active \protected\def▷{{\umlsymbols\symbol{"25B7}}}
+\catcode"25C6=\active \protected\def◆{{\umlsymbols\symbol{"25C6}}}
+\catcode"25C7=\active \protected\def◇{{\umlsymbols\symbol{"25C7}}}
+```
+
+{{< include _about.qmd >}}
+
+{{< include _16-object-relationships.qmd >}}
+
+{{< include _17-uml-class-diagram.qmd >}}

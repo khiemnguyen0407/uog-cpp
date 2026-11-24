@@ -1,0 +1,9 @@
+# About this section {.unnumbered}
+
+Section 02 is still foundational C++, but it's where C++ stops looking like Python. It covers what Python hides from you:
+
+- **One name, many types.** Chapter 05 lets several functions share a name (*overloading*), and Chapter 06 lets the compiler write the functions for us (*templates*).
+- **Referring to objects.** Chapter 07 introduces *value categories* and *references*, and with them pass by reference. Chapter 08 introduces *pointers* and pass by address. Python has only something that *feels* similar: passing an immutable object behaves a bit like pass by value, and passing a mutable object a bit like pass by reference.
+- **Memory you manage yourself.** Chapter 09 creates objects while the program runs, on the *heap*, and shows how to give that memory back.
+
+The notes work as in Section 01: each chapter matches the slide deck with the same number, the name above a listing is a file in that chapter's `cpp/` folder, and the coloured boxes mark Python comparisons (blue), key ideas (navy), best practices (green) and common mistakes (amber).

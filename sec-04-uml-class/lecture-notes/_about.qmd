@@ -1,0 +1,8 @@
+# About this section {.unnumbered}
+
+Section 03 taught you to write classes. Section 04 is about how classes **fit together** in a larger program, and how to describe that design so that someone else can build it:
+
+- **Chapter 16** names the relationships between objects other than "is a": *composition*, *aggregation*, *association* and *dependency*, and shows how each one is written in C++.
+- **Chapter 17** draws classes and all their relationships, inheritance included, as **UML class diagrams**, and translates between the diagrams and C++.
+
+A class diagram rarely fits on a slide, so Chapter 17 has no slide deck: in the lecture we work through its notes directly, and they appear here as they are. Chapter 16 works as in the earlier sections: it matches the slide deck with the same number, the name above a listing is a file in that chapter's `cpp/` folder, and the coloured boxes mark key ideas (navy), best practices (green) and common mistakes (amber).

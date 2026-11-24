@@ -1,0 +1,30 @@
+---
+title: "Section 01: C++ Basics"
+subtitle: "ENG3091 lecture notes, Chapters 00–04"
+author:
+  - name: Khiem Nguyen
+    email: khiem.nguyen@glasgow.ac.uk
+    affiliations: University of Glasgow
+metadata-files: [../../theme/notes.yml, ../../theme/section-notes.yml]
+format:
+  html:
+    output-file: lecture_notes_01.html
+    number-offset: [-1]   # number the chapters 0-4, like the slides
+  pdf:
+    output-file: lecture_notes_01.pdf
+---
+
+```{=latex}
+% Number the chapters 0-4, like the slides
+\setcounter{chapter}{-1}
+```
+
+{{< include _00-introduction.qmd >}}
+
+{{< include _01-structure-and-variables.qmd >}}
+
+{{< include _02-functions-and-files.qmd >}}
+
+{{< include _03-control-flow.qmd >}}
+
+{{< include _04-constants-and-strings.qmd >}}

@@ -40,9 +40,8 @@
 *.zip
 # debug information files
 *.dwo
-.clang-format
 CHANGES-chapter*.md
-scripts/
+__pycache__/
 typst-test/
 lecture_note/
 test/

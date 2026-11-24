@@ -1,0 +1,32 @@
+---
+title: "Section 02: C++ Intermediate"
+subtitle: "ENG3091 lecture notes, Chapters 05–09"
+author:
+  - name: Khiem Nguyen
+    email: khiem.nguyen@glasgow.ac.uk
+    affiliations: University of Glasgow
+metadata-files: [../../theme/notes.yml, ../../theme/section-notes.yml]
+format:
+  html:
+    output-file: lecture_notes_02.html
+    number-offset: [4]   # number the chapters 5-9, like the slides
+  pdf:
+    output-file: lecture_notes_02.pdf
+---
+
+```{=latex}
+% Number the chapters 5-9, like the slides
+\setcounter{chapter}{4}
+```
+
+{{< include _about.qmd >}}
+
+{{< include _05-function-overloading.qmd >}}
+
+{{< include _06-function-templates.qmd >}}
+
+{{< include _07-compound-types-references.qmd >}}
+
+{{< include _08-pointers.qmd >}}
+
+{{< include _09-dynamic-allocation.qmd >}}

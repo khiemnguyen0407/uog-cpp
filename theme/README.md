@@ -29,6 +29,39 @@ format:
 
 The chapter no longer needs its own `doc.css` or `slide.css`.
 
+A chapter that is lecture notes only (HTML and PDF, no slides), like Chapter 17,
+uses `metadata-files: [../../theme/notes.yml]` instead and lists only the
+`html` and `pdf` formats.
+
+## Section lecture notes
+
+Each section's prose notes, such as
+`sec-03-oop/lecture-notes/lecture_notes_03.qmd`, layer `section-notes.yml` on
+top of `notes.yml`:
+
+```yaml
+metadata-files: [../../theme/notes.yml, ../../theme/section-notes.yml]
+format:
+  html:
+    output-file: lecture_notes_03.html
+    number-offset: [9]   # number the chapters 10-15, like the slides
+  pdf:
+    output-file: lecture_notes_03.pdf
+```
+
+`section-notes.yml` adapts the notes for long reading: a narrower text column
+in the HTML; A4 pages, with each `# Heading` starting a new chapter, in the PDF;
+and cross-references printed as "§12.3", because "Section" already means one of
+the course's four sections.
+
+The master file holds only the title block and one
+`{{< include _XX-name.qmd >}}` per chapter. Each chapter file starts with
+`# Title {#sec-chXX}` and includes its listings and figures from the chapter
+folder (`../12-classes-more/cpp/...`). The PDF numbers its chapters with a raw
+LaTeX block at the top of the master file, `\setcounter{chapter}{9}` for
+Section 03, matching the HTML's `number-offset`. Sections 03 and 04 also put
+`\sloppy` there, so that long inline code can't run into the margin.
+
 ## Conventions
 
 | You write | You get |
@@ -56,6 +89,9 @@ number. `## Heading` starts an ordinary slide.
 ## Files
 
 - `lecture.yml`: shared Quarto options for all three formats.
+- `notes.yml`: the same, for notes-only chapters (HTML and PDF).
+- `section-notes.yml`: extra settings for the section lecture notes, layered
+  on top of `notes.yml`.
 - `eng3091-slides.scss`: the slide theme (palette, type, code panes, callouts).
 - `slides.html`: paints the title slide and section slides navy.
 - `notes.css`: small additions for the HTML notes.
