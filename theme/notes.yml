@@ -1,0 +1,45 @@
+# Shared settings for ENG3091 chapters that are lecture NOTES only
+# (HTML and PDF, no slides), such as Chapter 17's UML class diagrams.
+#
+# A chapter opts in with:   metadata-files: [../../theme/notes.yml]
+#
+# Keep in step with lecture.yml, which is the same plus the slide settings.
+
+author-meta: "Lecturer in Multiscale Materials"
+number-sections: true
+number-depth: 3
+highlight-style: ../../theme/eng3091.theme
+filters:
+  - ../../theme/eng3091.lua
+
+format:
+  html:
+    embed-resources: true
+    css: ../../theme/notes.css
+    grid:
+      body-width: 1600px
+      margin-width: 300px
+      sidebar-width: 350px
+    code-overflow: wrap
+    code-line-numbers: true
+    code-block-bg: true
+    code-block-border-left: false
+    toc: true
+    toc-depth: 3
+    toc-title: Contents
+
+  pdf:
+    code-line-numbers: true
+    include-in-header:
+      text: |
+        % Keep each code listing right where it appears in the text
+        % (no floating), and don't stretch the space between lines.
+        \AtBeginDocument{\raggedbottom\floatplacement{codelisting}{H}}
+    toc: true
+    toc-depth: 3
+    toc-title: Contents
+    geometry:
+      - top=24px
+      - bottom=24px
+      - left=36px
+      - right=36px

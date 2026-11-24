@@ -1,0 +1,11 @@
+# About this section {.unnumbered}
+
+In Sections 01 and 02 we used types: `int`, `double`, `std::string`, `std::vector`. Section 03 is where we design our own. It covers **object-oriented programming** (OOP) in C++:
+
+- **Classes and objects.** Chapter 10 introduces the ideas behind OOP and member functions. Chapter 11 hides data behind `private` and builds objects with *constructors*. Chapter 12 adds the `this` pointer, *destructors*, class templates and friends.
+- **Classes that feel built in.** Chapter 13 overloads operators, so that our own types work with `+` and `<<`.
+- **Families of classes.** Chapter 14 derives new classes from existing ones (*inheritance*), and Chapter 15 lets code written for a base class do the right thing for every derived class (*polymorphism*, with *virtual functions*).
+
+You wrote classes in Python, so the ideas won't be new. C++ asks more of you: who may use which data, exactly how an object is created, copied and destroyed, and which function a call really reaches. In return, the compiler checks all of it before the program ever runs.
+
+The notes work as in Sections 01 and 02: each chapter matches the slide deck with the same number, the name above a listing is a file in that chapter's folder (C++ files are in `cpp/`), and the coloured boxes mark Python comparisons (blue), key ideas (navy), best practices (green) and common mistakes (amber).

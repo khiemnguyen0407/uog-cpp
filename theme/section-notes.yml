@@ -1,0 +1,27 @@
+# Extra settings for the prose lecture notes: one document per section,
+# such as sec-01-cpp-basics/lecture-notes/lecture_notes_01.qmd.
+#
+# Layered on top of notes.yml, which it adjusts for long reading:
+#
+#     metadata-files: [../../theme/notes.yml, ../../theme/section-notes.yml]
+#
+# The notes folder must sit two levels below the repo root, like a chapter.
+
+# "see §2.3" rather than "see Section 2.3": "Section" already means one of
+# the course's four sections.
+crossref:
+  sec-prefix: "§"
+
+format:
+  html:
+    toc-depth: 2
+    grid:
+      body-width: 920px   # a comfortable line length for prose
+
+  pdf:
+    documentclass: scrreprt
+    papersize: a4
+    top-level-division: chapter   # each "# Heading" starts a new chapter page
+    toc-depth: 2
+    geometry:
+      - margin=22mm

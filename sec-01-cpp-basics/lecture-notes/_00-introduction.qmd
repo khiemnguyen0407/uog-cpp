@@ -1,0 +1,28 @@
+# Introduction to ENG3091 {#sec-ch00}
+
+These notes are the written companion to the slides for Section 01, *C++ Basics*. Each chapter matches the slide deck with the same number and uses the same examples, explained in a few more words. The name above a code listing, such as `hello.cpp`, is a file in that chapter's `cpp/` folder: compile it, run it, change it. You learn a programming language by writing programs, so practise, practise and practise. Use AI chatbots to *learn*, not to do the learning for you: only writing code yourself tells you whether you understand something or just think you do.
+
+The coloured boxes mean the same as on the slides: blue compares C++ with **Python**, navy marks a **key idea**, green a **best practice** and amber a **common mistake**. A red tab on a listing means it **does not compile**, on purpose.
+
+## C and C++
+
+Dennis Ritchie created **C** at Bell Labs in 1972 as a language for writing operating systems: it gives the programmer a lot of control over the machine, yet programs can still run on different computers. In 1973, Ritchie and Ken Thompson rewrote most of Unix in C. From 1979, Bjarne Stroustrup, also at Bell Labs, extended C into **C++**. C++ is roughly a superset of C, and its most notable addition is **object-oriented programming**, the topic of Section 03. Today C++ runs games, simulations, real-time and embedded systems, trading platforms, audio and video software and neural networks: anywhere speed and control matter.
+
+The philosophy of C and C++ is *"trust the programmer"*, which is both wonderful and dangerous. C++ gives you a great deal of freedom, and often won't stop you from doing something that makes no sense. Learning C++ well is partly learning which freedoms to leave alone.
+
+## Compiled versus interpreted
+
+C++ is **compiled**: before the program runs, a **compiler** translates all of your source code into machine code, which the processor then runs directly. Python is **interpreted**: the interpreter reads your code and carries it out as the program runs.
+
+| | C++ (compiled) | Python (interpreted) |
+|:---|:---|:---|
+| Performance | native machine code: fast | interpreted: slower |
+| Errors | many found at *compile time* | found at *run time* |
+| You ship | the compiled program | the source code |
+| Types | static: fixed in the code | dynamic: any value, any time |
+
+The errors row matters most to you. In Python, a typo in a rarely used function can hide for months, until that line finally runs. A C++ compiler checks the whole program first, so many mistakes are caught before the program ever runs, which is why this course teaches you to read compiler messages.
+
+## The road ahead
+
+The course has four sections: **C++ Basics** (Chapters 00–04, these notes), **C++ Intermediate** (05–09: overloading, templates, references, pointers, dynamic memory), **Object-Oriented Programming** (10–15: classes, operator overloading, inheritance, polymorphism) and **UML Class Diagrams** (16–17). In this section, Chapter 01 writes a first program and introduces variables and input and output; Chapter 02 organises programs into functions and files; Chapter 03 adds decisions and loops; and Chapter 04 covers constants and text.
